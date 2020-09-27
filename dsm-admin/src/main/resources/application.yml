@@ -1,0 +1,11 @@
+server:
+  port: 8094
+
+spring:
+  application:
+    name: dsm-admin-server
+  cloud:
+    nacos:
+      discovery:
+        namespace: jkstack-dsm
+        server-addr: 127.0.0.1:8848

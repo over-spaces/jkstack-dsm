@@ -1,0 +1,24 @@
+
+server:
+  port: 8093
+
+spring:
+  profiles:
+    active: ${spring.profiles.active}
+  application:
+    name: dsm-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
