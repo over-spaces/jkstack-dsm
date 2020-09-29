@@ -71,7 +71,7 @@ public class DynamicRouteServiceImpl implements ApplicationEventPublisherAware {
      * @param definition
      * @return
      */
-    public String add(RouteDefinition definition) {
+    public synchronized String add(RouteDefinition definition) {
         logger.info("gateway add route {}",definition);
         routeDefinitionWriter.save(Mono.just(definition)).subscribe();
         this.publisher.publishEvent(new RefreshRoutesEvent(this));

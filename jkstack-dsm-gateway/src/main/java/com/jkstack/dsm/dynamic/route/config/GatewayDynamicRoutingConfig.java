@@ -36,7 +36,7 @@ public class GatewayDynamicRoutingConfig  {
     private ConfigService configService;
 
     @PostConstruct
-    public void init() {
+    public synchronized void init() {
         logger.info("从nacos初始化gateway route配置...");
         try{
             configService = initConfigService();
