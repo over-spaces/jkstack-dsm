@@ -1,0 +1,44 @@
+2020-09-29 17:24:23.986 [main] INFO  c.a.n.client.config.impl.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:C:\Users\何雨\nacos\config
+2020-09-29 17:24:24.036 [main] INFO  com.alibaba.nacos.client.config.impl.Limiter - limitTime:5.0
+2020-09-29 17:24:24.132 [main] INFO  com.alibaba.nacos.client.config.utils.JVMUtil - isMultiInstance:false
+2020-09-29 17:24:24.196 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-dsm-user-management-dev.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-dsm-user-management.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-dsm-user-management,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-redis.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-zipkin.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-dsm-user-jdbc.yml,DEFAULT_GROUP'}]
+2020-09-29 17:24:24.208 [main] INFO  com.jkstack.dsm.DsmUserApplication - The following profiles are active: dev
+2020-09-29 17:24:25.656 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode!
+2020-09-29 17:24:25.661 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2020-09-29 17:24:25.736 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 49ms. Found 0 Redis repository interfaces.
+2020-09-29 17:24:26.095 [main] INFO  o.springframework.cloud.context.scope.GenericScope - BeanFactory id=222bbb59-89b8-30c0-b3c6-b844701b417f
+2020-09-29 17:24:26.469 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'spring.cloud.sentinel-com.alibaba.cloud.sentinel.SentinelProperties' of type [com.alibaba.cloud.sentinel.SentinelProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-09-29 17:24:26.471 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alibaba.cloud.sentinel.custom.SentinelAutoConfiguration' of type [com.alibaba.cloud.sentinel.custom.SentinelAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-09-29 17:24:27.008 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8088 (http)
+2020-09-29 17:24:27.026 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8088"]
+2020-09-29 17:24:27.027 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2020-09-29 17:24:27.028 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2020-09-29 17:24:27.297 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/dsm-user] - Initializing Spring embedded WebApplicationContext
+2020-09-29 17:24:27.298 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3058 ms
+2020-09-29 17:24:28.099 [main] INFO  com.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
+2020-09-29 17:24:28.102 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2020-09-29 17:24:28.149 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2020-09-29 17:25:42.247 [main] INFO  c.a.n.client.config.impl.LocalConfigInfoProcessor - LOCAL_SNAPSHOT_PATH:C:\Users\何雨\nacos\config
+2020-09-29 17:25:42.288 [main] INFO  com.alibaba.nacos.client.config.impl.Limiter - limitTime:5.0
+2020-09-29 17:25:42.323 [main] INFO  com.alibaba.nacos.client.config.utils.JVMUtil - isMultiInstance:false
+2020-09-29 17:25:42.354 [main] INFO  o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: [BootstrapPropertySource {name='bootstrapProperties-dsm-user-management-dev.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-dsm-user-management.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-dsm-user-management,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-redis.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-zipkin.yml,DEFAULT_GROUP'}, BootstrapPropertySource {name='bootstrapProperties-dsm-user-jdbc.yml,DEFAULT_GROUP'}]
+2020-09-29 17:25:42.363 [main] INFO  com.jkstack.dsm.DsmUserApplication - The following profiles are active: dev
+2020-09-29 17:25:43.758 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode!
+2020-09-29 17:25:43.761 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2020-09-29 17:25:43.815 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 36ms. Found 0 Redis repository interfaces.
+2020-09-29 17:25:44.106 [main] INFO  o.springframework.cloud.context.scope.GenericScope - BeanFactory id=222bbb59-89b8-30c0-b3c6-b844701b417f
+2020-09-29 17:25:44.445 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'spring.cloud.sentinel-com.alibaba.cloud.sentinel.SentinelProperties' of type [com.alibaba.cloud.sentinel.SentinelProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-09-29 17:25:44.447 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alibaba.cloud.sentinel.custom.SentinelAutoConfiguration' of type [com.alibaba.cloud.sentinel.custom.SentinelAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-09-29 17:25:44.911 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8088 (http)
+2020-09-29 17:25:44.923 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8088"]
+2020-09-29 17:25:44.924 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2020-09-29 17:25:44.924 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2020-09-29 17:25:45.166 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/dsm-user] - Initializing Spring embedded WebApplicationContext
+2020-09-29 17:25:45.166 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2778 ms
+2020-09-29 17:25:45.835 [main] INFO  com.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
+2020-09-29 17:25:45.837 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2020-09-29 17:25:45.871 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.

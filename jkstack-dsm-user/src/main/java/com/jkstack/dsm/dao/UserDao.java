@@ -4,7 +4,7 @@ import com.jkstack.dsm.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface UserDao {
+public interface UserDao{
     int deleteByPrimaryKey(long id);
 
     int insert(UserEntity record);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkstack.dsm.ResponseResult;
 import com.jkstack.dsm.ResponseResultCode;
+import com.jkstack.dsm.redis.RedisCommand;
 import com.jkstack.dsm.utils.JWTUtils;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -33,7 +35,7 @@ public class JwtTokenFilter implements GlobalFilter, Ordered {
     private static Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisCommand redisCommand;
 
     private ObjectMapper objectMapper;
 
@@ -67,9 +69,14 @@ public class JwtTokenFilter implements GlobalFilter, Ordered {
                 Claims claims = JWTUtils.parseClaims(token);
                 if (Objects.nonNull(claims)){ //签名验证通过
 
-                    //更新token时间，使token不过期
-                    stringRedisTemplate.opsForValue().set(JWTConstant.JWT_KEY_TTL.concat(claims.get(JWTConstant.JWT_KEY_ID).toString()), token, 1, TimeUnit.HOURS);
+                    final String key = JWTConstant.JWT_KEY_TTL.concat(claims.get(JWTConstant.JWT_KEY_ID).toString());
 
+                    if (redisCommand.exists(key)) {
+                        //更新token时间，使token不过期
+                        redisCommand.set(key, token, 1, TimeUnit.HOURS);
+                    }else{
+                        return authError(response, "认证过期");
+                    }
                     return chain.filter(exchange);
                 }else {
                     return authError(response, "认证无效");
