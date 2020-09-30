@@ -15,8 +15,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -39,12 +37,11 @@ public class JwtTokenFilter implements GlobalFilter, Ordered {
 
     private ObjectMapper objectMapper;
 
-    private AntPathMatcher antPathMatcher; //路径匹配器
+    private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
 
     public JwtTokenFilter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.antPathMatcher = new AntPathMatcher("/dsm-user/login");
     }
 
     @Override
@@ -52,7 +49,7 @@ public class JwtTokenFilter implements GlobalFilter, Ordered {
         String url = exchange.getRequest().getURI().getPath();
 
         //跳过不需要验证的url
-        if(antPathMatcher.isPattern(url)){
+        if(antPathMatcher.match("/login", "/login")){
             return chain.filter(exchange);
         }
 
