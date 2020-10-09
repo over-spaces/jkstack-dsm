@@ -10,13 +10,23 @@
 	</parent>
 
 	<artifactId>jkstack-dsm-user-service</artifactId>
-	<name>jkstack-dsm-user-service</name>
 
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.jkstack.dsm</groupId>
+			<artifactId>jkstack-dsm-user-feign</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -76,18 +86,6 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.jkstack.dsm</groupId>
-			<artifactId>jkstack-dsm-user-feign</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.jkstack.dsm</groupId>
-			<artifactId>jkstack-dsm-common</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

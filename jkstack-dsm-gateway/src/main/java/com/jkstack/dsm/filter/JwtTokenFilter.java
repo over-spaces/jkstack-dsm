@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-@Component
+//@Component
 public class JwtTokenFilter implements GlobalFilter, Ordered {
 
     private static Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
@@ -46,10 +46,14 @@ public class JwtTokenFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        if(true){
+            return chain.filter(exchange);
+        }
+
         String url = exchange.getRequest().getURI().getPath();
 
         //跳过不需要验证的url
-        if(antPathMatcher.match("/login", "/login")){
+        if(antPathMatcher.match("/dsm-user/login", url)){
             return chain.filter(exchange);
         }
 
