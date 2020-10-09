@@ -1,4 +1,4 @@
-package com.jkstack.dsm.user.entity;
+package com.jkstack.dsm.entity;
 
 import lombok.Data;
 

@@ -24,6 +24,8 @@
         <module>jkstack-dsm-common</module>
         <!--用户模块-->
         <module>jkstack-dsm-user</module>
+
+        <module>jkstack-dsm-weixin</module>
     </modules>
 
     <properties>
@@ -53,6 +55,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

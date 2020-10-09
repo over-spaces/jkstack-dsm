@@ -1,4 +1,4 @@
-package com.jkstack.dsm.user.controller;
+package com.jkstack.dsm.controller;
 
 public abstract class BaseController {
 }

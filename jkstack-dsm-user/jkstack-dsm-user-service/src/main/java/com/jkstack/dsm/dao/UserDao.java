@@ -1,6 +1,6 @@
-package com.jkstack.dsm.user.dao;
+package com.jkstack.dsm.dao;
 
-import com.jkstack.dsm.user.entity.UserEntity;
+import com.jkstack.dsm.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

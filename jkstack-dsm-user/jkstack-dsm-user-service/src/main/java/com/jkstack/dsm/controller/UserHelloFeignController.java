@@ -1,14 +1,14 @@
-package com.jkstack.dsm.user.controller;
+package com.jkstack.dsm.controller;
 
-import com.jkstack.dsm.IFeignHello;
+import com.jkstack.dsm.UserHelloFeign;
 import com.jkstack.dsm.ResponseResult;
-import com.jkstack.dsm.user.service.UserService;
+import com.jkstack.dsm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HelloController extends BaseController implements IFeignHello {
+public class UserHelloFeignController extends BaseController implements UserHelloFeign {
 
     @Autowired
     private UserService userService;
