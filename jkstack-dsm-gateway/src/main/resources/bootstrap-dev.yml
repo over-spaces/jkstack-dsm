@@ -2,12 +2,6 @@
 nacos:
   server-addr: 127.0.0.1:8848
   namespace: jkstack-dsm
-  gateway:
-    route:
-      config:
-        # gateway动态路由
-        group: DEFAULT_GROUP
-        data-id: dsm-gateway-dynamic-route.yml
 
 spring:
   profiles:
@@ -15,6 +9,23 @@ spring:
   application:
     name: dsm-user-management
   cloud:
+    gateway:
+      routes:
+        - id: dsm-user
+          uri: lb://dsm-user
+          predicates:
+            - Path=/dsm-user/**
+          filters:
+            - StripPrefix=1
+          order: 10
+
+        - id: dsm-weixin
+          uri: lb://dsm-weixin
+          predicates:
+            - Path=/dsm-weixin/**
+          filters:
+            - StripPrefix=1
+          order: 20
     nacos:
       discovery:
         server-addr: ${nacos.server-addr}

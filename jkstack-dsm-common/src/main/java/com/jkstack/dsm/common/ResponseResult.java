@@ -23,6 +23,10 @@ public class ResponseResult<T> implements Serializable {
         this.data = data;
     }
 
+    public static <T> ResponseResult SUCCESS(T data){
+        return new ResponseResult(data);
+    }
+
     public String getSessionId() {
         return sessionId;
     }

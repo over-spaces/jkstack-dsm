@@ -1,8 +1,10 @@
-package com.jkstack.dsm.filter;
+package com.jkstack.dsm.common.utils;
 
 public class JWTConstant {
 
     public static final String JWT_HEADER_KEY = "Authorization";
+
+    public static final String JWT_KEY_SALT = "5e7fa853-506b-4171-8ba4-f136267964f3";
 
     public static final String JWT_KEY_ID = "user_id";
 
@@ -11,4 +13,7 @@ public class JWTConstant {
     public static final String JWT_KEY_ROLE = "user_role";
 
     public static final String JWT_KEY_TTL = "jwt_token_user_";
+
+    //忽略权限认证的URL
+    public static final String[] JWT_IGNORE_AUTH_URL = {"login"};
 }

@@ -38,11 +38,17 @@ public final class JWTUtils {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         LocalDateTime dateTime = LocalDateTime.now();
         ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.systemDefault());
-        JwtBuilder jwtBuilder = Jwts.builder().setClaims((Map)claims).setId(UUID.randomUUID().toString()).setHeaderParam("typ", "JWT").setIssuedAt(Date.from(zonedDateTime.toInstant())).signWith(signatureAlgorithm, key.getBytes());
+
+        JwtBuilder jwtBuilder = Jwts.builder()
+                .setClaims(claims)
+                .setId(UUID.randomUUID().toString())
+                .setHeaderParam("typ", "JWT")
+                .setIssuedAt(Date.from(zonedDateTime.toInstant()))
+                .signWith(signatureAlgorithm, key.getBytes());
+
         if (validTime > 0L) {
             jwtBuilder.setExpiration(Date.from(dateTime.plusSeconds(validTime).atZone(ZoneId.systemDefault()).toInstant()));
         }
-
         return jwtBuilder.compact();
     }
 

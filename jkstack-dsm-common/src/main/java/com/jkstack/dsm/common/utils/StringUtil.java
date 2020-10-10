@@ -3,9 +3,11 @@ package com.jkstack.dsm.common.utils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href='fz_du@people2000.net'>dufazuo</a>
@@ -14,7 +16,12 @@ import java.util.List;
  * @Description：StringUtil 字符串工具类
  * @Time 2014年9月25日 下午4:00:22 create
  */
-public class StringUtil {
+public final class StringUtil {
+
+    public static boolean containsIgnoreCase(final CharSequence str, final CharSequence searchStr){
+        return StringUtils.containsIgnoreCase(str, searchStr);
+    }
+
     /**
      * Guava Splitter split
      *
@@ -172,6 +179,7 @@ public class StringUtil {
         if (null == vals) {
             return null;
         }
+
         StringBuilder sb = new StringBuilder();
         for (Object val : vals) {
             sb.append(",'").append(val).append("'");
@@ -343,55 +351,5 @@ public class StringUtil {
             sb.append('\t');
         }
     }
-
-    /**
-     * 输出json
-     *
-     * @param response json格式响应实体
-     *//*
-    public static void output(String json) {
-        String jsonStr = json;// 先将json对象转化为string对象
-        jsonStr = jsonStr.replaceAll("\\\\/", OR);
-        int level = 0;// 用户标记层级
-        StringBuffer jsonResultStr = new StringBuffer("＞  ");// 新建stringbuffer对象，用户接收转化好的string字符串
-        for (int i = 0; i < jsonStr.length(); i++) {// 循环遍历每一个字符
-            char piece = jsonStr.charAt(i);// 获取当前字符
-            char last = jsonResultStr.charAt(jsonResultStr.length() - 1);
-            // 如果上一个字符是断行，则在本行开始按照level数值添加标记符，排除第一行
-            if (i != 0 && '\n' == last) {
-                for (int k = 0; k < level; k++) {
-                    jsonResultStr.append(start);
-                }
-            }
-            switch (piece) {
-                case '{':
-                case '[':
-                    // 如果字符是{或者[，则断行，level加1
-                    jsonResultStr.append(piece + LINE);
-                    level++;
-                    break;
-                case ',':
-                    // 如果是“,”，则断行
-                    if ("\"0123456789l".contains(last + EMPTY)) jsonResultStr.append(piece + LINE);
-                    break;
-                case '}':
-                case ']':
-                    // 如果是}或者]，则断行，level减1
-                    jsonResultStr.append(LINE);
-                    level--;
-                    for (int k = 0; k < level; k++) {
-                        jsonResultStr.append(start);
-                    }
-                    jsonResultStr.append(piece);
-                    break;
-                default:
-                    jsonResultStr.append(piece);
-                    break;
-            }
-        }
-        output("↘ ↘ ↘ ↘ ↘ ↘ ↘ ↘ json ↙ ↙ ↙ ↙ ↙ ↙ ↙ ↙ ↙ ↙ ↙ ↙");
-        output(jsonResultStr.toString().replaceAll(LINE, LINE + "＞  "));
-        output("↗ ↗ ↗ ↗ ↗ ↗ ↗ ↗ json ↖ ↖ ↖ ↖ ↖ ↖ ↖ ↖ ↖ ↖ ↖ ↖");
-    }*/
 
 }
