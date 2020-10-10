@@ -7,10 +7,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class DsmGatewayApplication {
+public class JKStackDsmGatewayApplication {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(DsmGatewayApplication.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(JKStackDsmGatewayApplication.class, args);
 	}
 
 

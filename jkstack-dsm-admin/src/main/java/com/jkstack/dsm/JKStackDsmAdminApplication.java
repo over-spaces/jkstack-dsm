@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @EnableAdminServer
-public class DsmAdminApplication {
+public class JKStackDsmAdminApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DsmAdminApplication.class, args);
+		SpringApplication.run(JKStackDsmAdminApplication.class, args);
 	}
 
 }

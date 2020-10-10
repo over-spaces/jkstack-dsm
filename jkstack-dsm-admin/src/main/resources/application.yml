@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: dsm-admin-server
+    name: dsm-admin
   cloud:
     nacos:
       discovery:

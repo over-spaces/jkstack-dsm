@@ -8,10 +8,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableFeignClients(basePackages = "com.jkstack.dsm")
 @EnableDiscoveryClient
-public class JkstackDsmUserServiceApplication {
+public class JKStackDsmWeixinServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JkstackDsmUserServiceApplication.class, args);
+		SpringApplication.run(JKStackDsmWeixinServiceApplication.class, args);
 	}
 
 }
