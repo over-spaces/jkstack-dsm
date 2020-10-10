@@ -1,4 +1,4 @@
-package com.jkstack.dsm.controller;
+package com.jkstack.dsm.user.controller;
 
 import com.jkstack.dsm.common.ResponseResult;
 import com.jkstack.dsm.UserHelloFeign;

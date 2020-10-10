@@ -23,9 +23,21 @@ public class ResponseResult<T> implements Serializable {
         this.data = data;
     }
 
-    public static <T> ResponseResult SUCCESS(T data){
+    public static <T> ResponseResult success(T data){
         return new ResponseResult(data);
     }
+
+    public static ResponseResult error(String message){
+        return error(ResponseResultCode.INTERNAL_SERVER_ERROR.getCode(), message);
+    }
+
+    public static ResponseResult error(int code, String message){
+        ResponseResult result = new ResponseResult();
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
+    }
+
 
     public String getSessionId() {
         return sessionId;

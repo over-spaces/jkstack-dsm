@@ -1,24 +1,28 @@
-package com.jkstack.dsm.controller;
+package com.jkstack.dsm.user.controller;
 
 import com.google.common.collect.Maps;
 import com.jkstack.dsm.UserHelloFeign;
 import com.jkstack.dsm.common.BaseController;
 import com.jkstack.dsm.common.ResponseResult;
+import com.jkstack.dsm.common.redis.RedisCommand;
 import com.jkstack.dsm.common.utils.JWTConstant;
 import com.jkstack.dsm.common.utils.JWTUtils;
-import com.jkstack.dsm.controller.vo.LoginVO;
-import com.jkstack.dsm.service.UserService;
+import com.jkstack.dsm.user.controller.vo.LoginVO;
+import com.jkstack.dsm.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class UserHelloController extends BaseController implements UserHelloFeign {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisCommand redisCommand;
 
     @Override
     public ResponseResult hello(){
@@ -39,8 +43,12 @@ public class UserHelloController extends BaseController implements UserHelloFeig
         claims.put(JWTConstant.JWT_KEY_USER_NAME, "tom");
         claims.put(JWTConstant.JWT_KEY_ROLE, "admin");
 
-        loginVO.setToken(JWTUtils.createJWT(claims, JWTConstant.JWT_KEY_SALT));
-        return ResponseResult.SUCCESS(loginVO);
+        final String token = JWTUtils.createJWT(claims, JWTConstant.JWT_KEY_SALT);
+        loginVO.setToken(token);
+
+        final String key = JWTConstant.JWT_KEY_TTL.concat(claims.get(JWTConstant.JWT_KEY_ID).toString());
+        redisCommand.set(key, token, 1, TimeUnit.HOURS);
+        return ResponseResult.success(loginVO);
     }
 
     @GetMapping(value = "/user")

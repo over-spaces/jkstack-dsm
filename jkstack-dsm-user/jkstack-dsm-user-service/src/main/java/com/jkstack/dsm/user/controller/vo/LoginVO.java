@@ -1,4 +1,4 @@
-package com.jkstack.dsm.controller.vo;
+package com.jkstack.dsm.user.controller.vo;
 
 import lombok.Data;
 
