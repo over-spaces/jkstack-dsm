@@ -1,4 +1,4 @@
-package com.jkstack.dsm;
+package com.jkstack.dsm.common;
 
 import java.io.Serializable;
 

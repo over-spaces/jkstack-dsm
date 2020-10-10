@@ -1,4 +1,4 @@
-package com.jkstack.dsm.utils;
+package com.jkstack.dsm.common.utils;
 
 
 import org.apache.commons.lang3.math.NumberUtils;

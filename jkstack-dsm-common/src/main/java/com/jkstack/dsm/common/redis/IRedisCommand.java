@@ -1,4 +1,4 @@
-package com.jkstack.dsm.redis;
+package com.jkstack.dsm.common.redis;
 
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.ZSetOperations;

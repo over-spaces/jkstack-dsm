@@ -1,6 +1,6 @@
 package com.jkstack.dms;
 
-import com.jkstack.dsm.utils.JWTUtils;
+import com.jkstack.dsm.common.utils.JWTUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;

@@ -1,4 +1,4 @@
-package com.jkstack.dsm.utils;
+package com.jkstack.dsm.common.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.fasterxml.jackson.annotation.JsonIgnore;

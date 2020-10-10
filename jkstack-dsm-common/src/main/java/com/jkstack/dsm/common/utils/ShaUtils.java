@@ -1,4 +1,4 @@
-package com.jkstack.dsm.utils;
+package com.jkstack.dsm.common.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

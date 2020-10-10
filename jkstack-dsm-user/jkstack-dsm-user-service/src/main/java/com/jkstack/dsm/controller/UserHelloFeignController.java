@@ -1,7 +1,8 @@
 package com.jkstack.dsm.controller;
 
 import com.jkstack.dsm.UserHelloFeign;
-import com.jkstack.dsm.ResponseResult;
+import com.jkstack.dsm.common.BaseController;
+import com.jkstack.dsm.common.ResponseResult;
 import com.jkstack.dsm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,11 @@ public class UserHelloFeignController extends BaseController implements UserHell
     @Override
     public ResponseResult hello(){
         return new ResponseResult("hello jkstack~~~");
+    }
+
+    @Override
+    public String say() {
+        return "hello world!!!";
     }
 
     @GetMapping(value = "/login")

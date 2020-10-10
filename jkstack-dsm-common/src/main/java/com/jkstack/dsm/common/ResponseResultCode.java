@@ -1,6 +1,6 @@
-package com.jkstack.dsm;
+package com.jkstack.dsm.common;
 
-import com.jkstack.dsm.utils.LambdaUtil;
+import com.jkstack.dsm.common.utils.LambdaUtil;
 
 import java.util.Arrays;
 import java.util.Map;

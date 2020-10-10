@@ -1,4 +1,4 @@
-package com.jkstack.dsm.utils;
+package com.jkstack.dsm.common.utils;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
