@@ -8,6 +8,7 @@ class JKStackDsmUserServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

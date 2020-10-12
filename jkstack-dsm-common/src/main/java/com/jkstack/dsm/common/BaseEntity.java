@@ -1,11 +1,21 @@
 package com.jkstack.dsm.common;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-public class BaseEntity implements Serializable {
+/**
+ * 任何实体类都应该基础此类。
+ * @author lifang
+ * @since 2020-10-01
+ */
+@MappedSuperclass
+public abstract class BaseEntity implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(updatable = false, nullable = false, columnDefinition = "bigint primary key auto_increment")
     private Long id;
 
     private Date createdDate;
