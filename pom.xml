@@ -33,6 +33,8 @@
         <java.version>1.8</java.version>
         <spring-cloud-alibaba.version>2.2.1.RELEASE</spring-cloud-alibaba.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+        <swagger-spring-boot.version>1.9.1.RELEASE</swagger-spring-boot.version>
+        <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
         <mybatis-plus.version>3.4.0</mybatis-plus.version>
     </properties>
 
@@ -66,10 +68,16 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Swagger -->
         <dependency>
             <groupId>com.spring4all</groupId>
             <artifactId>swagger-spring-boot-starter</artifactId>
-            <version>1.9.1.RELEASE</version>
+            <version>${swagger-spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
+            <version>${swagger-bootstrap-ui.version}</version>
         </dependency>
 
         <dependency>

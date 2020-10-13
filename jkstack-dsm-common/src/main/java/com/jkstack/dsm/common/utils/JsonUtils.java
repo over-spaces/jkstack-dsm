@@ -22,7 +22,6 @@ public final class JsonUtils {
         objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
     }
 
     public static <R> R parseObject(String json, Class<R> valueType) {

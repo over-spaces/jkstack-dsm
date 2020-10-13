@@ -8,6 +8,7 @@ import com.jkstack.dsm.common.redis.RedisCommand;
 import com.jkstack.dsm.common.utils.JWTConstant;
 import com.jkstack.dsm.common.utils.JWTUtils;
 import com.jkstack.dsm.user.service.UserService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
