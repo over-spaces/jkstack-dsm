@@ -1,5 +1,6 @@
 package com.jkstack.dsm.user.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.jkstack.dsm.common.BaseEntity;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "t_department")
+@TableName(value = "t_department")
 public class DepartmentEntity extends BaseEntity {
 
     /**

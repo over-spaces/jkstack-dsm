@@ -47,6 +47,12 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatusEnum status;
 
+    private int deep;
+
+    private int rgt;
+
+    private int lft;
+
     /**
      * 手机
      */

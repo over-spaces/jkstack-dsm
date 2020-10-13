@@ -15,10 +15,10 @@ public abstract class BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false, nullable = false, columnDefinition = "bigint primary key auto_increment")
+    @Column(updatable = false, nullable = false, columnDefinition = "bigint auto_increment")
     private Long id;
 
-    private Date createdDate;
+    private Date createdDate = new Date();
 
     private Date updatedDate;
 

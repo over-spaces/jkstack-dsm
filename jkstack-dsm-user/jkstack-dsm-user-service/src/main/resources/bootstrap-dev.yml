@@ -29,3 +29,7 @@ spring:
           group: DEFAULT_GROUP
           refresh: true
           data-id: redis.yml
+        extension-configs[3]:
+          group: DEFAULT_GROUP
+          refresh: true
+          data-id: dsm-user-config.yml

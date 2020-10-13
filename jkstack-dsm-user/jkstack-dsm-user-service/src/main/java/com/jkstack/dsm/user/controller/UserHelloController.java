@@ -10,12 +10,14 @@ import com.jkstack.dsm.common.utils.JWTUtils;
 import com.jkstack.dsm.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@RequestMapping("/user")
 public class UserHelloController extends BaseController implements UserHelloFeign {
 
     @Autowired
