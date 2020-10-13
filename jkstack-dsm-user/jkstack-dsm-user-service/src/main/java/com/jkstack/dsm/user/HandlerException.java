@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
+ * 统一异常处理类
  * @author lifang
  * @since 2020/10/10
  */
