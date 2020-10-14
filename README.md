@@ -1,7 +1,7 @@
 # JKSTACK-DSM
 
 ## 代码规范
-#### 命名规则
+#### 命名规则 (尽量遵循阿里巴巴代码规范)
 1. 实体类以Entity结尾，如UserEntity.
 2. 接口实现类以Impl结尾，如UserServiceImpl.
 3. Action/Controller类以Controller结尾，如UserController.

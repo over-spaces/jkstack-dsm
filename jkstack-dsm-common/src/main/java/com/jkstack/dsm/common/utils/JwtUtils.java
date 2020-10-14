@@ -10,12 +10,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public final class JWTUtils {
+public final class JwtUtils {
 
     private static ThreadLocal<JWTResult> currentJWTResult = new ThreadLocal();
     private static ThreadLocal<String> currentJWT = new ThreadLocal();
 
-    private JWTUtils() {
+    private JwtUtils() {
     }
 
     public static String getAuthorizationFromParameter(String contentType ,String param){
@@ -56,13 +56,13 @@ public final class JWTUtils {
         return createJWT(claims, key, 0L);
     }
 
-    public static JWTUtils.JWTResult parse(String jwtToken, String key) {
-        JWTUtils.JWTResult jwtResult = null;
+    public static JwtUtils.JWTResult parse(String jwtToken, String key) {
+        JwtUtils.JWTResult jwtResult = null;
 
         try {
-            jwtResult = new JWTUtils.JWTResult(Jwts.parser().setSigningKey(key.getBytes()).parseClaimsJws(jwtToken));
+            jwtResult = new JwtUtils.JWTResult(Jwts.parser().setSigningKey(key.getBytes()).parseClaimsJws(jwtToken));
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException | ExpiredJwtException var4) {
-            jwtResult = new JWTUtils.JWTResult(var4);
+            jwtResult = new JwtUtils.JWTResult(var4);
         }
 
         return jwtResult;
@@ -78,7 +78,7 @@ public final class JWTUtils {
         }
     }
 
-    public static void addJWTResut2LocalCache(JWTUtils.JWTResult jwtResult) {
+    public static void addJWTResut2LocalCache(JwtUtils.JWTResult jwtResult) {
         currentJWTResult.set(jwtResult);
     }
 
@@ -91,8 +91,8 @@ public final class JWTUtils {
         currentJWT.remove();
     }
 
-    public static JWTUtils.JWTResult getCurrentJWTResult() {
-        return (JWTUtils.JWTResult)currentJWTResult.get();
+    public static JwtUtils.JWTResult getCurrentJWTResult() {
+        return (JwtUtils.JWTResult)currentJWTResult.get();
     }
 
     public static String getCurrentJWT() {

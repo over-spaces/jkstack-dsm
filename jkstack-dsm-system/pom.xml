@@ -8,13 +8,13 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<artifactId>jkstack-dsm-weixin</artifactId>
+	<artifactId>jkstack-dsm-system</artifactId>
 	<packaging>pom</packaging>
 
-	<name>jkstack-dsm-weixin</name>
+	<name>jkstack-dsm-system</name>
 
 	<modules>
-		<module>jkstack-dsm-weixin-feign</module>
-		<module>jkstack-dsm-weixin-service</module>
+		<module>jkstack-dsm-system-feign</module>
+		<module>jkstack-dsm-system-service</module>
 	</modules>
 </project>

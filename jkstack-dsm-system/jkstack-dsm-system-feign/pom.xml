@@ -4,18 +4,24 @@
 
 	<parent>
 		<groupId>com.jkstack.dsm</groupId>
-		<artifactId>jkstack-dsm-weixin</artifactId>
+		<artifactId>jkstack-dsm-system</artifactId>
 		<version>1.0.0</version>
 	</parent>
 
-	<artifactId>jkstack-dsm-weixin-feign</artifactId>
-	<name>jkstack-dsm-weixin-feign</name>
+	<artifactId>jkstack-dsm-system-feign</artifactId>
+	<name>jkstack-dsm-system-feign</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.jkstack.dsm</groupId>
 			<artifactId>jkstack-dsm-common</artifactId>
 			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.baomidou</groupId>
+					<artifactId>mybatis-plus</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

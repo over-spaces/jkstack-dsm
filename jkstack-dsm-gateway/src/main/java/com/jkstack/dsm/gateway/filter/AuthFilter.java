@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkstack.dsm.common.ResponseResult;
 import com.jkstack.dsm.common.ResponseResultCode;
 import com.jkstack.dsm.common.redis.RedisCommand;
-import com.jkstack.dsm.common.utils.JWTConstant;
-import com.jkstack.dsm.common.utils.JWTUtils;
+import com.jkstack.dsm.common.utils.JwtConstants;
+import com.jkstack.dsm.common.utils.JwtUtils;
 import com.jkstack.dsm.common.utils.StringUtil;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
@@ -54,12 +54,12 @@ public class AuthFilter implements GlobalFilter, Ordered {
         final String url = exchange.getRequest().getURI().getPath();
 
         //跳过不需要验证的url
-        if (isIgnoreAuthURL(url) || true) {
+        if (isIgnoreAuthURL(url)) {
             return chain.filter(exchange);
         }
 
         //获取token
-        String token = exchange.getRequest().getHeaders().getFirst(JWTConstant.JWT_HEADER_KEY);
+        String token = exchange.getRequest().getHeaders().getFirst(JwtConstants.JWT_HEADER_KEY);
         ServerHttpResponse response = exchange.getResponse();
 
         if (StringUtils.isBlank(token)) {
@@ -68,10 +68,10 @@ public class AuthFilter implements GlobalFilter, Ordered {
         } else {
             try {
                 //解析token
-                Claims claims = JWTUtils.parseClaims(token);
+                Claims claims = JwtUtils.parseClaims(token);
                 if (Objects.nonNull(claims)) { //签名验证通过
 
-                    final String key = JWTConstant.JWT_KEY_TTL.concat(claims.get(JWTConstant.JWT_KEY_ID).toString());
+                    final String key = JwtConstants.JWT_KEY_TTL.concat(claims.get(JwtConstants.JWT_KEY_USER_ID).toString());
 
                     if (redisCommand.exists(key)) {
                         //更新token时间，使token不过期
@@ -105,7 +105,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
      * 是否是忽略权限认证的URL
      */
     private boolean isIgnoreAuthURL(String url){
-        return Arrays.stream(JWTConstant.JWT_IGNORE_AUTH_URL)
+        return Arrays.stream(JwtConstants.JWT_IGNORE_AUTH_URL)
                 .anyMatch(ignoreUrl -> StringUtil.containsIgnoreCase(url, ignoreUrl));
     }
 

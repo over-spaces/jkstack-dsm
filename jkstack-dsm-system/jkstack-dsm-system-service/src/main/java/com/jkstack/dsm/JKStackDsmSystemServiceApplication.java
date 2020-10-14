@@ -10,10 +10,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients(basePackages = "com.jkstack.dsm")
 @EnableDiscoveryClient
 @EnableSwagger2
-public class JKStackDsmWeixinServiceApplication {
+public class JKStackDsmSystemServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JKStackDsmWeixinServiceApplication.class, args);
+		SpringApplication.run(JKStackDsmSystemServiceApplication.class, args);
 	}
 
 }
