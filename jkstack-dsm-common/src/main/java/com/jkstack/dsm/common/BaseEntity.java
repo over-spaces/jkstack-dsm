@@ -1,26 +1,60 @@
 package com.jkstack.dsm.common;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 /**
- * 任何实体类都应该基础此类。
+ * 任何实体类都应该继承此类。
  * @author lifang
  * @since 2020-10-01
  */
-@MappedSuperclass
 public abstract class BaseEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false, nullable = false, columnDefinition = "bigint auto_increment")
+    /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    private Date createdDate = new Date();
+    /**
+     * 租户ID
+     */
+    private String tenantId;
 
-    private Date updatedDate;
+    /**
+     * 公司ID
+     */
+    private String companyId;
+
+
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime = new Date();
+
+    /**
+     * 创建人ID
+     */
+    private String creatorId;
+
+    /**
+     * 修改时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date modifyTime;
+
+    /**
+     * 修改人ID
+     */
+    private String modifierId;
 
     public Long getId() {
         return id;
@@ -30,28 +64,66 @@ public abstract class BaseEntity implements Serializable {
         this.id = id;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public String getTenantId() {
+        return tenantId;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
-    public Date getUpdatedDate() {
-        return updatedDate;
+    public String getCompanyId() {
+        return companyId;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public String getModifierId() {
+        return modifierId;
+    }
+
+    public void setModifierId(String modifierId) {
+        this.modifierId = modifierId;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         BaseEntity that = (BaseEntity) o;
-        if(id == null || that.id == null) return false;
+        if(id == null || that.id == null) {
+            return false;
+        }
         return Objects.equals(id, that.id);
     }
 

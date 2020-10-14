@@ -6,4 +6,8 @@ public interface UserService {
 
     UserEntity findById(Long id);
 
+    void save(UserEntity userEntity);
+
+    void updateById(UserEntity userEntity);
+
 }
