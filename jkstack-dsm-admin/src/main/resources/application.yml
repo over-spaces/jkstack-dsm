@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: dsm-admin
+  security:
+    user:
+      name: root
+      password: 123qweASD
   cloud:
     nacos:
       discovery:

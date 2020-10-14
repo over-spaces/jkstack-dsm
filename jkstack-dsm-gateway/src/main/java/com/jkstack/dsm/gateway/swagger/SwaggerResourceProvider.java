@@ -37,7 +37,7 @@ public class SwaggerResourceProvider implements SwaggerResourcesProvider {
         gatewayProperties.getRoutes().stream()
                 .filter(routeDefinition -> routes.contains(routeDefinition.getId()))
                 .forEach(routeDefinition -> routeDefinition.getPredicates().stream()
-                        .filter(predicateDefinition -> ("Path").equalsIgnoreCase(predicateDefinition.getName()))
+                        .filter(predicateDefinition -> "Path".equalsIgnoreCase(predicateDefinition.getName()))
                         .forEach(predicateDefinition -> resources.add(swaggerResource(routeDefinition.getId(), "/" + routeDefinition.getId() + SwaggerConstant.SWAGGER_URL))));
         return resources;
     }
