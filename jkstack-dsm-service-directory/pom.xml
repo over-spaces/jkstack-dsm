@@ -8,14 +8,14 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<artifactId>jkstack-dsm-user</artifactId>
-	<name>jkstack-dsm-user</name>
-	<description>JKStack-DSM 用户模块</description>
-
+	<artifactId>jkstack-dsm-service-directory</artifactId>
 	<packaging>pom</packaging>
 
+	<name>jkstack-dsm-service-directory</name>
+	<description>JKStack-DSM 服务目录模块</description>
+
 	<modules>
-		<module>jkstack-dsm-user-feign</module>
-		<module>jkstack-dsm-user-service</module>
+		<module>jkstack-dsm-service-directory-feign</module>
+		<module>jkstack-dsm-service-directory-service</module>
 	</modules>
 </project>

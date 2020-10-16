@@ -1,6 +1,7 @@
 package com.jkstack.dsm.gateway.swagger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,12 +12,14 @@ import java.util.List;
 
 /**
  * swagger聚合接口，三个接口都是swagger-ui.html需要访问的接口
+ * 并限制只有在dev,test开发模式下才允许访问
  *
  * @author lifang
  * @since 2020-10-10
  */
 @RestController
 @RequestMapping("/swagger-resources")
+@Profile({"dev","test"})
 public class SwaggerResourceController {
 
     @Autowired

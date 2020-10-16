@@ -19,6 +19,7 @@ public abstract class BaseEntity implements Serializable {
 
     /**
      * 主键ID
+     * 注意：此ID不要参与任何业务逻辑，让它安静的自增就好了，处理业务逻辑用具体实体类的ID，如ServiceItemEntity#serviceItemId.
      */
     @TableId(type = IdType.AUTO)
     private Long id;

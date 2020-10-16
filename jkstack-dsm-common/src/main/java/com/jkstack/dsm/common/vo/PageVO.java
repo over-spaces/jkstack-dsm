@@ -29,6 +29,7 @@ public class PageVO implements Serializable {
     /**
      * 查询条件
      */
+    @ApiModelProperty(value = "简单查询条件")
     private String condition;
 
 }

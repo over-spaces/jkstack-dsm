@@ -10,4 +10,5 @@ import com.jkstack.dsm.user.entity.UserEntity;
 public interface UserMapper extends BaseMapper<UserEntity> {
 
 
+
 }

@@ -3,29 +3,11 @@ nacos:
   server-addr: 127.0.0.1:8848
   namespace: jkstack-dsm
 
+
 spring:
   profiles:
     active: ${spring.profiles.active}
-  application:
-    name: dsm-user-management
   cloud:
-    gateway:
-      routes:
-        - id: dsm-user
-          uri: lb://dsm-user
-          predicates:
-            - Path=/dsm-user/**
-          filters:
-            - StripPrefix=1
-          order: 10
-
-        - id: dsm-service-directory
-          uri: lb://dsm-service-directory
-          predicates:
-            - Path=/dsm-sdir/**
-          filters:
-            - StripPrefix=1
-          order: 20
     nacos:
       discovery:
         server-addr: ${nacos.server-addr}
@@ -37,8 +19,15 @@ spring:
         extension-configs[0]:
           group: DEFAULT_GROUP
           refresh: true
-          data-id: zipkin.yml
+          data-id: dsm-user-jdbc.yml
         extension-configs[1]:
           group: DEFAULT_GROUP
           refresh: true
+          data-id: zipkin.yml
+        extension-configs[2]:
+          group: DEFAULT_GROUP
+          refresh: true
           data-id: redis.yml
+feign:
+  httpclient:
+    enabled: true

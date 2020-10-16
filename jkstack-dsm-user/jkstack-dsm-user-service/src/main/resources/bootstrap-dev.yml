@@ -3,11 +3,10 @@ nacos:
   server-addr: 127.0.0.1:8848
   namespace: jkstack-dsm
 
+
 spring:
   profiles:
     active: ${spring.profiles.active}
-  application:
-    name: dsm-user
   cloud:
     nacos:
       discovery:
@@ -33,3 +32,8 @@ spring:
           group: DEFAULT_GROUP
           refresh: true
           data-id: dsm-user-config.yml
+swagger:
+  enabled: true
+  title: JKStack-DSM接口文档
+  authorization:
+    key-name: Authorization
