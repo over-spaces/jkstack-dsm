@@ -11,7 +11,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients(basePackages = "com.jkstack.dsm")
 @EnableDiscoveryClient
 @MapperScan("com.jkstack.dsm.user.mapper")
-@EnableSwagger2
 public class JKStackDsmUserServiceApplication {
 
 	public static void main(String[] args) {

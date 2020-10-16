@@ -15,5 +15,5 @@ public class JwtConstants {
     public static final String JWT_KEY_TTL = "jwt_token_user_";
 
     //忽略权限认证的URL
-    public static final String[] JWT_IGNORE_AUTH_URL = {"login", "/v2/api-docs"};
+    public static final String[] JWT_IGNORE_AUTH_URL = {"login", "/v3/api-docs"};
 }

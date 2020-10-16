@@ -1,6 +1,7 @@
 package com.jkstack.dsm.service.directory.controller.vo;
 
 import com.jkstack.dsm.common.vo.SimpleTreeDataVO;
+import com.jkstack.dsm.service.directory.entity.ServiceCategoryEntity;
 import lombok.ToString;
 
 import java.util.List;
@@ -13,6 +14,13 @@ import java.util.List;
 public class ServiceCategoryTreeVO extends SimpleTreeDataVO<ServiceCategoryTreeVO> {
 
     private String description;
+
+
+    public ServiceCategoryTreeVO(ServiceCategoryEntity serviceCategoryEntity){
+        super.setId(serviceCategoryEntity.getId());
+        super.setName(serviceCategoryEntity.getName());
+        this.description = serviceCategoryEntity.getDescription();
+    }
 
     public String getDescription() {
         return description;

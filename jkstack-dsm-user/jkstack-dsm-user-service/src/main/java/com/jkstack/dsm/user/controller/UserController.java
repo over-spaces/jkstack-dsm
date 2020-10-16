@@ -1,5 +1,6 @@
 package com.jkstack.dsm.user.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.UserControllerFeign;
 import com.jkstack.dsm.common.BaseController;
 import com.jkstack.dsm.common.ResponseResult;
@@ -73,6 +74,13 @@ public class UserController extends BaseController implements UserControllerFeig
         UserEntity userEntity = userService.findById(1L);
         userEntity.setUserId(UUID.randomUUID().toString());
         return new ResponseResult();
+    }
+
+    @ApiOperation("更新用户")
+    @PostMapping("/page")
+    public ResponseResult<List<UserEntity>> page() {
+        Page<UserEntity> page = userService.page(new Page<>(1, 15));
+        return new ResponseResult(page.getRecords());
     }
 
 

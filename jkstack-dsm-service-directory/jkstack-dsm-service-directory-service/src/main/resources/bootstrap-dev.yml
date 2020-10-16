@@ -28,6 +28,3 @@ spring:
           group: DEFAULT_GROUP
           refresh: true
           data-id: redis.yml
-feign:
-  httpclient:
-    enabled: true

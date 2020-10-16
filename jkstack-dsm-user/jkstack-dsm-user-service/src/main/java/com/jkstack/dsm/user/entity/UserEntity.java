@@ -3,7 +3,6 @@ package com.jkstack.dsm.user.entity;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jkstack.dsm.common.BaseEntity;
-import lombok.Data;
 
 
 /**

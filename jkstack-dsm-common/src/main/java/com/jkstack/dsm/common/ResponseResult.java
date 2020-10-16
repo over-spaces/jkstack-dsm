@@ -1,15 +1,15 @@
 package com.jkstack.dsm.common;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 public class ResponseResult<T> implements Serializable {
 
     private int code = ResponseResultCode.SUCCESS.getCode();
-    private String url;
-    private String message;
-    private T data;
 
-    private String sessionId;
+    private String message;
+
+    private T data;
 
     public ResponseResult() {
     }
@@ -23,44 +23,28 @@ public class ResponseResult<T> implements Serializable {
         this.data = data;
     }
 
-    public static <T> ResponseResult success(){
-        return new ResponseResult();
+    public static <T> ResponseResult success() {
+        return new ResponseResult<T>();
     }
 
-    public static <T> ResponseResult success(T data){
+    public static <T> ResponseResult success(T data) {
         return new ResponseResult(data);
     }
 
-    public static ResponseResult error(String message){
+    public static <T> ResponseResult<PageResult> success(long pageSize, long total, Collection<T> records) {
+        long page = total / pageSize + 1;
+        return new ResponseResult<>(new PageResult(page, total, records));
+    }
+
+    public static ResponseResult error(String message) {
         return error(ResponseResultCode.INTERNAL_SERVER_ERROR.getCode(), message);
     }
 
-    public static ResponseResult error(int code, String message){
+    public static ResponseResult error(int code, String message) {
         ResponseResult result = new ResponseResult();
         result.setCode(code);
         result.setMessage(message);
         return result;
-    }
-
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public boolean isFlag() {
-        return code == ResponseResultCode.SUCCESS.getCode() ? true : false;
     }
 
     public ResponseResult setCode(ResponseResultCode resultCode) {

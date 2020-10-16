@@ -1,5 +1,7 @@
 package com.jkstack.dsm.common.vo;
 
+import com.google.common.collect.Lists;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,17 +11,17 @@ import java.util.List;
  */
 public abstract class SimpleTreeDataVO<T> implements Serializable {
 
-    private String id;
+    private Long id;
 
     private String name;
 
-    private List<T> children;
+    private List<T> children = Lists.newArrayList();
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

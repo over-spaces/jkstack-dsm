@@ -19,10 +19,10 @@ spring:
             - StripPrefix=1
           order: 10
 
-        - id: dsm-service-directory
-          uri: lb://dsm-service-directory
+        - id: dsm-service-dir
+          uri: lb://dsm-service-dir
           predicates:
-            - Path=/dsm-sdir/**
+            - Path=/dsm-service-dir/**
           filters:
             - StripPrefix=1
           order: 20

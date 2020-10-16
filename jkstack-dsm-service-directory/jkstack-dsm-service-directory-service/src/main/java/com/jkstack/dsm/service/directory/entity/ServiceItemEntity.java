@@ -16,7 +16,6 @@ import lombok.Data;
 @TableName(value = "dsm_service_item")
 public class ServiceItemEntity extends BaseEntity {
 
-    @TableId(type = IdType.ASSIGN_UUID)
     private String serviceItemId;
 
     /**
