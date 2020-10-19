@@ -11,7 +11,7 @@ import java.util.Collection;
  * @since 2020/10/16
  */
 @ApiModel
-public class PageResult<T> implements Serializable {
+public class PageResult implements Serializable {
 
     @ApiModelProperty(value = "总记录数")
     private long total;
@@ -21,6 +21,10 @@ public class PageResult<T> implements Serializable {
 
     @ApiModelProperty(value = "记录")
     private Collection records;
+
+    public PageResult(){
+
+    }
 
     public PageResult(long page, long total, Collection records) {
         this.page = page;

@@ -1,21 +1,27 @@
 package com.jkstack.dsm.service.directory.entity;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.jkstack.dsm.common.BaseEntity;
+import com.jkstack.dsm.common.annotation.TableBusinessId;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 服务项
  * @author lifang
  * @since 2020-10-15
  */
-@Data
+@Setter
+@Getter
 @TableName(value = "dsm_service_item")
 public class ServiceItemEntity extends BaseEntity {
 
+    /**
+     * 服务项业务ID
+     */
+    @TableBusinessId
+    @TableField(fill = FieldFill.INSERT)
     private String serviceItemId;
 
     /**
@@ -34,4 +40,9 @@ public class ServiceItemEntity extends BaseEntity {
     @EnumValue
     private ServiceItemTypeEnum serviceItemType;
 
+    /**
+     * 所属类别
+     * ServiceCategoryEntity#serviceCategoryId
+     */
+    private String serviceCategoryId;
 }

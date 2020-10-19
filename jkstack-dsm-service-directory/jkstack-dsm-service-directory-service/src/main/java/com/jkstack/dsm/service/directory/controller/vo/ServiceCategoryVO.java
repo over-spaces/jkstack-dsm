@@ -18,8 +18,8 @@ import java.io.Serializable;
 @ApiModel
 public class ServiceCategoryVO implements Serializable {
 
-    @ApiModelProperty(value = "服务类别ID, 为空表示新建服务类别", example = "")
-    private Long id;
+    @ApiModelProperty(value = "服务类别业务ID, 为空表示新建服务类别", example = "")
+    private String serviceCategoryId;
 
     /**
      * 名称
@@ -32,7 +32,7 @@ public class ServiceCategoryVO implements Serializable {
      * 所属类别ID
      */
     @ApiModelProperty(value = "服务类别名称", required = true)
-    private Long parentId;
+    private String parentServiceCategoryId;
 
     /**
      * 描述
@@ -44,15 +44,15 @@ public class ServiceCategoryVO implements Serializable {
         ServiceCategoryEntity serviceCategoryEntity = new ServiceCategoryEntity();
         serviceCategoryEntity.setName(this.name);
         serviceCategoryEntity.setDescription(this.description);
-        serviceCategoryEntity.setParentId(this.parentId);
+        serviceCategoryEntity.setParentServiceCategoryId(this.parentServiceCategoryId);
         return serviceCategoryEntity;
     }
 
 
     public ServiceCategoryVO(ServiceCategoryEntity serviceCategoryEntity){
-        this.id = serviceCategoryEntity.getId();
+        this.serviceCategoryId = serviceCategoryEntity.getServiceCategoryId();
         this.name = serviceCategoryEntity.getName();
-        this.parentId = serviceCategoryEntity.getParentId();
+        this.parentServiceCategoryId = serviceCategoryEntity.getParentServiceCategoryId();
         this.description = serviceCategoryEntity.getDescription();
     }
 }

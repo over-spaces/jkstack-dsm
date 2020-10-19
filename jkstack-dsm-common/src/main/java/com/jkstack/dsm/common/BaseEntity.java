@@ -57,6 +57,7 @@ public abstract class BaseEntity implements Serializable {
      */
     private String modifierId;
 
+
     public Long getId() {
         return id;
     }

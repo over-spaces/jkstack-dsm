@@ -8,19 +8,24 @@ import com.jkstack.dsm.common.annotation.TableBusinessId;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 /**
- * 服务类别
+ * 节假日
  * @author lifang
- * @since 2020/10/15
+ * @since 2020/10/19
  */
 @Getter
 @Setter
-@TableName(value = "dsm_service_category")
-public class ServiceCategoryEntity extends BaseEntity {
+@TableName("dsm_holiday")
+public class HolidayEntity extends BaseEntity {
 
+    /**
+     * 节假日业务ID
+     */
     @TableBusinessId
     @TableField(fill = FieldFill.INSERT)
-    private String serviceCategoryId;
+    private String holidayId;
 
     /**
      * 名称
@@ -28,13 +33,13 @@ public class ServiceCategoryEntity extends BaseEntity {
     private String name;
 
     /**
-     * 所属类别ID（父节点）
+     * 开始时间
      */
-    private String parentServiceCategoryId;
+    private Date startDate;
 
     /**
-     * 描述
+     * 结束时间
      */
-    private String description;
+    private Date endDate;
 
 }

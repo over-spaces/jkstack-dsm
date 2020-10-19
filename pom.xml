@@ -26,6 +26,9 @@
         <module>jkstack-dsm-user</module>
 
         <module>jkstack-dsm-system</module>
+
+        <!--服务目录-->
+        <module>jkstack-dsm-service-directory</module>
     </modules>
 
     <properties>
@@ -68,16 +71,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Swagger -->
-        <!--<dependency>-->
-        <!--    <groupId>com.spring4all</groupId>-->
-        <!--    <artifactId>swagger-spring-boot-starter</artifactId>-->
-        <!--    <version>${swagger-spring-boot.version}</version>-->
-        <!--</dependency>-->
+         <!--Swagger -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+            <groupId>com.spring4all</groupId>
+            <artifactId>swagger-spring-boot-starter</artifactId>
+            <version>${swagger-spring-boot.version}</version>
         </dependency>
 
         <dependency>

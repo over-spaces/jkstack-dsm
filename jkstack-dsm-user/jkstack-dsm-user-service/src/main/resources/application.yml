@@ -7,3 +7,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+swagger:
+  enable: true
+  title: JKStack-DSM「用户管理」接口文档
+  description: JKStack-DSM「用户管理」接口文档

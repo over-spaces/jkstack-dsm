@@ -1,6 +1,6 @@
 package com.jkstack.dsm.service.directory.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jkstack.dsm.common.service.CommonServiceImpl;
 import com.jkstack.dsm.service.directory.entity.ServiceCategoryEntity;
 import com.jkstack.dsm.service.directory.mapper.ServiceCategoryMapper;
 import com.jkstack.dsm.service.directory.service.ServiceCategoryService;
@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2020/10/15
  */
 @Service
-public class ServiceCategoryServiceImpl extends ServiceImpl<ServiceCategoryMapper, ServiceCategoryEntity> implements ServiceCategoryService {
+public class ServiceCategoryServiceImpl extends CommonServiceImpl<ServiceCategoryMapper, ServiceCategoryEntity> implements ServiceCategoryService {
 
     @Override
     public void deleteByIds(List<Long> serviceCategoryIds) {

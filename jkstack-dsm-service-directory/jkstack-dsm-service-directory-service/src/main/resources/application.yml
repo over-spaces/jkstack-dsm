@@ -6,3 +6,8 @@ spring:
     name: dsm-service-dir
   main:
     allow-bean-definition-overriding: true
+
+swagger:
+  enable: true
+  title: JKStack-DSM「服务目录」接口文档
+  description: JKStack-DSM「服务目录」接口文档

@@ -17,7 +17,7 @@ public class ServiceCategoryTreeVO extends SimpleTreeDataVO<ServiceCategoryTreeV
 
 
     public ServiceCategoryTreeVO(ServiceCategoryEntity serviceCategoryEntity){
-        super.setId(serviceCategoryEntity.getId());
+        super.setId(serviceCategoryEntity.getServiceCategoryId());
         super.setName(serviceCategoryEntity.getName());
         this.description = serviceCategoryEntity.getDescription();
     }
