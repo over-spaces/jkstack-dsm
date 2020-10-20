@@ -40,14 +40,13 @@ public class ServiceCategoryController extends BaseController {
     private ServiceCategoryService serviceCategoryService;
 
     @ApiOperation(value = "查询服务类别列表")
-    @PostMapping("/getServiceCategoryList")
-    public ResponseResult getServiceCategoryList(@RequestBody PageVO pageVO) {
+    @PostMapping("/list")
+    public ResponseResult list(@RequestBody PageVO pageVO) {
         Page<ServiceCategoryEntity> page = serviceCategoryService.page(new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
 
         List<ServiceCategoryTreeVO> records = page.getRecords().stream()
                 .map(ServiceCategoryTreeVO::new)
                 .collect(Collectors.toList());
-
         return ResponseResult.success(pageVO.getPageSize(), page.getTotal(), records);
     }
 
@@ -70,7 +69,7 @@ public class ServiceCategoryController extends BaseController {
     }
 
     @ApiOperation(value = "批量删除服务类别")
-    @PostMapping("/deleteServiceCategory")
+    @PostMapping("/delete")
     public ResponseResult deleteServiceCategory(@RequestParam List<Long> serviceCategoryIds) throws MessageException {
         if (CollectionUtils.isEmpty(serviceCategoryIds)) {
             throw new MessageException("请选择需要删除的服务类别!");

@@ -3,7 +3,6 @@ package com.jkstack.dsm.service.directory.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.jkstack.dsm.common.BaseEntity;
 import com.jkstack.dsm.common.annotation.TableBusinessId;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
