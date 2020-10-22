@@ -24,9 +24,6 @@
         <module>jkstack-dsm-common</module>
         <!--用户模块-->
         <module>jkstack-dsm-user</module>
-
-        <module>jkstack-dsm-system</module>
-
         <!--服务目录-->
         <module>jkstack-dsm-service-directory</module>
     </modules>
