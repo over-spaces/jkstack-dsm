@@ -7,10 +7,19 @@ package com.jkstack.dsm.user.entity;
  */
 public enum UserStatusEnum {
 
+    /**
+     * 用户状态-在职
+     */
     IN_SERVICE("在职"),
 
+    /**
+     * 用户状态-休假
+     */
     LEAVE("休假"),
 
+    /**
+     * 用户状态-离职
+     */
     RESIGN("离职");
 
     public String text;

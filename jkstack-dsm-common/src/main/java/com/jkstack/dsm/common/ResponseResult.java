@@ -3,9 +3,14 @@ package com.jkstack.dsm.common;
 import java.io.Serializable;
 import java.util.Collection;
 
+/**
+ * @param <T>
+ * @author lifang
+ * @since 2020-10-01
+ */
 public class ResponseResult<T> implements Serializable {
 
-    private int code = ResponseResultCode.SUCCESS.getCode();
+    private int code = ResponseResultCodeEnum.SUCCESS.getCode();
 
     private String message;
 
@@ -27,17 +32,24 @@ public class ResponseResult<T> implements Serializable {
         return new ResponseResult<T>();
     }
 
-    public static <T> ResponseResult success(T data) {
-        return new ResponseResult(data);
+    public static <T> ResponseResult<T> success(T data) {
+        return new ResponseResult<T>(data);
     }
 
-    public static <T> ResponseResult<PageResult> success(long pageSize, long total, Collection<T> records) {
+    public static <T> ResponseResult<PageResult<T>> success(long pageSize, long total, Collection<T> records) {
         long page = total / pageSize + 1;
-        return new ResponseResult<>(new PageResult(page, total, records));
+        return new ResponseResult<>(new PageResult<T>(page, total, records));
     }
 
     public static ResponseResult error(String message) {
-        return error(ResponseResultCode.INTERNAL_SERVER_ERROR.getCode(), message);
+        return error(ResponseResultCodeEnum.INTERNAL_SERVER_ERROR.getCode(), message);
+    }
+
+    public static ResponseResult error(ResponseResultCodeEnum codeEnum, String message) {
+        ResponseResult result = new ResponseResult();
+        result.setCode(codeEnum.getCode());
+        result.setMessage(message);
+        return result;
     }
 
     public static ResponseResult error(int code, String message) {
@@ -47,7 +59,7 @@ public class ResponseResult<T> implements Serializable {
         return result;
     }
 
-    public ResponseResult setCode(ResponseResultCode resultCode) {
+    public ResponseResult setCode(ResponseResultCodeEnum resultCode) {
         this.code = resultCode.getCode();
         return this;
     }
@@ -77,10 +89,6 @@ public class ResponseResult<T> implements Serializable {
     public ResponseResult setData(T data) {
         this.data = data;
         return this;
-    }
-
-    public String getResultCodeMsg() {
-        return ResponseResultCode.get(code).getMsg();
     }
 
     @Override

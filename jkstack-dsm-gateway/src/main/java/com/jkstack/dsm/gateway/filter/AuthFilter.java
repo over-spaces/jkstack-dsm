@@ -3,7 +3,7 @@ package com.jkstack.dsm.gateway.filter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkstack.dsm.common.ResponseResult;
-import com.jkstack.dsm.common.ResponseResultCode;
+import com.jkstack.dsm.common.ResponseResultCodeEnum;
 import com.jkstack.dsm.common.redis.RedisCommand;
 import com.jkstack.dsm.common.utils.JwtConstants;
 import com.jkstack.dsm.common.utils.JwtUtils;
@@ -121,7 +121,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
         String result = "";
         try {
-            result = objectMapper.writeValueAsString(new ResponseResult(ResponseResultCode.UNAUTHORIZED.getCode(), msg));
+            result = objectMapper.writeValueAsString(new ResponseResult(ResponseResultCodeEnum.UNAUTHORIZED.getCode(), msg));
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage(), e);
         }

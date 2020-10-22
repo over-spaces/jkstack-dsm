@@ -6,6 +6,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,5 +38,9 @@ public final class StringUtil {
     public static List<String> splitToList(String separator, String str) {
         Iterable<String> iterable = Splitter.on(separator).split(str);
         return Lists.newArrayList(iterable);
+    }
+
+    public static boolean endsWithIgnoreCaseAny(String str, String...suffix){
+        return Arrays.stream(suffix).anyMatch(s -> StringUtils.endsWithIgnoreCase(str, s));
     }
 }
