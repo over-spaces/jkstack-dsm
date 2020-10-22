@@ -1,6 +1,6 @@
 
 nacos:
-  server-addr: 127.0.0.1:8848
+  server-addr: 192.168.1.115:8848
   namespace: jkstack-dsm
 
 spring:

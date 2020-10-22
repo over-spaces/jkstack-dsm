@@ -5,11 +5,6 @@ import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
-import cn.afterturn.easypoi.excel.entity.result.ExcelVerifyHandlerResult;
-import cn.afterturn.easypoi.handler.inter.IExcelDataHandler;
-import cn.afterturn.easypoi.handler.inter.IExcelVerifyHandler;
-import cn.afterturn.easypoi.handler.inter.IReadHandler;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,11 +13,8 @@ import com.jkstack.dsm.common.*;
 import com.jkstack.dsm.common.redis.RedisCommand;
 import com.jkstack.dsm.common.utils.JwtConstants;
 import com.jkstack.dsm.common.utils.JwtUtils;
-import com.jkstack.dsm.common.utils.MD5Util;
 import com.jkstack.dsm.common.vo.PageVO;
-import com.jkstack.dsm.user.config.UserConfigProperties;
 import com.jkstack.dsm.user.controller.vo.UserExcelVO;
-import com.jkstack.dsm.user.controller.vo.UserListVO;
 import com.jkstack.dsm.user.controller.vo.UserVO;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.service.UserService;
@@ -32,8 +24,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -42,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +107,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @ApiOperation("用户列表")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @PostMapping("/list")
-    public ResponseResult<PageResult<UserListVO>> list(@RequestBody PageVO pageVO) {
+    public ResponseResult<PageResult<UserVO>> list(@RequestBody PageVO pageVO) {
         IPage<UserEntity> page;
         LambdaUpdateWrapper<UserEntity> wrapper = getLikeQueryWrapper(pageVO.getCondition());
         if(Objects.isNull(wrapper)){
@@ -127,11 +116,11 @@ public class UserController extends BaseController implements UserControllerFeig
             page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()), wrapper);
         }
 
-        List<UserListVO> list = page.getRecords().stream()
-                .map(UserListVO::new)
+        List<UserVO> list = page.getRecords().stream()
+                .map(UserVO::new)
                 .collect(Collectors.toList());
 
-        PageResult<UserListVO> pageResult = new PageResult(page.getCurrent(), page.getTotal(), list);
+        PageResult<UserVO> pageResult = new PageResult(page.getCurrent(), page.getTotal(), list);
         return new ResponseResult<>(pageResult);
     }
 
