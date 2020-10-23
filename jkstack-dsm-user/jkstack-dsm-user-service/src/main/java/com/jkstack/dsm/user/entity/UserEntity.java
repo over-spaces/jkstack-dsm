@@ -28,6 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserEntity extends BaseEntity {
 
+
     /**
      * 用户ID
      */
@@ -70,6 +71,9 @@ public class UserEntity extends BaseEntity {
     @EnumValue
     @Column(length = 20, type = MySqlTypeConstant.VARCHAR, comment = "用户状态")
     private UserStatusEnum status;
+
+    @Column(length = 64, type = MySqlTypeConstant.VARCHAR, comment = "职位")
+    private String position;
 
     /**
      * 电话

@@ -1,10 +1,12 @@
 package com.jkstack.dsm.common;
 
+import com.google.common.collect.Maps;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * 列表数据返回结果VO
@@ -23,8 +25,9 @@ public class PageResult<T> implements Serializable {
     @ApiModelProperty(value = "记录")
     private Collection<T> records;
 
-    public PageResult(){
+    private Map<String, Object> expand = Maps.newHashMap();
 
+    public PageResult(){
     }
 
     public PageResult(long page, long total, Collection<T> records) {
@@ -45,7 +48,7 @@ public class PageResult<T> implements Serializable {
         return page;
     }
 
-    public void setPage(int page) {
+    public void setPage(long page) {
         this.page = page;
     }
 
@@ -55,5 +58,13 @@ public class PageResult<T> implements Serializable {
 
     public void setRecords(Collection<T> records) {
         this.records = records;
+    }
+
+    public Map<String, Object> getExpand() {
+        return expand;
+    }
+
+    public void setExpand(Map<String, Object> expand) {
+        this.expand = expand;
     }
 }

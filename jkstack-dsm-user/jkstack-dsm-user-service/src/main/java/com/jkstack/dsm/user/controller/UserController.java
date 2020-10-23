@@ -14,6 +14,7 @@ import com.jkstack.dsm.common.redis.RedisCommand;
 import com.jkstack.dsm.common.utils.JwtConstants;
 import com.jkstack.dsm.common.utils.JwtUtils;
 import com.jkstack.dsm.common.vo.PageVO;
+import com.jkstack.dsm.common.vo.SimpleDataVO;
 import com.jkstack.dsm.user.controller.vo.UserExcelVO;
 import com.jkstack.dsm.user.controller.vo.UserVO;
 import com.jkstack.dsm.user.entity.UserEntity;
@@ -119,6 +120,17 @@ public class UserController extends BaseController implements UserControllerFeig
         List<UserVO> list = page.getRecords().stream()
                 .map(UserVO::new)
                 .collect(Collectors.toList());
+
+        list.stream()
+                .forEach(user -> {
+                    user.getDepartmentList().add(new SimpleDataVO("1", "中国移动/上海杨浦总部/财务部"));
+                    user.getDepartmentList().add(new SimpleDataVO("2", "中国移动/上海总部/上海杨浦分部/研发部"));
+                    user.getDepartmentList().add(new SimpleDataVO("3", "人事部"));
+
+                    user.getWorkGroupList().add(new SimpleDataVO("1", "工作组1"));
+                    user.getWorkGroupList().add(new SimpleDataVO("2", "工作组2"));
+                    user.getWorkGroupList().add(new SimpleDataVO("3", "工作组3"));
+                });
 
         PageResult<UserVO> pageResult = new PageResult(page.getCurrent(), page.getTotal(), list);
         return new ResponseResult<>(pageResult);

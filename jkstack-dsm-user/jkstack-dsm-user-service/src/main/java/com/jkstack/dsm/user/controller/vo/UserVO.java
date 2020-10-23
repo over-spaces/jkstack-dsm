@@ -50,6 +50,9 @@ public class UserVO implements Serializable {
     @ApiModelProperty(value = "微信", example = "1234@outlook.com")
     private String wechat;
 
+    @ApiModelProperty(value = "职位", example = "客户经理")
+    private String position;
+
     @ApiModelProperty(value = "用户状态", example = "IN_SERVICE", required = true)
     private UserStatusEnum status;
 
@@ -79,6 +82,7 @@ public class UserVO implements Serializable {
         this.name = userEntity.getName();
         this.phone = userEntity.getPhone();
         this.email = userEntity.getEmail();
+        this.wechat = userEntity.getWechat();
         this.status = userEntity.getStatus();
         this.statusText = userEntity.getStatus() != null ? userEntity.getStatus().getText() : null;
         this.roleId = "default_role";
@@ -93,6 +97,8 @@ public class UserVO implements Serializable {
         userEntity.setPhone(this.phone);
         userEntity.setEmail(this.email);
         userEntity.setStatus(this.status);
+        userEntity.setWechat(this.wechat);
+        userEntity.setPosition(this.position);
         return userEntity;
     }
 }

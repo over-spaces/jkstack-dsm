@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Table(name = "dsm_user_department")
-public class UserDepartmentEntity extends BaseEntity {
+public class UserDepartmentEntity extends BaseEntity{
 
     @Column(length = 64, comment = "用户ID")
     @Index(value = "idx_user_id")

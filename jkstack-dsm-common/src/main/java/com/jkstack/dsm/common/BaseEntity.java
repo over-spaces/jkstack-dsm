@@ -30,40 +30,40 @@ public abstract class BaseEntity implements Serializable {
     /**
      * 租户ID
      */
-    @Column
+    @Column(length = 64)
     private String tenantId;
 
     /**
      * 公司ID
      */
-    @Column
+    @Column(length = 64)
     private String companyId;
 
 
     /**
      * 创建时间
      */
-    @Column
+    @Column(type = MySqlTypeConstant.DATETIME)
     @TableField(fill = FieldFill.INSERT)
     private Date createTime = new Date();
 
     /**
      * 创建人ID
      */
-    @Column
+    @Column(length = 64)
     private String creatorId;
 
     /**
      * 修改时间
      */
-    @Column
+    @Column(type = MySqlTypeConstant.DATETIME)
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date modifyTime;
 
     /**
      * 修改人ID
      */
-    @Column
+    @Column(length = 64)
     private String modifierId;
 
 

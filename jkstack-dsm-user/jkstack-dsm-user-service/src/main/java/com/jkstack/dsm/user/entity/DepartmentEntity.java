@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Index;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
-import com.jkstack.dsm.common.BaseEntity;
+import com.gitee.sunchenbin.mybatis.actable.annotation.Unique;
 import com.jkstack.dsm.common.annotation.TableBusinessId;
 import com.jkstack.dsm.common.lr.LRNode;
+import com.jkstack.dsm.common.lr.LRTreeNodeEntity;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Transient;
 
 /**
  * 部门实体
@@ -21,15 +23,16 @@ import lombok.Setter;
 @Getter
 @Table(name = "dsm_department")
 @TableName(value = "dsm_department")
-public class DepartmentEntity extends BaseEntity {
+public class DepartmentEntity extends LRTreeNodeEntity implements LRNode<DepartmentEntity>{
 
     @TableBusinessId
     @TableField(fill = FieldFill.INSERT)
     @Column(length = 64, comment = "部门ID")
     @Index(value = "idx_department_id")
+    @Unique
     private String departmentId;
 
-    @Column(length = 64, comment = "部门ID")
+    @Column(length = 64, comment = "名称")
     private String name;
 
     @Column(length = 64, comment = "父部门ID")
@@ -37,19 +40,32 @@ public class DepartmentEntity extends BaseEntity {
     private String parentDepartmentId;
 
     @Column(length = 64, comment = "部门主管")
-    private String userId;
-
-    @Column(comment = "LR算法树-右值")
-    private Integer right;
-
-    @Column(comment = "LR算法树-左值")
-    private Integer left;
-
-    @Column(comment = "LR算法树-深度")
-    private Integer deep;
+    private String leaderUserId;
 
     @Column(comment = "排序")
     private int sort;
 
+    /**
+     * 不需要对应表字段。
+     */
+    @Transient
+    private DepartmentEntity parentNode;
 
+    /**
+     * 对应表业务ID
+     */
+    @Override
+    public String getBusinessId() {
+        return departmentId;
+    }
+
+    @Override
+    public String getParentNodeBusinessId() {
+        return parentDepartmentId;
+    }
+
+    @Override
+    public void setParentNodeBusinessId(String parentNodeBusinessId) {
+        this.parentDepartmentId = parentNodeBusinessId;
+    }
 }

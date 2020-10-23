@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -35,7 +36,7 @@ public class HandlerException {
         return ResponseResult.error("系统错误");
     }
 
-    @ExceptionHandler({ MethodArgumentNotValidException.class })
+    @ExceptionHandler({ MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.OK)
     public ResponseResult<String> processException(MethodArgumentNotValidException e) {
         String msg = e.getBindingResult().getFieldErrors()
@@ -49,6 +50,12 @@ public class HandlerException {
     @ResponseStatus(HttpStatus.OK)
     public ResponseResult<String> processException(MessageException e) {
         return ResponseResult.error(e.getMessage());
+    }
+
+    @ExceptionHandler({ MissingServletRequestParameterException.class })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseResult<String> processException(MissingServletRequestParameterException e) {
+        return ResponseResult.error(ResponseResultCodeEnum.PARAMETER_ERROR, "接口参数错误!");
     }
 
     @ExceptionHandler({ ServiceException.class })

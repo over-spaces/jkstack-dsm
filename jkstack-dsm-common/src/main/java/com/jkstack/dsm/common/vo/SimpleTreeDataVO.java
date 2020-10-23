@@ -1,6 +1,11 @@
 package com.jkstack.dsm.common.vo;
 
 import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,29 +14,11 @@ import java.util.List;
  * @author lifang
  * @since 2020/10/15
  */
-public abstract class SimpleTreeDataVO<T> implements Serializable {
+@ApiModel
+public class SimpleTreeDataVO<T> extends SimpleDataVO {
 
-    private String id;
-
-    private String name;
-
+    @ApiModelProperty(value = "子节点列表")
     private List<T> children = Lists.newArrayList();
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public List<T> getChildren() {
         return children;
