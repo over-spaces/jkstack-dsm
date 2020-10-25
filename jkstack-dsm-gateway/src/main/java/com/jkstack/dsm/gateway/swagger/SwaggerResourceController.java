@@ -4,10 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
+import reactor.core.publisher.Mono;
 import springfox.documentation.swagger.web.*;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -17,26 +22,29 @@ import java.util.List;
  * @author lifang
  * @since 2020-10-10
  */
-@RestController
-@RequestMapping("/swagger-resources")
-@Profile({"dev","test"})
+@Controller
+@Profile({"dev", "test"})
 public class SwaggerResourceController {
 
     @Autowired
     private SwaggerResourceProvider swaggerResourceProvider;
 
 
-    @RequestMapping(value = "/configuration/security")
+
+    @ResponseBody
+    @RequestMapping(value = "/swagger-resources/configuration/security")
     public ResponseEntity<SecurityConfiguration> securityConfiguration() {
         return new ResponseEntity<>(SecurityConfigurationBuilder.builder().build(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/configuration/ui")
+    @ResponseBody
+    @RequestMapping(value = "/swagger-resources/configuration/ui")
     public ResponseEntity<UiConfiguration> uiConfiguration() {
         return new ResponseEntity<>(UiConfigurationBuilder.builder().build(), HttpStatus.OK);
     }
 
-    @RequestMapping
+    @ResponseBody
+    @RequestMapping(value = "/swagger-resources")
     public ResponseEntity<List<SwaggerResource>> swaggerResources() {
         return new ResponseEntity<>(swaggerResourceProvider.get(), HttpStatus.OK);
     }

@@ -1,5 +1,7 @@
 package com.jkstack.dsm.user.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.common.BaseController;
 import com.jkstack.dsm.common.PageResult;
 import com.jkstack.dsm.common.ResponseResult;
@@ -10,6 +12,9 @@ import com.jkstack.dsm.user.controller.vo.DepartmentUserVO;
 import com.jkstack.dsm.user.controller.vo.DepartmentVO;
 import com.jkstack.dsm.user.controller.vo.UserVO;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
+import com.jkstack.dsm.user.entity.UserEntity;
+import com.jkstack.dsm.user.service.DepartmentService;
+import com.jkstack.dsm.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,6 +34,11 @@ import java.util.List;
 @RestController()
 @RequestMapping("/department")
 public class DepartmentController extends BaseController {
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private DepartmentService departmentService;
 
 
     @ApiOperation(value = "部门列表")
@@ -63,6 +73,7 @@ public class DepartmentController extends BaseController {
     @PostMapping("/users")
     public ResponseResult<PageResult<DepartmentUserVO>> listDepartmentUsers(@RequestParam String departmentId,
                                                                             @RequestBody PageVO pageVO) {
+        IPage<UserEntity> pageUsers = userService.pageUsersByDepartmentId(new Page(pageVO.getPageNo(), pageVO.getPageSize()), departmentId);
 
         PageResult<DepartmentUserVO> pageResult = new PageResult();
         //人数

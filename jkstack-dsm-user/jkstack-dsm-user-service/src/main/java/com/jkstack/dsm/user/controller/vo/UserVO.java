@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -29,6 +30,7 @@ public class UserVO implements Serializable {
     private String userId;
 
     @NotBlank(message="用户名不能为空")
+    @Length(max = 64, message = "用户名不合法")
     @ApiModelProperty(value = "用户名", example = "lisi", required = true)
     private String loginName;
 

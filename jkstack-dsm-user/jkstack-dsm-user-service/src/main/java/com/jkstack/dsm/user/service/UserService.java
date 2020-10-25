@@ -1,5 +1,6 @@
 package com.jkstack.dsm.user.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jkstack.dsm.common.service.CommonService;
 import com.jkstack.dsm.user.entity.UserEntity;
 
@@ -8,7 +9,6 @@ import java.util.List;
 public interface UserService extends CommonService<UserEntity> {
 
     void deleteByUserId(List<String> userIds);
-
 
     /**
      * 创建用户，并且初始化密码
@@ -35,4 +35,6 @@ public interface UserService extends CommonService<UserEntity> {
      * @param loginName 用户名
      */
     boolean checkUserLoginName(String userId, String loginName);
+
+    IPage<UserEntity> pageUsersByDepartmentId(IPage page, String departmentId);
 }

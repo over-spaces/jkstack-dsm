@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @since 2020/10/13
  */
 @Data
-@ApiModel
+@ApiModel(description = "列表分页查询类")
 public class PageVO implements Serializable {
 
     /**
@@ -29,7 +29,7 @@ public class PageVO implements Serializable {
     /**
      * 查询条件
      */
-    @ApiModelProperty(value = "简单查询条件")
+    @ApiModelProperty(value = "简单查询条件", example = "")
     private String condition;
 
 }

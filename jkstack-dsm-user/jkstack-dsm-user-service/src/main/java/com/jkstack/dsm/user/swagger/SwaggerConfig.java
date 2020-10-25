@@ -3,6 +3,7 @@ package com.jkstack.dsm.user.swagger;
 import com.jkstack.dsm.common.utils.JwtConstants;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -23,15 +25,19 @@ import java.util.*;
  * @since 2020/10/19
  */
 @Configuration
-@EnableSwagger2
+@EnableOpenApi
 public class SwaggerConfig {
 
     @Autowired
     private SwaggerProperties swaggerProperties;
 
+    @Value("${spring.application.name}")
+    private String applicationName;
+
     @Bean
     public Docket createRestApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
+                .pathMapping(applicationName)
                 .genericModelSubstitutes(Mono.class, Flux.class, Publisher.class)
                 .enable(swaggerProperties.isEnable())
                 .apiInfo(apiInfo())

@@ -6,6 +6,6 @@ package com.jkstack.dsm.gateway.swagger;
  */
 public class SwaggerConstant {
 
-    public static final String SWAGGER_URL = "/v2/api-docs";
+    public static final String SWAGGER_URL = "/v3/api-docs";
 
 }

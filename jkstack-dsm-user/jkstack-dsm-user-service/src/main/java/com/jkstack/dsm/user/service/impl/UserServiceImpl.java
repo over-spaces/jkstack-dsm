@@ -1,8 +1,7 @@
 package com.jkstack.dsm.user.service.impl;
 
-import cn.hutool.crypto.digest.MD5;
-import com.alibaba.nacos.common.utils.Md5Utils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jkstack.dsm.common.service.CommonServiceImpl;
 import com.jkstack.dsm.common.utils.MD5Util;
 import com.jkstack.dsm.user.config.UserConfigProperties;
@@ -78,5 +77,10 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
         }
         //不合法的用户名
         return false;
+    }
+
+    @Override
+    public IPage<UserEntity> pageUsersByDepartmentId(IPage page, String departmentId) {
+        return userMapper.pageUsersByDepartmentId(page, departmentId);
     }
 }

@@ -2,6 +2,7 @@ package com.jkstack.dsm.common.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @ApiModel
 public class SimpleDataVO implements Serializable {
 
@@ -23,9 +25,4 @@ public class SimpleDataVO implements Serializable {
 
     @ApiModelProperty(value = "名称")
     private String name;
-
-    public SimpleDataVO(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 }

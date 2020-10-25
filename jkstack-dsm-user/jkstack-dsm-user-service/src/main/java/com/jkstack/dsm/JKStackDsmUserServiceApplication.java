@@ -10,14 +10,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableFeignClients(basePackages = "com.jkstack.dsm")
 @EnableDiscoveryClient
-@MapperScan("com.jkstack.dsm.user.mapper")
 @ComponentScan({"com.jkstack.dsm", "com.gitee.sunchenbin.mybatis.actable.manager.*"})
-@MapperScan({"com.gitee.sunchenbin.mybatis.actable.dao.*"})
+@MapperScan({"com.jkstack.dsm.user.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
 public class JKStackDsmUserServiceApplication {
 
 	public static void main(String[] args) {

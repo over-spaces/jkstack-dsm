@@ -15,6 +15,7 @@ import java.util.List;
  * @since 2020/10/15
  */
 @ApiModel
+@NoArgsConstructor
 public class SimpleTreeDataVO<T> extends SimpleDataVO {
 
     @ApiModelProperty(value = "子节点列表")
