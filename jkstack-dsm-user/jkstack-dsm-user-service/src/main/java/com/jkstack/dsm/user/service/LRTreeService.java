@@ -1,6 +1,6 @@
 package com.jkstack.dsm.user.service;
 
-import com.jkstack.dsm.common.lr.LRNode;
+import com.jkstack.dsm.common.lr.LRTreeNodeEntity;
 
 /**
  * @author lifang
@@ -8,6 +8,6 @@ import com.jkstack.dsm.common.lr.LRNode;
  */
 public interface LRTreeService {
 
-    <T extends LRNode> void updateAllNodeLR(Class<T> cls);
+    <T extends LRTreeNodeEntity> void updateAllNodeLR(Class<T> cls);
 
 }

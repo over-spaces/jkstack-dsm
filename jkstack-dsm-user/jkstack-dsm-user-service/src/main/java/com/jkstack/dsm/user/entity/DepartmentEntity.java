@@ -8,11 +8,9 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.Index;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Unique;
 import com.jkstack.dsm.common.annotation.TableBusinessId;
-import com.jkstack.dsm.common.lr.LRNode;
 import com.jkstack.dsm.common.lr.LRTreeNodeEntity;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Transient;
 
 /**
  * 部门实体
@@ -23,7 +21,7 @@ import org.springframework.data.annotation.Transient;
 @Getter
 @Table(name = "dsm_department")
 @TableName(value = "dsm_department")
-public class DepartmentEntity extends LRTreeNodeEntity implements LRNode<DepartmentEntity>{
+public class DepartmentEntity extends LRTreeNodeEntity{
 
     @TableBusinessId
     @TableField(fill = FieldFill.INSERT)
@@ -44,35 +42,4 @@ public class DepartmentEntity extends LRTreeNodeEntity implements LRNode<Departm
 
     @Column(comment = "排序")
     private int sort;
-
-    /**
-     * 不需要对应表字段。
-     */
-    @Transient
-    @TableField(exist = false)
-    private DepartmentEntity parentNode;
-
-
-    /**
-     * 对应表业务ID
-     */
-    @Override
-    public String getBusinessId() {
-        return departmentId;
-    }
-
-    @Override
-    public void setBusinessId(String businessId) {
-        this.departmentId = businessId;
-    }
-
-    @Override
-    public String getParentNodeBusinessId() {
-        return parentDepartmentId;
-    }
-
-    @Override
-    public void setParentNodeBusinessId(String parentNodeBusinessId) {
-        this.parentDepartmentId = parentNodeBusinessId;
-    }
 }

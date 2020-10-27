@@ -43,7 +43,7 @@ public class LRTreeDepartmentDaoImpl implements LRTreeDao {
     @Override
     @Transactional(readOnly = true)
     public LRNode getVirtualRootNode() {
-        LRNode lrNode = new DepartmentEntity();
+        LRNode lrNode = new LRNode();
         lrNode.setDeep(0);
         lrNode.setLft(1);
         String sql = String.format("select max(rgt) from %s", TABLE_NAME);
@@ -113,29 +113,27 @@ public class LRTreeDepartmentDaoImpl implements LRTreeDao {
     }
 
     @Override
-    public List<LRNode> fullLoad() {
-        final List<LRNode> nodes = new ArrayList<>(100);
+    public Collection<LRNode> fullLoad() {
         final Map<String, LRNode> nodeMap = new HashMap<>(100);
 
-        String sql = String.format("select %s, %s from %s order by %s", COLUMN_BUSINESS_ID, PARENT_COLUMN_NAME, TABLE_NAME, PARENT_COLUMN_NAME);
+        String sql = String.format("SELECT %s, %s, name FROM %s ORDER BY %s", COLUMN_BUSINESS_ID, PARENT_COLUMN_NAME, TABLE_NAME, PARENT_COLUMN_NAME);
         jdbcTemplate.query(sql, rs -> {
             String businessId = rs.getString(1);
             String parentBusinessId = rs.getString(2);
+            String name = rs.getString(3);
 
-            LRNode lrNode = new DepartmentEntity();
-            lrNode.setBusinessId(businessId);
-            lrNode.setParentNodeBusinessId(parentBusinessId);
-            lrNode.setLft(null);
-            lrNode.setRgt(null);
-            lrNode.setDeep(null);
-            nodes.add(lrNode);
-            nodeMap.put(businessId, lrNode);
+            LRNode node = new LRNode();
+            node.setId(businessId);
+            node.setParentId(parentBusinessId);
+            node.setName(name);
+            nodeMap.put(businessId, node);
         });
 
+        Collection<LRNode> nodes = nodeMap.values();
         nodes.stream()
-                .filter(node -> StringUtils.isNotBlank(node.getParentNodeBusinessId()))
+                .filter(node -> StringUtils.isNotBlank(node.getParentId()))
                 .forEach(node -> {
-                    node.setParentNode(nodeMap.get(node.getParentNodeBusinessId()));
+                    node.setParentNode(nodeMap.get(node.getParentId()));
                 });
         return nodes;
     }
@@ -145,14 +143,15 @@ public class LRTreeDepartmentDaoImpl implements LRTreeDao {
         Map<String, Object>[] params = new HashMap[allNodes.size()];
         int index = 0;
         for (LRNode node : allNodes) {
-            params[index] = new HashMap<>(4);
-            params[index].put("businessId", node.getBusinessId());
+            params[index] = new HashMap<>(5);
+            params[index].put("businessId", node.getId());
             params[index].put("lft", node.getLft());
             params[index].put("rgt", node.getRgt());
             params[index].put("deep", node.getDeep());
+            params[index].put("fullPathName", node.getFullPathName());
             index++;
         }
-        String sql = String.format("UPDATE %s SET lft=:lft , rgt=:rgt, deep=:deep WHERE %s=:businessId", TABLE_NAME, COLUMN_BUSINESS_ID);
+        String sql = String.format("UPDATE %s SET lft=:lft , rgt=:rgt, deep=:deep, full_path_name=:fullPathName WHERE %s=:businessId", TABLE_NAME, COLUMN_BUSINESS_ID);
         namedParameterJdbcTemplate.batchUpdate(sql, params);
     }
 }

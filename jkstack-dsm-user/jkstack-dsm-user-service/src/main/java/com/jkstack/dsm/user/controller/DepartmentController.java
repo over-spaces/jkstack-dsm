@@ -32,6 +32,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -116,7 +117,7 @@ public class DepartmentController extends BaseController {
         Map<String, Long> listUserNumberMap = departmentService.queryDeptUserNumber();
 
         List<DepartmentChildrenListVO> departmentChildrenList = departmentEntities.stream()
-                .map(departmentEntity -> new DepartmentChildrenListVO(departmentEntity.getBusinessId(), departmentEntity.getName(), listUserNumberMap.getOrDefault(departmentEntity.getBusinessId(), 0L)))
+                .map(departmentEntity -> new DepartmentChildrenListVO(departmentEntity.getDepartmentId(), departmentEntity.getName(), listUserNumberMap.getOrDefault(departmentEntity.getDepartmentId(), 0L)))
                 .collect(Collectors.toList());
         return ResponseResult.success(departmentChildrenList);
     }
@@ -147,8 +148,9 @@ public class DepartmentController extends BaseController {
 
     @ApiOperation("移除部门下用户")
     @PostMapping("/remove/user")
-    public ResponseResult removeUser(@RequestParam String departmentId,
-                                     @RequestBody List<String> userIds) throws MessageException {
+    public ResponseResult removeUser(@RequestBody @Valid DepartmentAddUserVO departmentAddUserVO) throws MessageException {
+        String departmentId = departmentAddUserVO.getDepartmentId();
+        Set<String> userIds = departmentAddUserVO.getUserIds();
 
         if(CollectionUtils.isEmpty(userIds)){
             throw new MessageException("请选择需要移除的用户！");

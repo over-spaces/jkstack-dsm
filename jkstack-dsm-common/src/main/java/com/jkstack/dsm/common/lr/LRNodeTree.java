@@ -11,98 +11,45 @@ import java.util.Stack;
  * @author lifang
  * @since 2020/10/26
  */
-public class LRNodeTree implements LRNode<LRNodeTree>{
+public class LRNodeTree extends LRNode {
 
-    private String businessId;
-    private String name;
-    private Integer rgt;
-    private Integer lft;
-    private Integer deep;
-    private String parentNodeBusinessId;
-    private LRNodeTree parentNode;
+    private LRNodeTree parentNodeTree;
+
     private List<LRNodeTree> children = new ArrayList<>();
 
-    public LRNodeTree(LRNode lrNode) throws Exception {
-        this(lrNode, 0);
+    public LRNodeTree(LRNode node) {
+        this(node, 0);
     }
 
-    public LRNodeTree(LRNode lrNode, int index) throws ServiceException {
-        this.businessId = lrNode.getBusinessId();
-        if (lrNode.getParentNode() != null) {
-            if(index > 50){
+    public LRNodeTree(LRNode node, int index) throws ServiceException {
+        super.setId(node.getId());
+        super.setParentId(node.getParentId());
+        super.setName(node.getName());
+        super.setDeep(node.getDeep());
+        super.setLft(node.getLft());
+        super.setRgt(node.getRgt());
+        super.setFullPathName(node.getFullPathName());
+        if (node.getParentNode() != null) {
+            if (index > 50) {
                 throw new ServiceException("部门上下级关系错误!");
             }
-            this.parentNode = new LRNodeTree((LRNode) lrNode.getParentNode(), index + 1);
+            this.parentNodeTree = new LRNodeTree(node.getParentNode(), index + 1);
         } else {
-            this.parentNode = null;
+            this.parentNodeTree = null;
         }
-        this.parentNodeBusinessId = lrNode.getParentNodeBusinessId();
     }
 
-    @Override
-    public String getBusinessId() {
-        return businessId;
-    }
-
-    @Override
-    public void setBusinessId(String businessId) {
-        this.businessId = businessId;
-    }
-
-    @Override
-    public Integer getRgt() {
-        return rgt;
-    }
-
-    @Override
-    public void setRgt(Integer rgt) {
-        this.rgt = rgt;
-    }
-
-    @Override
-    public Integer getLft() {
-        return lft;
-    }
-
-    @Override
-    public void setLft(Integer lft) {
-        this.lft = lft;
-    }
 
     @Override
     public Integer getDeep() {
-        if (StringUtils.isBlank(this.businessId)) {
+        if (StringUtils.isBlank(this.getId())) {
             return 0;
-        } if (parentNode == null) {
-            return 1;
-        }else {
-            return parentNode.getDeep() + 1;
         }
-    }
-
-    @Override
-    public void setDeep(Integer deep) {
-        this.deep = deep;
-    }
-
-    @Override
-    public String getParentNodeBusinessId() {
-        return parentNodeBusinessId;
-    }
-
-    @Override
-    public void setParentNodeBusinessId(String parentNodeBusinessId) {
-        this.parentNodeBusinessId = parentNodeBusinessId;
-    }
-
-    @Override
-    public LRNodeTree getParentNode() {
-        return parentNode;
-    }
-
-    @Override
-    public void setParentNode(LRNodeTree node) {
-        this.parentNode = node;
+        if (parentNodeTree == null) {
+            return 1;
+        } else {
+            return parentNodeTree.getDeep() + 1;
+        }
     }
 
     public List<LRNodeTree> getChildren() {
@@ -111,5 +58,13 @@ public class LRNodeTree implements LRNode<LRNodeTree>{
 
     public void setChildren(List<LRNodeTree> children) {
         this.children = children;
+    }
+
+    public LRNodeTree getParentNodeTree() {
+        return parentNodeTree;
+    }
+
+    public void setParentNodeTree(LRNodeTree parentNodeTree) {
+        this.parentNodeTree = parentNodeTree;
     }
 }

@@ -95,7 +95,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
      * @param userIds      用户列表
      */
     @Override
-    public void removeUser(String departmentId, List<String> userIds) {
+    public void removeUser(String departmentId, Set<String> userIds) {
         DepartmentEntity departmentEntity = getByBusinessId(departmentId);
         if (departmentEntity == null) {
             return;
@@ -106,7 +106,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
             updateById(departmentEntity);
         }
         QueryWrapper<UserDepartmentEntity> wrapper = new QueryWrapper<>();
-        wrapper.lambda().ne(UserDepartmentEntity::getDepartmentId, departmentId)
+        wrapper.lambda().eq(UserDepartmentEntity::getDepartmentId, departmentId)
                 .and(w -> w.in(UserDepartmentEntity::getUserId, userIds));
         userDepartmentMapper.delete(wrapper);
     }
@@ -151,5 +151,20 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         newUserIds.stream()
                 .map(userId -> new UserDepartmentEntity(userId, departmentId))
                 .forEach(userDepartmentEntity -> userDepartmentMapper.insert(userDepartmentEntity));
+    }
+
+    /**
+     * 查询用户所属的部门
+     *
+     * @param userIds 用户ID列表
+     */
+    @Override
+    public Map<String, List<DepartmentEntity>> listByUsers(List<String> userIds) {
+        Map<String, List<DepartmentEntity>> result = Maps.newHashMap();
+        for (String userId : userIds) {
+            List<DepartmentEntity> departmentEntities = listByUserId(userId);
+            result.put(userId, departmentEntities);
+        }
+        return result;
     }
 }

@@ -3,6 +3,7 @@ package com.jkstack.dsm.user.mapper;
 
 import com.jkstack.dsm.common.lr.LRNode;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public interface LRTreeDao {
 
     long count();
 
-    List<LRNode> fullLoad();
+    Collection<LRNode> fullLoad();
 
     void batchUpdate(List<LRNode> allNodes);
 

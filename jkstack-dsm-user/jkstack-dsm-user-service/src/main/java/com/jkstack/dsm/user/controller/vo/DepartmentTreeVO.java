@@ -25,7 +25,7 @@ public class DepartmentTreeVO extends SimpleTreeDataVO<DepartmentTreeVO> {
 
 
     public DepartmentTreeVO(DepartmentEntity departmentEntity){
-        this.setId(departmentEntity.getBusinessId());
+        this.setId(departmentEntity.getDepartmentId());
         this.setName(departmentEntity.getName());
         this.setParentId(departmentEntity.getParentDepartmentId());
         this.setDeep(departmentEntity.getDeep());

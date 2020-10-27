@@ -18,6 +18,7 @@ import com.jkstack.dsm.common.vo.SimpleDataVO;
 import com.jkstack.dsm.user.controller.vo.UserExcelVO;
 import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.controller.vo.UserVO;
+import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.entity.WorkGroupEntity;
 import com.jkstack.dsm.user.service.DepartmentService;
@@ -117,13 +118,15 @@ public class UserController extends BaseController implements UserControllerFeig
 
         List<String> userIds = page.getRecords().stream().map(UserEntity::getUserId).collect(Collectors.toList());
         Map<String, List<WorkGroupEntity>> userWorkGroupMap = workGroupService.listByUserIds(userIds);
+        Map<String, List<DepartmentEntity>> userDepartmentMap = departmentService.listByUsers(userIds);
 
         List<UserVO> list = page.getRecords().stream().map(UserVO::new)
                 .peek(user -> {
                     //部门
-                    user.getDepartmentList().add(new SimpleDataVO("1", "中国移动/上海杨浦总部/财务部"));
-                    user.getDepartmentList().add(new SimpleDataVO("2", "中国移动/上海总部/上海杨浦分部/研发部"));
-                    user.getDepartmentList().add(new SimpleDataVO("3", "人事部"));
+                    List<SimpleDataVO> userDepartmentList = userDepartmentMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()
+                            .map(departmentEntity -> new SimpleDataVO(departmentEntity.getDepartmentId(), departmentEntity.getFullPathName()))
+                            .collect(Collectors.toList());
+                    user.setDepartmentList(userDepartmentList);
 
                     //工作组
                     List<SimpleDataVO> userWorkGroupList = userWorkGroupMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()

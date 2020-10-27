@@ -1,35 +1,32 @@
 package com.jkstack.dsm.common.lr;
 
-import com.jkstack.dsm.common.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Stack;
 
 /**
  * LR算法
  * @author lifang
  * @since 2020/10/21
  */
-public interface LRNode<T> {
+@Setter
+@Getter
+public class LRNode {
 
-    /**
-     * 对应表业务ID
-     */
-    String getBusinessId();
+    private String id;
 
-    void setBusinessId(String businessId);
+    private String name;
 
-    Integer getRgt();
-    void setRgt(Integer rgt);
+    private String parentId;
 
-    Integer getLft();
-    void setLft(Integer lft);
+    private Integer rgt;
 
-    Integer getDeep();
-    void setDeep(Integer deep);
+    private Integer lft;
 
-    String getParentNodeBusinessId();
-    void setParentNodeBusinessId(String parentNodeBusinessId);
+    private Integer deep;
 
-    T getParentNode();
+    private LRNode parentNode;
 
-    void setParentNode(T node);
-
+    private String fullPathName;
 }

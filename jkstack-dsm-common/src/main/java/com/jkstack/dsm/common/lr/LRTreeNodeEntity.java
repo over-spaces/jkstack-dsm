@@ -4,10 +4,14 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.jkstack.dsm.common.BaseEntity;
 
 /**
+ * LR算法基础类
  * @author lifang
  * @since 2020/10/23
  */
 public abstract class LRTreeNodeEntity extends BaseEntity {
+
+    @Column(length = 64, comment = "名称")
+    private String name;
 
     @Column(comment = "LR算法树-右值")
     private Integer rgt;
@@ -17,6 +21,17 @@ public abstract class LRTreeNodeEntity extends BaseEntity {
 
     @Column(comment = "LR算法树-深度")
     private Integer deep;
+
+    @Column(length = 300, comment = "名称全路径")
+    private String fullPathName;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getRgt() {
         return rgt;
@@ -40,5 +55,13 @@ public abstract class LRTreeNodeEntity extends BaseEntity {
 
     public void setDeep(Integer deep) {
         this.deep = deep;
+    }
+
+    public String getFullPathName() {
+        return fullPathName;
+    }
+
+    public void setFullPathName(String fullPathName) {
+        this.fullPathName = fullPathName;
     }
 }

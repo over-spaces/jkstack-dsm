@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author lifang
@@ -46,32 +47,45 @@ public class LRTreeServiceImpl implements LRTreeService {
         rootNode.setRgt(2);
         rootNode.setDeep(0);
 
-        List<LRNode> allNodes = getLRTreeDAO(cls).fullLoad();
-        logger.debug("finished full load.");
+        Collection<LRNode> allNodes = getLRTreeDAO(cls).fullLoad();
 
         if(CollectionUtils.isEmpty(allNodes)) {
             return;
         }
 
-        LRNodeTree lrNodeTreeRoot = buildNodeTree(rootNode, allNodes);
+        //2.设置名称全路径
+        allNodes.stream().forEach(node -> {
+            List<String> nameFullPathList = getNameFullPathList(node, new ArrayList<>());
+            Collections.reverse(nameFullPathList);
+            node.setFullPathName(nameFullPathList.stream().collect(Collectors.joining("/")));
+        });
 
-        if(lrNodeTreeRoot == null){
+        LRNodeTree root = buildNodeTree(rootNode, allNodes);
+
+        if(root == null){
             logger.error("LR算法刷新失败，可能是上下级关系出现死循环了, class:{}", cls);
             return;
         }
 
-        logger.debug("finished build tree.");
+        //3. 计算所有L/R值
+        root.setLft(1);
+        root.setDeep(0);
+        updateTreeNodeLR(root);
 
-        //2. 计算所有L/R值
-        lrNodeTreeRoot.setLft(1);
-        lrNodeTreeRoot.setDeep(0);
-        updateTreeNodeLR(lrNodeTreeRoot);
-
-        logger.debug("finished all nodes update.");
-
-        //3. 批量更新到数据库中
-        getLRTreeDAO(cls).batchUpdate(tree2list(lrNodeTreeRoot));
+        //4. 批量更新到数据库中
+        getLRTreeDAO(cls).batchUpdate(tree2list(root));
         logger.debug("finished store into db.");
+    }
+
+
+    private List<String> getNameFullPathList(LRNode node, List<String> nameFullPathList){
+        if(node != null && StringUtils.isNotBlank(node.getName())) {
+            nameFullPathList.add(node.getName());
+            if(node.getParentNode() != null) {
+                getNameFullPathList(node.getParentNode(), nameFullPathList);
+            }
+        }
+        return nameFullPathList;
     }
 
     private LRNodeTree buildNodeTree(LRNode rootNode, Collection<LRNode> allLRNodes) {
@@ -89,6 +103,7 @@ public class LRTreeServiceImpl implements LRTreeService {
                 if (!treeNodeMap.containsKey(level)) {
                     treeNodeMap.put(level, new ArrayList<>());
                 }
+
                 treeNodeMap.get(level).add(treeNode);
             }
 
@@ -96,7 +111,7 @@ public class LRTreeServiceImpl implements LRTreeService {
                 List<LRNodeTree> treeNodes = treeNodeMap.get(l);
                 logger.debug("get level {} count {}", l, treeNodes.size());
                 for (LRNodeTree lrNodeTree : treeNodes) {
-                    LRNodeTree parentNode = findParentNode(lrNodeTree.getParentNodeBusinessId(), treeNodeMap.get(l - 1));
+                    LRNodeTree parentNode = findParentNode(lrNodeTree.getParentId(), treeNodeMap.get(l - 1));
                     if (parentNode != null) {
                         parentNode.getChildren().add(lrNodeTree);
                         lrNodeTree.setParentNode(parentNode);
@@ -130,7 +145,7 @@ public class LRTreeServiceImpl implements LRTreeService {
 
     protected List<LRNode> tree2list(LRNodeTree lrNodeTree) {
         List<LRNode> allLRNodes = new ArrayList<>(200);
-        if (StringUtils.isBlank(lrNodeTree.getBusinessId())) {
+        if (StringUtils.isBlank(lrNodeTree.getId())) {
             allLRNodes.add(lrNodeTree);
         }
 
@@ -148,7 +163,7 @@ public class LRTreeServiceImpl implements LRTreeService {
 
     protected LRNodeTree findParentNode(String parentId, Collection<LRNodeTree> treeNodes) {
         for (LRNodeTree lrNodeTree : treeNodes) {
-            if (Objects.equals(parentId, lrNodeTree.getBusinessId())) {
+            if (Objects.equals(parentId, lrNodeTree.getId())) {
                 return lrNodeTree;
             }
         }

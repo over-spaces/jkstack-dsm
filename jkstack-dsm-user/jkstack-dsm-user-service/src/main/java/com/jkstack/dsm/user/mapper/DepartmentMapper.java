@@ -18,7 +18,7 @@ public interface DepartmentMapper extends BaseMapper<DepartmentEntity> {
 
     @Select("SELECT dept.* FROM dsm_department dept " +
             " LEFT JOIN dsm_user_department d ON dept.department_id=d.department_id" +
-            " WHERE d.user_id=${userId}")
+            " WHERE d.user_id='${userId}'")
     List<DepartmentEntity> listByUserId(String userId);
 
 

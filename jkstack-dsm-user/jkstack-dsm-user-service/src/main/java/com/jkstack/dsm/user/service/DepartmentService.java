@@ -46,7 +46,7 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
      * @param departmentId 部门ID
      * @param userIds 用户列表
      */
-    void removeUser(String departmentId, List<String> userIds);
+    void removeUser(String departmentId, Set<String> userIds);
 
     /**
      * 获取指定部门下全部的子部门
@@ -61,4 +61,11 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
      * @param userIds 用户ID列表
      */
     void addUser(String departmentId, Set<String> userIds) throws MessageException;
+
+    /**
+     * 查询用户所属的部门
+     * @param userIds 用户ID列表
+     * @return
+     */
+    Map<String, List<DepartmentEntity>> listByUsers(List<String> userIds);
 }

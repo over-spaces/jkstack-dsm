@@ -15,6 +15,6 @@ import java.util.List;
 public interface WorkGroupMapper extends BaseMapper<WorkGroupEntity> {
 
 
-    @Select("SELECT w.* FROM dsm_work_group w LEFT JOIN dsm_user_work_group u ON w.work_group_id=u.work_group_id WHERE u.user_id=${userId}")
+    @Select("SELECT w.* FROM dsm_work_group w LEFT JOIN dsm_user_work_group u ON w.work_group_id=u.work_group_id WHERE u.user_id='${userId}'")
     List<WorkGroupEntity> listByUserId(String userId);
 }
