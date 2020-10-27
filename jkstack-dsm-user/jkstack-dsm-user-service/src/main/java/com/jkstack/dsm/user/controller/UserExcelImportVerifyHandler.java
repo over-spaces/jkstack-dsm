@@ -38,6 +38,10 @@ public class UserExcelImportVerifyHandler implements IExcelVerifyHandler<UserExc
             message += "姓名不允许为空;" ;
         }
 
+        if(StringUtils.length(userExcelVO.getName()) > 60){
+            message += "姓名字符过长;" ;
+        }
+
         if (StringUtils.isBlank(userExcelVO.getPhone())) {
             message += "电话不允许为空;" ;
         }

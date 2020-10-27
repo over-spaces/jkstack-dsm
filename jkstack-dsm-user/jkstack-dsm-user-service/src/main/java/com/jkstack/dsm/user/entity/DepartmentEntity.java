@@ -49,7 +49,9 @@ public class DepartmentEntity extends LRTreeNodeEntity implements LRNode<Departm
      * 不需要对应表字段。
      */
     @Transient
+    @TableField(exist = false)
     private DepartmentEntity parentNode;
+
 
     /**
      * 对应表业务ID
@@ -57,6 +59,11 @@ public class DepartmentEntity extends LRTreeNodeEntity implements LRNode<Departm
     @Override
     public String getBusinessId() {
         return departmentId;
+    }
+
+    @Override
+    public void setBusinessId(String businessId) {
+        this.departmentId = businessId;
     }
 
     @Override

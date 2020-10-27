@@ -1,6 +1,8 @@
 package com.jkstack.dsm.user.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jkstack.dsm.common.service.CommonService;
+import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.entity.UserEntity;
 
 import java.util.List;
@@ -35,4 +37,19 @@ public interface UserService extends CommonService<UserEntity> {
      * @param loginName 用户名
      */
     boolean checkUserLoginName(String userId, String loginName);
+
+    /**
+     * 分页查询部门下用户列表
+     * @param departmentId 部门ID
+     * @param pageVO 分页查询信息
+     * @return 部门下用户列表
+     */
+    IPage<UserEntity> listDepartmentUsers(String departmentId, PageVO pageVO);
+
+    /**
+     * 统计指定部门下用户数量
+     * @param departmentId 部门ID
+     * @return 用户数量
+     */
+    long countUserByDepartmentId(String departmentId);
 }

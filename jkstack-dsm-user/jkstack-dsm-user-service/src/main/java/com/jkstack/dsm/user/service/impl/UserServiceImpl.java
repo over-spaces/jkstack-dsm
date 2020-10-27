@@ -1,13 +1,15 @@
 package com.jkstack.dsm.user.service.impl;
 
-import cn.hutool.crypto.digest.MD5;
-import com.alibaba.nacos.common.utils.Md5Utils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.common.service.CommonServiceImpl;
 import com.jkstack.dsm.common.utils.MD5Util;
+import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.config.UserConfigProperties;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.mapper.UserMapper;
+import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private DepartmentService departmentService;
     @Autowired
     private UserConfigProperties userConfigProperties;
 
@@ -78,5 +82,22 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
         }
         //不合法的用户名
         return false;
+    }
+
+    @Override
+    public IPage<UserEntity> listDepartmentUsers(String departmentId, PageVO pageVO) {
+        IPage<UserEntity> page = new Page<>(pageVO.getPageNo(), pageVO.getPageSize());
+        return userMapper.listDepartmentUsers(departmentId, page);
+    }
+
+    /**
+     * 统计指定部门下用户数量
+     *
+     * @param departmentId 部门ID
+     * @return 用户数量
+     */
+    @Override
+    public long countUserByDepartmentId(String departmentId) {
+        return departmentService.listChildrenDepartmentIds(departmentId).size();
     }
 }

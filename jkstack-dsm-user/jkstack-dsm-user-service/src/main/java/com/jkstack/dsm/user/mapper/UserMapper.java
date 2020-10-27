@@ -1,7 +1,11 @@
 package com.jkstack.dsm.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jkstack.dsm.user.entity.UserEntity;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * @author lifang
@@ -9,6 +13,6 @@ import com.jkstack.dsm.user.entity.UserEntity;
  */
 public interface UserMapper extends BaseMapper<UserEntity> {
 
-
-
+    @Select("select user.* from dsm_user user left join dsm_user_department d on user.user_id=d.user_id where d.department_id='${departmentId}'")
+    IPage<UserEntity> listDepartmentUsers(String departmentId, IPage<UserEntity> page);
 }

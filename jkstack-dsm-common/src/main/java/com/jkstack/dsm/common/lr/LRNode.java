@@ -7,12 +7,14 @@ import com.jkstack.dsm.common.BaseEntity;
  * @author lifang
  * @since 2020/10/21
  */
-public interface LRNode<T extends BaseEntity> {
+public interface LRNode<T> {
 
     /**
      * 对应表业务ID
      */
     String getBusinessId();
+
+    void setBusinessId(String businessId);
 
     Integer getRgt();
     void setRgt(Integer rgt);
@@ -27,6 +29,7 @@ public interface LRNode<T extends BaseEntity> {
     void setParentNodeBusinessId(String parentNodeBusinessId);
 
     T getParentNode();
+
     void setParentNode(T node);
 
 }

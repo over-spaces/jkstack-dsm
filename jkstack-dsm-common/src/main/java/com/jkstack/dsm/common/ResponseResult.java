@@ -23,6 +23,7 @@ public class ResponseResult<T> implements Serializable {
         this.data = data;
     }
 
+
     public ResponseResult(int code, T data) {
         this.code = code;
         this.data = data;

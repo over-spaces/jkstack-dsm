@@ -14,6 +14,9 @@ import java.io.Serializable;
 @ApiModel
 public class PageVO implements Serializable {
 
+    @ApiModelProperty(value = "业务ID", example = "1")
+    private String id;
+
     /**
      * 分页，当前页数(从1开始)
      */

@@ -1,11 +1,13 @@
 package com.jkstack.dsm.user.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Index;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.jkstack.dsm.common.BaseEntity;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -16,6 +18,8 @@ import lombok.Setter;
  */
 @Setter
 @Getter
+@NoArgsConstructor
+@TableName(value = "dsm_user_department")
 @Table(name = "dsm_user_department")
 public class UserDepartmentEntity extends BaseEntity{
 
@@ -27,4 +31,8 @@ public class UserDepartmentEntity extends BaseEntity{
     @Index(value = "idx_department_id")
     private String departmentId;
 
+    public UserDepartmentEntity(String userId, String departmentId){
+        this.userId = userId;
+        this.departmentId = departmentId;
+    }
 }

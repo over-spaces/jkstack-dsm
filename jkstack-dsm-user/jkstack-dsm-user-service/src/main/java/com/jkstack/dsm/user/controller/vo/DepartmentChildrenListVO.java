@@ -18,6 +18,10 @@ import lombok.Setter;
 public class DepartmentChildrenListVO extends SimpleDataVO {
 
     @ApiModelProperty(value = "部门人数")
-    private int number;
+    private long number;
 
+    public DepartmentChildrenListVO(String id, String name, long number) {
+        super(id, name);
+        this.number = number;
+    }
 }

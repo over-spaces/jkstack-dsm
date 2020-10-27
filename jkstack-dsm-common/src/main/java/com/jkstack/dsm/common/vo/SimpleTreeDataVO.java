@@ -15,10 +15,41 @@ import java.util.List;
  * @since 2020/10/15
  */
 @ApiModel
-public class SimpleTreeDataVO<T> extends SimpleDataVO {
+public class SimpleTreeDataVO<T> extends SimpleDataVO{
+
+    @ApiModelProperty("父节点ID")
+    private String parentId;
+
+    private int deep;
+
+    private int sort;
 
     @ApiModelProperty(value = "子节点列表")
     private List<T> children = Lists.newArrayList();
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public int getDeep() {
+        return deep;
+    }
+
+    public void setDeep(int deep) {
+        this.deep = deep;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
 
     public List<T> getChildren() {
         return children;

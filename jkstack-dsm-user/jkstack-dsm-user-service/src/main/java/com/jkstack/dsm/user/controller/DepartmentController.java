@@ -1,25 +1,39 @@
 package com.jkstack.dsm.user.controller;
 
+import cn.hutool.json.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.common.BaseController;
+import com.jkstack.dsm.common.MessageException;
 import com.jkstack.dsm.common.PageResult;
 import com.jkstack.dsm.common.ResponseResult;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.common.vo.SimpleTreeDataVO;
-import com.jkstack.dsm.user.controller.vo.DepartmentChildrenListVO;
-import com.jkstack.dsm.user.controller.vo.DepartmentUserVO;
-import com.jkstack.dsm.user.controller.vo.DepartmentVO;
-import com.jkstack.dsm.user.controller.vo.UserVO;
+import com.jkstack.dsm.user.controller.vo.*;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
+import com.jkstack.dsm.user.entity.UserEntity;
+import com.jkstack.dsm.user.service.DepartmentService;
+import com.jkstack.dsm.user.service.LRTreeService;
+import com.jkstack.dsm.user.service.UserService;
+import io.jsonwebtoken.lang.Assert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * @author lifang
@@ -30,45 +44,165 @@ import java.util.List;
 @RequestMapping("/department")
 public class DepartmentController extends BaseController {
 
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private LRTreeService lrTreeService;
 
-    @ApiOperation(value = "部门列表")
+    @ApiOperation("更新部门LR算法")
+    @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
+    @PostMapping("/upldateAllDeptLR")
+    public ResponseResult upldateAllDeptLR(){
+        lrTreeService.updateAllNodeLR(DepartmentEntity.class);
+        return ResponseResult.success();
+    }
+
+    @ApiOperation(value = "部门树列表")
     @GetMapping("/tree/list")
-    public ResponseResult<List<SimpleTreeDataVO>> list(@RequestParam(required = false) String departmentId){
+    public ResponseResult<List<DepartmentTreeVO>> list(@RequestParam(required = false) String departmentId){
+        List<DepartmentTreeVO> departmentTreeList = null;
+        if(StringUtils.isBlank(departmentId)){
+            //未指定部门ID，默认加载deep<=3的部门树
+            departmentTreeList = departmentService.listDepartmentTreeByDeepLE(3);
+        }else{
+            //指定部门ID，加载下级部门
+            List<DepartmentEntity> departmentEntities = departmentService.listByParentDepartmentId(departmentId);
+            departmentTreeList = departmentEntities.stream()
+                    .map(DepartmentTreeVO::new)
+                    .collect(Collectors.toList());
+
+        }
+        return ResponseResult.success(departmentTreeList);
+    }
+
+    @ApiOperation(value = "部门排序")
+    @PostMapping("/tree/sort")
+    public ResponseResult sort(@RequestBody List<SimpleTreeDataVO> list){
         return ResponseResult.success();
     }
 
     @ApiOperation(value = "新建/编辑部门")
     @PostMapping("/save")
-    public ResponseResult save(@RequestBody @Valid DepartmentVO departmentVO){
+    public ResponseResult save(@RequestBody @Valid DepartmentVO departmentVO) throws MessageException {
+        checkDepartment(departmentVO);
+
         DepartmentEntity departmentEntity;
         if(StringUtils.isBlank(departmentVO.getDepartmentId())){
             //新建
             departmentEntity = new DepartmentEntity();
         }else{
             //更新
-
+            departmentEntity = departmentService.getByBusinessId(departmentVO.getDepartmentId());
+            if(departmentEntity == null){
+                throw new MessageException("部门不存在");
+            }
         }
+        departmentEntity.setName(departmentVO.getName());
+        departmentEntity.setParentDepartmentId(departmentVO.getParentDepartmentId());
+        departmentEntity.setLeaderUserId(departmentVO.getLeaderUserId());
+        departmentService.saveOrUpdate(departmentEntity);
+
+        lrTreeService.updateAllNodeLR(DepartmentEntity.class);
         return ResponseResult.success();
     }
+
 
     @ApiOperation(value = "获取子部门列表")
-    @PostMapping("/children/list")
-    public ResponseResult<DepartmentChildrenListVO> listChildren(@RequestParam String departmentId,
-                                                                 @RequestBody PageVO pageVO){
+    @GetMapping("/children/list")
+    public ResponseResult<List<DepartmentChildrenListVO>> listChildren(@RequestParam String departmentId){
+        List<DepartmentEntity> departmentEntities = departmentService.listByParentDepartmentId(departmentId);
+        Map<String, Long> listUserNumberMap = departmentService.queryDeptUserNumber();
+
+        List<DepartmentChildrenListVO> departmentChildrenList = departmentEntities.stream()
+                .map(departmentEntity -> new DepartmentChildrenListVO(departmentEntity.getBusinessId(), departmentEntity.getName(), listUserNumberMap.getOrDefault(departmentEntity.getBusinessId(), 0L)))
+                .collect(Collectors.toList());
+        return ResponseResult.success(departmentChildrenList);
+    }
+
+    @ApiOperation("部门直属用户列表")
+    @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
+    @PostMapping("/users")
+    public ResponseResult<PageResult<DepartmentUserVO>> listDepartmentUsers(@RequestBody PageVO queryVO) {
+        String departmentId = queryVO.getId();
+        DepartmentEntity departmentEntity = departmentService.getByBusinessId(departmentId);
+
+        IPage<UserEntity> pageUser = userService.listDepartmentUsers(departmentId, queryVO);
+        long allUserCount = userService.countUserByDepartmentId(departmentId);
+        long deptCount = departmentService.countDepartmentByByDepartmentId(departmentId);
+
+        List<DepartmentUserVO> departmentUserVOList = pageUser.getRecords().stream()
+                .map(DepartmentUserVO::new)
+                .collect(Collectors.toList());
+        PageResult<DepartmentUserVO> pageResult = new PageResult(pageUser.getPages(), queryVO.getPageSize(), departmentUserVOList);
+
+        //人数（全部子部门人数）
+        pageResult.getExpand().put("allUserCount", allUserCount);
+        //子部门数量(直属)
+        pageResult.getExpand().put("deptCount", deptCount);
+        pageResult.getExpand().put("name", departmentEntity.getName());
+        return ResponseResult.success(pageResult);
+    }
+
+    @ApiOperation("移除部门下用户")
+    @PostMapping("/remove/user")
+    public ResponseResult removeUser(@RequestParam String departmentId,
+                                     @RequestBody List<String> userIds) throws MessageException {
+
+        if(CollectionUtils.isEmpty(userIds)){
+            throw new MessageException("请选择需要移除的用户！");
+        }
+        departmentService.removeUser(departmentId, userIds);
         return ResponseResult.success();
     }
 
-    @ApiOperation("部门下用户列表")
+    @ApiOperation("选择人员列表")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
-    @PostMapping("/users")
-    public ResponseResult<PageResult<DepartmentUserVO>> listDepartmentUsers(@RequestParam String departmentId,
-                                                                            @RequestBody PageVO pageVO) {
+    @PostMapping("/pick/user")
+    public ResponseResult<PageResult<UserSimpleVO>> listUser(@RequestBody PageVO pageVO) {
+        IPage<UserEntity> page;
+        LambdaUpdateWrapper<UserEntity> wrapper = null;
+        if(Objects.isNull(wrapper)){
+            page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()));
+        }else {
+            page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()), wrapper);
+        }
 
-        PageResult<DepartmentUserVO> pageResult = new PageResult();
-        //人数
-        pageResult.getExpand().put("userCount", 0);
-        //子部门数量
-        pageResult.getExpand().put("deptCount", 0);
+        List<UserSimpleVO> list = page.getRecords().stream()
+                .map(UserSimpleVO::new)
+                .collect(Collectors.toList());
+        PageResult<UserSimpleVO> pageResult = new PageResult(page.getPages(), page.getTotal(), list);
         return ResponseResult.success(pageResult);
+    }
+
+    @ApiOperation("部门人添加用户")
+    @PostMapping("/add/user")
+    public ResponseResult addUser(@RequestBody @Valid DepartmentAddUserVO departmentAddUserVO) throws MessageException {
+
+        departmentService.addUser(departmentAddUserVO.getDepartmentId(), departmentAddUserVO.getUserIds());
+
+        return ResponseResult.success();
+    }
+
+
+    private void checkDepartment(DepartmentVO departmentVO) throws MessageException {
+        if(StringUtils.isNotBlank(departmentVO.getParentDepartmentId())){
+            DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentVO.getParentDepartmentId());
+            if(parentDepartmentEntity == null){
+                throw new MessageException("未知的上级部门");
+            }
+        }
+        if(StringUtils.isNotBlank(departmentVO.getLeaderUserId())){
+            UserEntity userEntity = userService.getByBusinessId(departmentVO.getLeaderUserId());
+            if(userEntity == null){
+                throw new MessageException("未知的部门领导");
+            }
+            List<DepartmentEntity> departmentEntities = departmentService.listByUserId(userEntity.getUserId());
+            boolean flag = departmentEntities.stream().anyMatch(departmentEntity -> StringUtils.equals(departmentEntity.getDepartmentId(), departmentVO.getDepartmentId()));
+            if(!flag){
+                throw new MessageException("部门主管设置错误，部门主管必须是当前部门的直属人员!");
+            }
+        }
     }
 }

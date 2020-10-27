@@ -1,5 +1,6 @@
 package com.jkstack.dsm.common.handler;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
@@ -33,7 +34,7 @@ public class BaseMetaObjectFillHandler implements MetaObjectHandler {
         Class<?> clazz = metaObject.getOriginalObject().getClass();
         Field businessField = getTableBusinessField(clazz);
         if(businessField != null){
-            this.setFieldValByName(businessField.getName(), UUID.randomUUID().toString(), metaObject);
+            this.setFieldValByName(businessField.getName(), IdUtil.objectId(), metaObject);
         }
     }
 

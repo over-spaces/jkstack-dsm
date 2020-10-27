@@ -16,9 +16,13 @@ import com.jkstack.dsm.common.utils.JwtUtils;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.common.vo.SimpleDataVO;
 import com.jkstack.dsm.user.controller.vo.UserExcelVO;
+import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.controller.vo.UserVO;
 import com.jkstack.dsm.user.entity.UserEntity;
+import com.jkstack.dsm.user.entity.WorkGroupEntity;
+import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
+import com.jkstack.dsm.user.service.WorkGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -27,16 +31,12 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -51,6 +51,10 @@ public class UserController extends BaseController implements UserControllerFeig
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private WorkGroupService workGroupService;
     @Autowired
     private RedisCommand redisCommand;
 
@@ -82,9 +86,7 @@ public class UserController extends BaseController implements UserControllerFeig
         } else {
             //编辑
             userEntity = userService.getByBusinessId(userVO.getUserId());
-            if (userEntity == null) {
-                throw new MessageException("用户不存在!");
-            }
+            DsmAssert.isNull(userEntity,"用户不存在");
             userService.updateById(userEntity);
         }
         return new ResponseResult();
@@ -96,11 +98,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @GetMapping("/get")
     public ResponseResult<UserVO> get(@RequestParam String userId) throws MessageException {
         UserEntity userEntity = userService.getByBusinessId(userId);
-
-        if (Objects.isNull(userEntity)) {
-            throw new MessageException("用户不存在!");
-        }
-
+        DsmAssert.isNull(userEntity, "用户不存在");
         UserVO userVO = new UserVO(userEntity);
         return new ResponseResult<>(userVO);
     }
@@ -109,7 +107,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @PostMapping("/list")
     public ResponseResult<PageResult<UserVO>> list(@RequestBody PageVO pageVO) {
-        IPage<UserEntity> page;
+        Page<UserEntity> page;
         LambdaUpdateWrapper<UserEntity> wrapper = getLikeQueryWrapper(pageVO.getCondition());
         if(Objects.isNull(wrapper)){
             page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()));
@@ -117,31 +115,34 @@ public class UserController extends BaseController implements UserControllerFeig
             page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()), wrapper);
         }
 
-        List<UserVO> list = page.getRecords().stream()
-                .map(UserVO::new)
-                .collect(Collectors.toList());
+        List<String> userIds = page.getRecords().stream().map(UserEntity::getUserId).collect(Collectors.toList());
+        Map<String, List<WorkGroupEntity>> userWorkGroupMap = workGroupService.listByUserIds(userIds);
 
-        list.stream()
-                .forEach(user -> {
+        List<UserVO> list = page.getRecords().stream().map(UserVO::new)
+                .peek(user -> {
+                    //部门
                     user.getDepartmentList().add(new SimpleDataVO("1", "中国移动/上海杨浦总部/财务部"));
                     user.getDepartmentList().add(new SimpleDataVO("2", "中国移动/上海总部/上海杨浦分部/研发部"));
                     user.getDepartmentList().add(new SimpleDataVO("3", "人事部"));
 
-                    user.getWorkGroupList().add(new SimpleDataVO("1", "工作组1"));
-                    user.getWorkGroupList().add(new SimpleDataVO("2", "工作组2"));
-                    user.getWorkGroupList().add(new SimpleDataVO("3", "工作组3"));
-                });
+                    //工作组
+                    List<SimpleDataVO> userWorkGroupList = userWorkGroupMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()
+                            .map(workGroupEntity -> new SimpleDataVO(workGroupEntity.getWorkGroupId(), workGroupEntity.getName()))
+                            .collect(Collectors.toList());
+                    user.setWorkGroupList(userWorkGroupList);
+                })
+                .collect(Collectors.toList());
 
         PageResult<UserVO> pageResult = new PageResult(page.getCurrent(), page.getTotal(), list);
         return new ResponseResult<>(pageResult);
     }
 
+
+
     @ApiOperation("移除用户")
     @PostMapping("/delete")
     public ResponseResult delete(@RequestBody List<String> userIds) throws MessageException {
-        if (CollectionUtils.isEmpty(userIds)) {
-            throw new MessageException("请选择需要删除的用户列表!");
-        }
+        DsmAssert.isNull(userIds, "请选择需要删除的用户列表");
         userService.deleteByUserId(userIds);
         return new ResponseResult<>();
     }
@@ -206,9 +207,7 @@ public class UserController extends BaseController implements UserControllerFeig
 
     private UserEntity getByBusinessId(String userId) throws MessageException {
         UserEntity userEntity = userService.getByBusinessId(userId);
-        if (Objects.isNull(userEntity)) {
-            throw new MessageException("用户不存在!");
-        }
+        DsmAssert.isNull(userEntity, "用户不存在");
         return userEntity;
     }
 }

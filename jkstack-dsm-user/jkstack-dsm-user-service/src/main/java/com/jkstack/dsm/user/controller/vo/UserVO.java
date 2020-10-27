@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -23,18 +24,7 @@ import java.util.List;
 @Setter
 @ApiModel
 @NoArgsConstructor
-public class UserVO implements Serializable {
-
-    @ApiModelProperty(value = "用户ID", example = "1000")
-    private String userId;
-
-    @NotBlank(message="用户名不能为空")
-    @ApiModelProperty(value = "用户名", example = "lisi", required = true)
-    private String loginName;
-
-    @NotBlank(message="姓名不能为空")
-    @ApiModelProperty(value = "姓名", example = "李四", required = true)
-    private String name;
+public class UserVO extends UserSimpleVO {
 
     @ApiModelProperty(value = "工号", example = "JK0001")
     private String userNo;
@@ -76,23 +66,22 @@ public class UserVO implements Serializable {
 
 
     public UserVO(UserEntity userEntity){
-        this.userId = userEntity.getUserId();
+        super(userEntity);
         this.userNo = userEntity.getUserNo();
-        this.loginName = userEntity.getLoginName();
-        this.name = userEntity.getName();
         this.phone = userEntity.getPhone();
         this.email = userEntity.getEmail();
         this.wechat = userEntity.getWechat();
         this.status = userEntity.getStatus();
         this.statusText = userEntity.getStatus() != null ? userEntity.getStatus().getText() : null;
+        this.position = userEntity.getPosition();
         this.roleId = "default_role";
         this.roleName = "默认角色";
         roleList = Lists.newArrayList(new SimpleDataVO("default_role", "默认角色"));
     }
 
     public UserEntity toUserEntity(UserEntity userEntity){
-        userEntity.setLoginName(this.loginName);
-        userEntity.setName(this.name);
+        userEntity.setLoginName(super.getLoginName());
+        userEntity.setName(super.getName());
         userEntity.setUserNo(this.userNo);
         userEntity.setPhone(this.phone);
         userEntity.setEmail(this.email);

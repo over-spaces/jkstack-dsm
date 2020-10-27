@@ -1,5 +1,6 @@
 package com.jkstack.dsm.common.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -70,6 +71,7 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
         wrapper.eq(StringUtil.convertCamelToUnder(field.getName()), businessId);
         baseMapper.delete(wrapper);
     }
+
 
     private Field getBusinessIdField(){
         Field[] fields = entityClass.getDeclaredFields();

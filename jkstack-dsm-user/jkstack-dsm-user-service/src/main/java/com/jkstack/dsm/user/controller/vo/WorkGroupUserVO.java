@@ -1,5 +1,6 @@
 package com.jkstack.dsm.user.controller.vo;
 
+import com.jkstack.dsm.common.vo.SimpleDataVO;
 import com.jkstack.dsm.user.entity.UserEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,15 +8,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author lifang
- * @since 2020/10/23
+ * @since 2020/10/27
  */
 @Setter
 @Getter
 @ApiModel
-public class DepartmentUserVO implements Serializable {
+public class WorkGroupUserVO implements Serializable {
 
     @ApiModelProperty(value = "用户ID")
     private String userId;
@@ -32,15 +34,17 @@ public class DepartmentUserVO implements Serializable {
     @ApiModelProperty(value = "电话")
     private String phone;
 
-    @ApiModelProperty(value = "职位")
-    private String position;
+    @ApiModelProperty(value = "部门")
+    private List<SimpleDataVO> departmentList;
 
-    public DepartmentUserVO(UserEntity userEntity) {
+    @ApiModelProperty(value = "工作组范围")
+    private List<SimpleDataVO> workGroupScopeList;
+
+    public WorkGroupUserVO(UserEntity userEntity) {
         this.userId = userEntity.getUserId();
         this.loginName = userEntity.getLoginName();
         this.name = userEntity.getName();
         this.userNo = userEntity.getUserNo();
         this.phone = userEntity.getPhone();
-        this.position = userEntity.getPosition();
     }
 }
