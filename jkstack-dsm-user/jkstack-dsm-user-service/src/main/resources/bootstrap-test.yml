@@ -1,6 +1,6 @@
 
 nacos:
-  server-addr: 192.168.2.23:8848
+  server-addr: 192.168.3.23:8848
   namespace: jkstack-dsm
 
 
