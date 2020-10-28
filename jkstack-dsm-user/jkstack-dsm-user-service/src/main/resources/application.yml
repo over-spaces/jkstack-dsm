@@ -12,9 +12,6 @@ swagger:
   title: JKStack-DSM「用户管理」接口文档
   description: JKStack-DSM「用户管理」接口文档
 
-mybatis-plus:
-  mapper-locations: classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml
-
     # actable的配置信息
 actable:
   table:

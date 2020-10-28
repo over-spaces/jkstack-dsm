@@ -3,6 +3,7 @@ package com.jkstack.dsm.user.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jkstack.dsm.common.service.CommonService;
 import com.jkstack.dsm.common.vo.PageVO;
+import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.entity.UserEntity;
 
 import java.util.List;
@@ -47,9 +48,18 @@ public interface UserService extends CommonService<UserEntity> {
     IPage<UserEntity> listDepartmentUsers(String departmentId, PageVO pageVO);
 
     /**
+     * 获取指定部门下全部的用户列表（包含子部门）
+     * @param departmentId 部门ID
+     * @return 部门下全部用户列表
+     */
+    List<UserSimpleVO> listAllByDepartmentId(String departmentId);
+
+    /**
      * 统计指定部门下用户数量
      * @param departmentId 部门ID
      * @return 用户数量
      */
     long countUserByDepartmentId(String departmentId);
+
+    IPage<UserEntity> pageByNotDepartmentId(String departmentId, PageVO pageVO);
 }

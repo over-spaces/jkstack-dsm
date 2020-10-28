@@ -1,39 +1,30 @@
 package com.jkstack.dsm.user.controller;
 
-import cn.hutool.json.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.common.BaseController;
 import com.jkstack.dsm.common.MessageException;
 import com.jkstack.dsm.common.PageResult;
 import com.jkstack.dsm.common.ResponseResult;
 import com.jkstack.dsm.common.vo.PageVO;
-import com.jkstack.dsm.common.vo.SimpleTreeDataVO;
 import com.jkstack.dsm.user.controller.vo.*;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.LRTreeService;
 import com.jkstack.dsm.user.service.UserService;
-import io.jsonwebtoken.lang.Assert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -66,7 +57,7 @@ public class DepartmentController extends BaseController {
         List<DepartmentTreeVO> departmentTreeList = null;
         if(StringUtils.isBlank(departmentId)){
             //未指定部门ID，默认加载deep<=3的部门树
-            departmentTreeList = departmentService.listDepartmentTreeByDeepLE(3);
+            departmentTreeList = departmentService.listDepartmentTreeByDeepLE(1);
         }else{
             //指定部门ID，加载下级部门
             List<DepartmentEntity> departmentEntities = departmentService.listByParentDepartmentId(departmentId);
@@ -80,7 +71,7 @@ public class DepartmentController extends BaseController {
 
     @ApiOperation(value = "部门排序")
     @PostMapping("/tree/sort")
-    public ResponseResult sort(@RequestBody List<SimpleTreeDataVO> list){
+    public ResponseResult sort(@RequestBody DepartmentDropSortVO departmentDropSortVO){
         return ResponseResult.success();
     }
 
@@ -159,17 +150,12 @@ public class DepartmentController extends BaseController {
         return ResponseResult.success();
     }
 
-    @ApiOperation("选择人员列表")
+
+    @ApiOperation("部门添加成员列表")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @PostMapping("/pick/user")
     public ResponseResult<PageResult<UserSimpleVO>> listUser(@RequestBody PageVO pageVO) {
-        IPage<UserEntity> page;
-        LambdaUpdateWrapper<UserEntity> wrapper = null;
-        if(Objects.isNull(wrapper)){
-            page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()));
-        }else {
-            page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()), wrapper);
-        }
+        IPage<UserEntity> page = userService.pageByNotDepartmentId(pageVO.getId(), pageVO);
 
         List<UserSimpleVO> list = page.getRecords().stream()
                 .map(UserSimpleVO::new)
@@ -177,6 +163,7 @@ public class DepartmentController extends BaseController {
         PageResult<UserSimpleVO> pageResult = new PageResult(page.getPages(), page.getTotal(), list);
         return ResponseResult.success(pageResult);
     }
+
 
     @ApiOperation("部门人添加用户")
     @PostMapping("/add/user")
@@ -186,6 +173,15 @@ public class DepartmentController extends BaseController {
 
         return ResponseResult.success();
     }
+
+
+    @ApiOperation("部门下成员列表")
+    @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
+    @PostMapping("/members")
+    public ResponseResult<List<UserSimpleVO>> listUser(@RequestParam String departmentId) {
+        return ResponseResult.success(userService.listAllByDepartmentId(departmentId));
+    }
+
 
 
     private void checkDepartment(DepartmentVO departmentVO) throws MessageException {

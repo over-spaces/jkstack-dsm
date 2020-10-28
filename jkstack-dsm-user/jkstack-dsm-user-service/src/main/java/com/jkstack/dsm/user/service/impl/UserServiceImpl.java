@@ -1,5 +1,7 @@
 package com.jkstack.dsm.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,6 +9,7 @@ import com.jkstack.dsm.common.service.CommonServiceImpl;
 import com.jkstack.dsm.common.utils.MD5Util;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.config.UserConfigProperties;
+import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.mapper.UserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
@@ -14,10 +17,12 @@ import com.jkstack.dsm.user.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> implements UserService {
 
     @Autowired
@@ -91,6 +96,17 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     }
 
     /**
+     * 获取指定部门下全部的用户列表（包含子部门）
+     *
+     * @param departmentId 部门ID
+     * @return 部门下全部用户列表
+     */
+    @Override
+    public List<UserSimpleVO> listAllByDepartmentId(String departmentId) {
+        return userMapper.listAllByDepartmentId(departmentId);
+    }
+
+    /**
      * 统计指定部门下用户数量
      *
      * @param departmentId 部门ID
@@ -99,5 +115,14 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     @Override
     public long countUserByDepartmentId(String departmentId) {
         return departmentService.listChildrenDepartmentIds(departmentId).size();
+    }
+
+    @Override
+    public IPage<UserEntity> pageByNotDepartmentId(String departmentId, PageVO pageVO) {
+        if(StringUtils.isBlank(pageVO.getCondition())){
+            return userMapper.pageByNotDepartmentId(departmentId, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+        }else{
+            return userMapper.pageByNotDepartmentIdAndLike(departmentId, pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.jkstack.dsm.common.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ import java.io.Serializable;
 @ApiModel
 public class PageVO implements Serializable {
 
-    @ApiModelProperty(value = "业务ID", example = "1")
+    @ApiModelProperty(value = "业务ID", example = "")
     private String id;
 
     /**
