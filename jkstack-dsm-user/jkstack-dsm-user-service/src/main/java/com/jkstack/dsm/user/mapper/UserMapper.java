@@ -23,11 +23,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     @Select("SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_user_department WHERE department_id='${departmentId}')")
     IPage<UserEntity> pageByNotDepartmentId(String departmentId, IPage<UserEntity> page);
 
-    @Select("SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_user_department " +
-            "WHERE department_id='${departmentId}') AND (name LIKE '%${condition}%' OR login_name LIKE '%${condition}%' OR user_no LIKE '%${condition}%')")
     IPage<UserEntity> pageByNotDepartmentIdAndLike(String departmentId, String condition, IPage<UserEntity> page);
 
-
     List<UserSimpleVO> listAllByDepartmentId(String departmentId);
-
 }

@@ -29,4 +29,10 @@
             WHERE dept.department_id='${departmentId}'
     </select>
 
+    <select id="pageByNotDepartmentIdAndLike" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_user_department
+            WHERE department_id='${departmentId}')
+            AND (name LIKE '%${condition}%' OR login_name LIKE '%${condition}%' OR user_no LIKE '%${condition}%')
+    </select>
+
 </mapper>
