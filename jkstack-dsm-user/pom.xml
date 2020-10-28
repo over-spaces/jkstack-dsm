@@ -11,7 +11,7 @@
 	<artifactId>jkstack-dsm-user</artifactId>
 	<name>jkstack-dsm-user</name>
 	<description>JKStack-DSM 用户模块</description>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<modules>
 		<module>jkstack-dsm-user-feign</module>
