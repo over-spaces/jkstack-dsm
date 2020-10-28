@@ -238,6 +238,16 @@
         </root>
     </springProfile>
 
+    <springProfile name="test">
+        <root level="info">
+            <appender-ref ref="CONSOLE_DEBUG"/>
+            <appender-ref ref="DEBUG_FILE"/>
+            <appender-ref ref="INFO_FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+        </root>
+    </springProfile>
+
     <springProfile name="llq">
         <root level="info">
             <appender-ref ref="CONSOLE"/>
