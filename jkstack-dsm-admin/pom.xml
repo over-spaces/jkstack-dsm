@@ -12,7 +12,7 @@
 	<artifactId>jkstack-dsm-admin</artifactId>
 	<version>1.0.0</version>
 	<name>jkstack-dsm-admin</name>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<description>DSM-Admin for Spring Boot</description>
 

@@ -177,7 +177,7 @@ public class DepartmentController extends BaseController {
 
     @ApiOperation("部门下成员列表")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
-    @PostMapping("/members")
+    @GetMapping("/members")
     public ResponseResult<List<UserSimpleVO>> listUser(@RequestParam String departmentId) {
         return ResponseResult.success(userService.listAllByDepartmentId(departmentId));
     }
