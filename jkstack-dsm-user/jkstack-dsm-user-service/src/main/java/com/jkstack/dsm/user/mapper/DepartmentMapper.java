@@ -16,18 +16,13 @@ import java.util.Map;
  */
 public interface DepartmentMapper extends BaseMapper<DepartmentEntity> {
 
-    @Select("SELECT dept.* FROM dsm_department dept " +
-            " LEFT JOIN dsm_user_department d ON dept.department_id=d.department_id" +
-            " WHERE d.user_id='${userId}'")
     List<DepartmentEntity> listByUserId(String userId);
 
 
     /**
      * 查询部门下用户数量
      */
-    @Select("SELECT d.department_id, count(d.user_id) AS count FROM dsm_user_department d GROUP BY d.department_id")
     List<Map<String, Long>> listDeptUserNumber();
 
-    @Select("SELECT d.department_id AS count FROM dsm_department d WHERE d.lft>#{lft} AND d.rgt<#{rgt}")
-    List<String> selectChildrenDepartmentIds(int lft, int rgt);
+    List<String> listChildrenDepartmentIds(int lft, int rgt);
 }

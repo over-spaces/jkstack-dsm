@@ -17,11 +17,18 @@
         <result property="password" column="password" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
-        <result property="weixin" column="weixin" jdbcType="VARCHAR"/>
         <result property="wechat" column="wechat" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="position" column="position" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <select id="listDepartmentUsers" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT user.* FROM dsm_user user LEFT JOIN dsm_user_department d ON user.user_id=d.user_id WHERE d.department_id='${departmentId}'
+    </select>
+
+    <select id="pageByNotDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_user_department WHERE department_id='${departmentId}')
+    </select>
 
     <select id="listAllByDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
         SELECT user.user_id, user.name,user.login_name FROM dsm_user user

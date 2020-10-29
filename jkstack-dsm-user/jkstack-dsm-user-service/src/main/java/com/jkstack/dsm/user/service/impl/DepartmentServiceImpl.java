@@ -124,7 +124,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         if (departmentEntity == null) {
             return Collections.emptyList();
         }
-        return departmentMapper.selectChildrenDepartmentIds(departmentEntity.getLft(), departmentEntity.getRgt());
+        return departmentMapper.listChildrenDepartmentIds(departmentEntity.getLft(), departmentEntity.getRgt());
     }
 
     /**

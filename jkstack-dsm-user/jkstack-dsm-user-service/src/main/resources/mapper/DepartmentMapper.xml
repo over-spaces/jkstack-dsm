@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jkstack.dsm.user.mapper.DepartmentMapper">
+
+    <resultMap type="com.jkstack.dsm.user.entity.DepartmentEntity" id="DepartmentMap">
+        <result property="departmentId" column="department_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="parentDepartmentId" column="parent_department_id" jdbcType="VARCHAR"/>
+        <result property="deep" column="deep" jdbcType="INTEGER"/>
+        <result property="sort" column="sort" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="tenantId" column="tenant_id" jdbcType="VARCHAR"/>
+        <result property="companyId" column="company_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="OTHER"/>
+        <result property="creatorId" column="creator_id" jdbcType="VARCHAR"/>
+        <result property="modifyTime" column="modify_time" jdbcType="OTHER"/>
+        <result property="modifierId" column="modifier_id" jdbcType="VARCHAR"/>
+        <result property="rgt" column="rgt" jdbcType="INTEGER"/>
+        <result property="lft" column="lft" jdbcType="INTEGER"/>
+        <result property="leaderUserId" column="leader_user_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="listByUserId" parameterType="string" resultType="com.jkstack.dsm.user.entity.DepartmentEntity">
+        SELECT dept.* FROM dsm_department dept
+            LEFT JOIN dsm_user_department d ON dept.department_id=d.department_id
+            WHERE d.user_id='${userId}'
+    </select>
+
+    <select id="listDeptUserNumber" resultType="java.util.Map">
+        SELECT d.department_id, count(d.user_id) AS count FROM dsm_user_department d GROUP BY d.department_id
+    </select>
+
+    <select id="listChildrenDepartmentIds" parameterType="int" resultType="java.lang.String">
+        SELECT d.department_id AS count FROM dsm_department d WHERE d.lft &gt; ${lft} AND d.rgt &lt; ${rgt}
+    </select>
+
+</mapper>
