@@ -3,38 +3,34 @@ package com.jkstack.dsm.user.service.impl;
 import com.jkstack.dsm.common.lr.LRNode;
 import com.jkstack.dsm.common.lr.LRNodeTree;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
-import com.jkstack.dsm.user.mapper.LRTreeDao;
-import com.jkstack.dsm.user.mapper.LRTreeDepartmentDaoImpl;
-import com.jkstack.dsm.user.service.LRTreeService;
-import org.apache.commons.compress.utils.Lists;
+import com.jkstack.dsm.user.mapper.DepartmentMapper;
+import com.jkstack.dsm.user.service.LrTreeService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * @author lifang
- * @since 2020/10/26
+ * @since 2020/10/29
  */
 @Service
-public class LRTreeServiceImpl implements LRTreeService {
+@Transactional(rollbackFor = Exception.class)
+public class LrTreeServiceImpl implements LrTreeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LRTreeServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(LrTreeServiceImpl.class);
 
     @Autowired
-    private LRTreeDepartmentDaoImpl lrTreeDepartmentDao;
-
-    public LRTreeDao getLRTreeDAO(Class cls){
-        if(cls == DepartmentEntity.class) {
-            return lrTreeDepartmentDao;
-        }
-        return null;
-    }
+    private DepartmentMapper departmentMapper;
+    @Autowired
+    private DepartmentServiceImpl departmentService;
 
     /**
      * 一次性批量更新指定类的所有节点的L/R值。
@@ -42,12 +38,12 @@ public class LRTreeServiceImpl implements LRTreeService {
     @Override
     public void updateAllNodeLR(Class cls) {
         //1.采用全部加载到内存中的方式，应该会快一些。
-        LRNode rootNode = getLRTreeDAO(cls).getVirtualRootNode();
+        LRNode rootNode = getVirtualRootNode();
         rootNode.setLft(1);
         rootNode.setRgt(2);
         rootNode.setDeep(0);
 
-        Collection<LRNode> allNodes = getLRTreeDAO(cls).fullLoad();
+        Collection<LRNode> allNodes = listAllNode();
 
         if(CollectionUtils.isEmpty(allNodes)) {
             return;
@@ -70,11 +66,52 @@ public class LRTreeServiceImpl implements LRTreeService {
         //3. 计算所有L/R值
         root.setLft(1);
         root.setDeep(0);
-        updateTreeNodeLR(root);
+        calcNodeLR(root);
 
         //4. 批量更新到数据库中
-        getLRTreeDAO(cls).batchUpdate(tree2list(root));
+        // getLRTreeDAO(cls).batchUpdate(tree2list(root));
+        batchUpdateNodeLR(tree2list(root));
         logger.debug("finished store into db.");
+    }
+
+
+    public void batchUpdateNodeLR(List<LRNode> allNodeList){
+        List<DepartmentEntity> departmentEntities = allNodeList.stream()
+                .filter(node -> StringUtils.isNotBlank(node.getId()))
+                .map(node -> {
+                    DepartmentEntity departmentEntity = new DepartmentEntity();
+                    departmentEntity.setDepartmentId(node.getId());
+                    departmentEntity.setDeep(node.getDeep());
+                    departmentEntity.setRgt(node.getRgt());
+                    departmentEntity.setLft(node.getLft());
+                    departmentEntity.setFullPathName(node.getFullPathName());
+                    return departmentEntity;
+                })
+                .collect(Collectors.toList());
+        departmentService.updateBatchByBusinessId(departmentEntities, 500);
+    }
+
+    public Collection<LRNode> listAllNode() {
+        List<LRNode> allNodes = departmentMapper.listAllNode();
+        Map<String, LRNode> nodeMap = allNodes.stream().collect(Collectors.toMap(LRNode::getId, Function.identity()));
+
+        Collection<LRNode> nodes = nodeMap.values();
+        nodes.stream()
+                .filter(node -> StringUtils.isNotBlank(node.getParentId()))
+                .forEach(node -> {
+                    node.setParentNode(nodeMap.get(node.getParentId()));
+                });
+        return nodes;
+    }
+
+    private LRNode getVirtualRootNode(){
+        Integer right = departmentMapper.getMaxRightValue();
+        LRNode node = new LRNode();
+        right = Math.max(Optional.ofNullable(right).orElse(0), 1);
+        node.setRgt(right + 1);
+        node.setDeep(0);
+        node.setLft(1);
+        return node;
     }
 
 
@@ -131,12 +168,12 @@ public class LRTreeServiceImpl implements LRTreeService {
         return null;
     }
 
-    protected int updateTreeNodeLR(LRNodeTree lrNodeTree) {
+    protected int calcNodeLR(LRNodeTree lrNodeTree) {
         int seed = lrNodeTree.getLft();
         for (LRNodeTree lrNodeTreeChild : lrNodeTree.getChildren()) {
             seed++;
             lrNodeTreeChild.setLft(seed);
-            seed = updateTreeNodeLR(lrNodeTreeChild);
+            seed = calcNodeLR(lrNodeTreeChild);
         }
         seed++;
         lrNodeTree.setRgt(seed);
@@ -152,7 +189,6 @@ public class LRTreeServiceImpl implements LRTreeService {
         if (!lrNodeTree.getChildren().isEmpty()) {
             allLRNodes.addAll(lrNodeTree.getChildren());
         }
-
         for (LRNodeTree lrNodeTreeChild : lrNodeTree.getChildren()) {
             if (!lrNodeTreeChild.getChildren().isEmpty()) {
                 allLRNodes.addAll(tree2list(lrNodeTreeChild));
@@ -162,11 +198,9 @@ public class LRTreeServiceImpl implements LRTreeService {
     }
 
     protected LRNodeTree findParentNode(String parentId, Collection<LRNodeTree> treeNodes) {
-        for (LRNodeTree lrNodeTree : treeNodes) {
-            if (Objects.equals(parentId, lrNodeTree.getId())) {
-                return lrNodeTree;
-            }
-        }
-        return null;
+        return treeNodes.stream()
+                .filter(node -> StringUtils.equals(parentId, node.getId()))
+                .findFirst()
+                .orElse(null);
     }
 }

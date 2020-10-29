@@ -28,4 +28,11 @@ public interface CommonService<T> extends IService<T> {
      * @param businessId 表的业务ID，非主键ID
      */
     void removeByBusinessId(String businessId);
+
+    /**
+     * 根据业务ID更新
+     * @param entityList 实体类列表
+     * @param batchSize 批量跟新数量
+     */
+    boolean updateBatchByBusinessId(Collection<T> entityList, int batchSize);
 }

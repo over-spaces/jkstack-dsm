@@ -34,4 +34,12 @@
         SELECT d.department_id AS count FROM dsm_department d WHERE d.lft &gt; ${lft} AND d.rgt &lt; ${rgt}
     </select>
 
+    <select id="getMaxRightValue" resultType="int">
+        select max(rgt) from dsm_department
+    </select>
+
+    <select id="listAllNode" resultType="com.jkstack.dsm.common.lr.LRNode">
+        SELECT department_id AS id, parent_department_id AS parentId, name FROM dsm_department ORDER BY parent_department_id
+    </select>
+
 </mapper>

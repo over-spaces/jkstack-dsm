@@ -88,6 +88,7 @@ public class UserController extends BaseController implements UserControllerFeig
             //编辑
             userEntity = userService.getByBusinessId(userVO.getUserId());
             DsmAssert.isNull(userEntity,"用户不存在");
+            userEntity = userVO.toUserEntity(userEntity);
             userService.updateById(userEntity);
         }
         return new ResponseResult();
@@ -154,7 +155,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @GetMapping("/template/download")
     public ResponseResult downloadTemplate(HttpServletResponse response) {
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("导入用户信息", "导入用户信息"), UserExcelVO.class, Lists.newArrayList());
-        downloadExcel("导入用户信息.xlsx", workbook, response);
+        downloadExcel("导入用户信息.xls", workbook, response);
         return new ResponseResult<>();
     }
 

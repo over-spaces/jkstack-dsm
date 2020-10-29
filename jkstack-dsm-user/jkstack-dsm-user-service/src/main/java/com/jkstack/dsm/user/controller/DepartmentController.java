@@ -1,16 +1,13 @@
 package com.jkstack.dsm.user.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.jkstack.dsm.common.BaseController;
-import com.jkstack.dsm.common.MessageException;
-import com.jkstack.dsm.common.PageResult;
-import com.jkstack.dsm.common.ResponseResult;
+import com.jkstack.dsm.common.*;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.controller.vo.*;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.service.DepartmentService;
-import com.jkstack.dsm.user.service.LRTreeService;
+import com.jkstack.dsm.user.service.LrTreeService;
 import com.jkstack.dsm.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,7 +38,7 @@ public class DepartmentController extends BaseController {
     @Autowired
     private UserService userService;
     @Autowired
-    private LRTreeService lrTreeService;
+    private LrTreeService lrTreeService;
 
     @ApiOperation("更新部门LR算法")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
@@ -76,6 +73,33 @@ public class DepartmentController extends BaseController {
     }
 
     @ApiOperation(value = "新建/编辑部门")
+    @PostMapping("/get")
+    public ResponseResult<DepartmentVO> get(@RequestParam String departmentId) throws MessageException {
+
+        DepartmentEntity departmentEntity = departmentService.getByBusinessId(departmentId);
+
+        DsmAssert.isNull(departmentEntity, "部门不存在");
+
+        DepartmentVO departmentVO = new DepartmentVO();
+        departmentVO.setDepartmentId(departmentEntity.getDepartmentId());
+        departmentVO.setName(departmentEntity.getName());
+
+        DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentEntity.getParentDepartmentId());
+        if(parentDepartmentEntity != null){
+            departmentVO.setParentDepartmentId(parentDepartmentEntity.getDepartmentId());
+            departmentVO.setParentDepartmentName(parentDepartmentEntity.getParentDepartmentName());
+        }
+
+        UserEntity userEntity = userService.getByBusinessId(departmentEntity.getLeaderUserId());
+        if(userEntity != null){
+            departmentVO.setLeaderUserId(userEntity.getUserId());
+            departmentVO.setLeaderUserName(userEntity.getName());
+        }
+        return ResponseResult.success(departmentVO);
+    }
+
+
+    @ApiOperation(value = "新建/编辑部门")
     @PostMapping("/save")
     public ResponseResult save(@RequestBody @Valid DepartmentVO departmentVO) throws MessageException {
         checkDepartment(departmentVO);
@@ -87,9 +111,7 @@ public class DepartmentController extends BaseController {
         }else{
             //更新
             departmentEntity = departmentService.getByBusinessId(departmentVO.getDepartmentId());
-            if(departmentEntity == null){
-                throw new MessageException("部门不存在");
-            }
+            DsmAssert.isNull(departmentEntity, "部门不存在");
         }
         departmentEntity.setName(departmentVO.getName());
         departmentEntity.setParentDepartmentId(departmentVO.getParentDepartmentId());
