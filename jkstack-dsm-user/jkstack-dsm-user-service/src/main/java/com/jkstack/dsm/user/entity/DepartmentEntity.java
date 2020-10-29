@@ -34,10 +34,6 @@ public class DepartmentEntity extends LRTreeNodeEntity{
     @Index(value = "idx_parent_department_id")
     private String parentDepartmentId;
 
-    @Column(length = 64, comment = "父部门名称")
-    @Index(value = "idx_parent_department_id")
-    private String parentDepartmentName;
-
     @Column(length = 64, comment = "部门主管")
     private String leaderUserId;
 

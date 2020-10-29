@@ -167,4 +167,16 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         }
         return result;
     }
+
+    /**
+     * 按名称模糊查询部门列表
+     *
+     * @param name 名称
+     */
+    @Override
+    public List<DepartmentEntity> listByNameLike(String name) {
+        QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
+        wrapper.lambda().like(DepartmentEntity::getName, name);
+        return departmentMapper.selectList(wrapper);
+    }
 }

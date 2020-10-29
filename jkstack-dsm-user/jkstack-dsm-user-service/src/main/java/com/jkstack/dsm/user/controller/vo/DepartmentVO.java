@@ -27,6 +27,9 @@ public class DepartmentVO implements Serializable {
     @ApiModelProperty(value = "部门名称")
     private String name;
 
+    @ApiModelProperty(value = "部门名称路径")
+    private String fullPathName;
+
     @ApiModelProperty(value = "父部门ID")
     private String parentDepartmentId;
 
@@ -38,4 +41,10 @@ public class DepartmentVO implements Serializable {
 
     @ApiModelProperty(value = "部门主管名称")
     private String leaderUserName;
+
+    public DepartmentVO(DepartmentEntity entity) {
+        this.departmentId = entity.getDepartmentId();
+        this.name = entity.getName();
+        this.fullPathName = entity.getFullPathName();
+    }
 }

@@ -68,4 +68,10 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
      * @return
      */
     Map<String, List<DepartmentEntity>> listByUsers(List<String> userIds);
+
+    /**
+     * 按名称模糊查询部门列表
+     * @param name 名称
+     */
+    List<DepartmentEntity> listByNameLike(String name);
 }

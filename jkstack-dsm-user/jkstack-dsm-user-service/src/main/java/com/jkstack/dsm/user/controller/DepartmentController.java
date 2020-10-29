@@ -72,8 +72,8 @@ public class DepartmentController extends BaseController {
         return ResponseResult.success();
     }
 
-    @ApiOperation(value = "新建/编辑部门")
-    @PostMapping("/get")
+    @ApiOperation(value = "部门明细信息")
+    @GetMapping("/get")
     public ResponseResult<DepartmentVO> get(@RequestParam String departmentId) throws MessageException {
 
         DepartmentEntity departmentEntity = departmentService.getByBusinessId(departmentId);
@@ -87,7 +87,7 @@ public class DepartmentController extends BaseController {
         DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentEntity.getParentDepartmentId());
         if(parentDepartmentEntity != null){
             departmentVO.setParentDepartmentId(parentDepartmentEntity.getDepartmentId());
-            departmentVO.setParentDepartmentName(parentDepartmentEntity.getParentDepartmentName());
+            departmentVO.setParentDepartmentName(parentDepartmentEntity.getName());
         }
 
         UserEntity userEntity = userService.getByBusinessId(departmentEntity.getLeaderUserId());
@@ -98,6 +98,15 @@ public class DepartmentController extends BaseController {
         return ResponseResult.success(departmentVO);
     }
 
+    @ApiOperation(value = "按部门名称模糊查询")
+    @GetMapping("/name/query")
+    public ResponseResult<List<DepartmentVO>> queryNameLike(@RequestParam String name) throws MessageException {
+        List<DepartmentEntity> departmentEntities = departmentService.listByNameLike(name);
+        List<DepartmentVO> result = departmentEntities.stream()
+                .map(DepartmentVO::new)
+                .collect(Collectors.toList());
+        return ResponseResult.success(result);
+    }
 
     @ApiOperation(value = "新建/编辑部门")
     @PostMapping("/save")
