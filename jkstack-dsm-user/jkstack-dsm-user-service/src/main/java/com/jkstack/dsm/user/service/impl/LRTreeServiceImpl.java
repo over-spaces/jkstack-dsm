@@ -4,7 +4,7 @@ import com.jkstack.dsm.common.lr.LRNode;
 import com.jkstack.dsm.common.lr.LRNodeTree;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.mapper.DepartmentMapper;
-import com.jkstack.dsm.user.service.LrTreeService;
+import com.jkstack.dsm.user.service.LRTreeService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class LrTreeServiceImpl implements LrTreeService {
+public class LRTreeServiceImpl implements LRTreeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LrTreeServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(LRTreeServiceImpl.class);
 
     @Autowired
     private DepartmentMapper departmentMapper;

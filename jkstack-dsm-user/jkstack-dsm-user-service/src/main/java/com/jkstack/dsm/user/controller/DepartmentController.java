@@ -7,7 +7,7 @@ import com.jkstack.dsm.user.controller.vo.*;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.service.DepartmentService;
-import com.jkstack.dsm.user.service.LrTreeService;
+import com.jkstack.dsm.user.service.LRTreeService;
 import com.jkstack.dsm.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +38,7 @@ public class DepartmentController extends BaseController {
     @Autowired
     private UserService userService;
     @Autowired
-    private LrTreeService lrTreeService;
+    private LRTreeService lrTreeService;
 
     @ApiOperation("更新部门LR算法")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
