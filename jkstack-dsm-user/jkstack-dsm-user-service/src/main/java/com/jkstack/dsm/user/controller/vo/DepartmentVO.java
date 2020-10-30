@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * @author lifang
@@ -36,15 +37,24 @@ public class DepartmentVO implements Serializable {
     @ApiModelProperty(value = "父部门名称")
     private String parentDepartmentName;
 
+    @ApiModelProperty(value = "上级部门名称路径")
+    private String parentFullPathName;
+
     @ApiModelProperty(value = "部门主管ID")
     private String leaderUserId;
 
     @ApiModelProperty(value = "部门主管名称")
     private String leaderUserName;
 
+    @ApiModelProperty(value = "是否叶子节点，判断是否允许删除")
+    private boolean leaf;
+
     public DepartmentVO(DepartmentEntity entity) {
         this.departmentId = entity.getDepartmentId();
         this.name = entity.getName();
         this.fullPathName = entity.getFullPathName();
+        Integer lft = Optional.ofNullable(entity.getLft()).orElse(0);
+        Integer rgt = Optional.ofNullable(entity.getRgt()).orElse(0);
+        this.leaf = (Math.max(0, rgt - lft - 1) / 2) <= 0;
     }
 }

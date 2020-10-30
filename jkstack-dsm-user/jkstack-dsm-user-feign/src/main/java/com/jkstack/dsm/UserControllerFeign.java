@@ -9,4 +9,5 @@ import org.springframework.cloud.openfeign.FeignClient;
  */
 @FeignClient(value = "dsm-user")
 public interface UserControllerFeign {
+
 }

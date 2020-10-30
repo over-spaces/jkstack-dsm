@@ -80,14 +80,13 @@ public class DepartmentController extends BaseController {
 
         Assert.isNull(departmentEntity, "部门不存在");
 
-        DepartmentVO departmentVO = new DepartmentVO();
-        departmentVO.setDepartmentId(departmentEntity.getDepartmentId());
-        departmentVO.setName(departmentEntity.getName());
+        DepartmentVO departmentVO = new DepartmentVO(departmentEntity);
 
         DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentEntity.getParentDepartmentId());
         if(parentDepartmentEntity != null){
             departmentVO.setParentDepartmentId(parentDepartmentEntity.getDepartmentId());
             departmentVO.setParentDepartmentName(parentDepartmentEntity.getName());
+            departmentVO.setParentFullPathName(parentDepartmentEntity.getFullPathName());
         }
 
         UserEntity userEntity = userService.getByBusinessId(departmentEntity.getLeaderUserId());
@@ -107,6 +106,7 @@ public class DepartmentController extends BaseController {
                 .collect(Collectors.toList());
         return ResponseResult.success(result);
     }
+
 
     @ApiOperation(value = "新建/编辑部门")
     @PostMapping("/save")
@@ -171,6 +171,16 @@ public class DepartmentController extends BaseController {
         pageResult.getExpand().put("deptCount", deptCount);
         pageResult.getExpand().put("name", departmentEntity.getName());
         return ResponseResult.success(pageResult);
+    }
+
+    @ApiOperation("删除部门")
+    @GetMapping("/delete")
+    public ResponseResult delete(@RequestParam String departmentId){
+        DepartmentEntity departmentEntity = departmentService.getByBusinessId(departmentId);
+
+
+
+        return ResponseResult.success();
     }
 
     @ApiOperation("移除部门下用户")
