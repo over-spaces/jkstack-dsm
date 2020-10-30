@@ -41,6 +41,7 @@ public class UserVO extends UserSimpleVO {
     private String wechat;
 
     @ApiModelProperty(value = "职位", example = "客户经理")
+    @Length(max = 60, message = "职位不合法")
     private String position;
 
     @ApiModelProperty(value = "用户状态", example = "IN_SERVICE", required = true)

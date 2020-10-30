@@ -21,7 +21,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserSimpleVO implements Serializable {
 
-    @ApiModelProperty(value = "用户ID", example = "1000")
+    @ApiModelProperty(value = "用户ID", example = "")
     private String userId;
 
     @NotBlank(message="用户名不能为空")
@@ -30,7 +30,7 @@ public class UserSimpleVO implements Serializable {
     private String loginName;
 
     @NotBlank(message="姓名不能为空")
-    @Length(max = 60, message = "用户名不合法")
+    @Length(max = 60, message = "姓名不合法")
     @ApiModelProperty(value = "姓名", example = "李四", required = true)
     private String name;
 

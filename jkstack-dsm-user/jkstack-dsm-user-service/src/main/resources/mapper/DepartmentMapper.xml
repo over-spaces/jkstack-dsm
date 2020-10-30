@@ -35,11 +35,19 @@
     </select>
 
     <select id="getMaxRightValue" resultType="int">
-        select max(rgt) from dsm_department
+        select MAX(rgt) from dsm_department
     </select>
 
     <select id="listAllNode" resultType="com.jkstack.dsm.common.lr.LRNode">
         SELECT department_id AS id, parent_department_id AS parentId, name FROM dsm_department ORDER BY parent_department_id
+    </select>
+
+    <select id="getMaxSortValueByDeep" parameterType="int" resultType="java.lang.Integer">
+        SELECT MAX(sort) FROM dsm_department WHERE deep=${deep}
+    </select>
+
+    <select id="getMaxSortValueByParentDepartmentId" parameterType="string" resultType="java.lang.Integer">
+        SELECT MAX(sort) FROM dsm_department WHERE parent_department_id='${parentDepartmentId}'
     </select>
 
 </mapper>

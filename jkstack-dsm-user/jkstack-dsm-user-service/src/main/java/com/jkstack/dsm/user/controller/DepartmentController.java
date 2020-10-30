@@ -78,7 +78,7 @@ public class DepartmentController extends BaseController {
 
         DepartmentEntity departmentEntity = departmentService.getByBusinessId(departmentId);
 
-        DsmAssert.isNull(departmentEntity, "部门不存在");
+        Assert.isNull(departmentEntity, "部门不存在");
 
         DepartmentVO departmentVO = new DepartmentVO();
         departmentVO.setDepartmentId(departmentEntity.getDepartmentId());
@@ -117,11 +117,16 @@ public class DepartmentController extends BaseController {
         if(StringUtils.isBlank(departmentVO.getDepartmentId())){
             //新建
             departmentEntity = new DepartmentEntity();
+
+            //获取相同深度的节点最大排序值
+            int sort = departmentService.getSameDeepMaxSortValueByParentDepartmentId(departmentVO.getParentDepartmentId());
+            departmentEntity.setSort(sort + 1);
         }else{
             //更新
             departmentEntity = departmentService.getByBusinessId(departmentVO.getDepartmentId());
-            DsmAssert.isNull(departmentEntity, "部门不存在");
+            Assert.isNull(departmentEntity, "部门不存在");
         }
+
         departmentEntity.setName(departmentVO.getName());
         departmentEntity.setParentDepartmentId(departmentVO.getParentDepartmentId());
         departmentEntity.setLeaderUserId(departmentVO.getLeaderUserId());
@@ -213,20 +218,20 @@ public class DepartmentController extends BaseController {
         return ResponseResult.success(userService.listAllByDepartmentId(departmentId));
     }
 
-
-
     private void checkDepartment(DepartmentVO departmentVO) throws MessageException {
+        int deep = 1;
         if(StringUtils.isNotBlank(departmentVO.getParentDepartmentId())){
             DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentVO.getParentDepartmentId());
-            if(parentDepartmentEntity == null){
-                throw new MessageException("未知的上级部门");
-            }
+            Assert.isNull(parentDepartmentEntity, "未知的上级部门");
+            deep = parentDepartmentEntity.getDeep() + 1;
         }
+
+        //同一层级，部门名称不允许重名
+        departmentService.checkName(deep, departmentVO.getDepartmentId(), departmentVO.getName());
+
         if(StringUtils.isNotBlank(departmentVO.getLeaderUserId())){
             UserEntity userEntity = userService.getByBusinessId(departmentVO.getLeaderUserId());
-            if(userEntity == null){
-                throw new MessageException("未知的部门领导");
-            }
+            Assert.isNull(userEntity, "未知的部门主管");
             List<DepartmentEntity> departmentEntities = departmentService.listByUserId(userEntity.getUserId());
             boolean flag = departmentEntities.stream().anyMatch(departmentEntity -> StringUtils.equals(departmentEntity.getDepartmentId(), departmentVO.getDepartmentId()));
             if(!flag){

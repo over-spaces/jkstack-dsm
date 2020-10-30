@@ -42,4 +42,10 @@
             AND (name LIKE '%${condition}%' OR login_name LIKE '%${condition}%' OR user_no LIKE '%${condition}%')
     </select>
 
+    <select id="listByWorkGroupId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT user.* FROM dsm_user user
+            LEFT JOIN dsm_user_work_group group ON user.user_id=group.user_id
+            WHERE group.work_group_id='${workGroupId}'
+    </select>
+
 </mapper>

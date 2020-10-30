@@ -62,4 +62,12 @@ public interface UserService extends CommonService<UserEntity> {
     long countUserByDepartmentId(String departmentId);
 
     IPage<UserEntity> pageByNotDepartmentId(String departmentId, PageVO pageVO);
+
+    /**
+     * 查收工作组下人员列表
+     * @param workGroupId 工作组ID
+     * @param pageVO 分页信息
+     * @return 用户列表
+     */
+    IPage<UserEntity> listByWorkGroupId(String workGroupId, PageVO pageVO);
 }

@@ -81,10 +81,9 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
      * 根据业务ID更新
      *
      * @param entityList 实体类列表
-     * @param batchSize  批量跟新数量
      */
     @Override
-    public boolean updateBatchByBusinessId(Collection<T> entityList, int batchSize) {
+    public boolean updateBatchByBusinessId(Collection<T> entityList) {
         Field field = getBusinessIdField();
         if(field == null){
             logger.error("{}, 未知的业务ID字段.", entityClass.getName());

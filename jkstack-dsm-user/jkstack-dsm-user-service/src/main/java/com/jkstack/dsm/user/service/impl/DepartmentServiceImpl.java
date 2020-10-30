@@ -2,7 +2,7 @@ package com.jkstack.dsm.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Maps;
-import com.jkstack.dsm.common.DsmAssert;
+import com.jkstack.dsm.common.Assert;
 import com.jkstack.dsm.common.MessageException;
 import com.jkstack.dsm.common.service.CommonServiceImpl;
 import com.jkstack.dsm.common.vo.TreeHelper;
@@ -13,6 +13,7 @@ import com.jkstack.dsm.user.mapper.DepartmentMapper;
 import com.jkstack.dsm.user.mapper.UserDepartmentMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -137,7 +138,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     public void addUser(String departmentId, Set<String> userIds) throws MessageException {
 
         DepartmentEntity departmentEntity = getByBusinessId(departmentId);
-        DsmAssert.isNull(departmentEntity, "部门不存在!");
+        Assert.isNull(departmentEntity, "部门不存在!");
 
         QueryWrapper<UserDepartmentEntity> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(UserDepartmentEntity::getDepartmentId, departmentId);
@@ -178,5 +179,47 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
         wrapper.lambda().like(DepartmentEntity::getName, name);
         return departmentMapper.selectList(wrapper);
+    }
+
+    /**
+     * 校验部门名称是否合法（重名校验）
+     *
+     * @param deep         深度，相同深度的节点校验
+     * @param departmentId 部门ID，新建为空
+     * @param name         待校验的名称
+     */
+    @Override
+    public void checkName(int deep, String departmentId, String name) throws MessageException {
+        QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(DepartmentEntity::getDeep, deep)
+                .and(w -> w.in(DepartmentEntity::getName, name));
+        List<DepartmentEntity> departmentEntities = departmentMapper.selectList(wrapper);
+        if (CollectionUtils.isEmpty(departmentEntities)) {
+            return;
+        }
+        if (StringUtils.isNotBlank(departmentId)) {
+            boolean flag = departmentEntities.stream().noneMatch(entity -> departmentId.equals(entity.getDepartmentId()));
+            if (flag) {
+                throw new MessageException("部门名称已经存在");
+            }
+        } else {
+            throw new MessageException("部门名称已经存在");
+        }
+    }
+
+    /**
+     * 获取相同深度的节点最大排序值
+     *
+     * @param parentDepartmentId 父部门ID
+     */
+    @Override
+    public int getSameDeepMaxSortValueByParentDepartmentId(String parentDepartmentId) {
+        Integer sort;
+        if (StringUtils.isBlank(parentDepartmentId)) {
+            sort = departmentMapper.getMaxSortValueByDeep(1);
+        } else {
+            sort = departmentMapper.getMaxSortValueByParentDepartmentId(parentDepartmentId);
+        }
+        return Optional.ofNullable(sort).orElse(0);
     }
 }

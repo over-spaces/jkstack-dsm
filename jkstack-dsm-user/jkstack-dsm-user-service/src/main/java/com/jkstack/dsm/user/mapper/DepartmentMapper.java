@@ -39,4 +39,8 @@ public interface DepartmentMapper extends BaseMapper<DepartmentEntity> {
     Integer getMaxRightValue();
 
     List<LRNode> listAllNode();
+
+    Integer getMaxSortValueByDeep(int deep);
+
+    Integer getMaxSortValueByParentDepartmentId(String parentDepartmentId);
 }

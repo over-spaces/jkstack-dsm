@@ -20,7 +20,7 @@ public abstract class LRTreeNodeEntity extends BaseEntity {
     private Integer lft;
 
     @Column(comment = "LR算法树-深度")
-    private Integer deep;
+    private Integer deep = 0;
 
     @Column(length = 300, comment = "名称全路径")
     private String fullPathName;

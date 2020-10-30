@@ -5,6 +5,7 @@ import com.jkstack.dsm.user.entity.UserEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.util.List;
 @Setter
 @Getter
 @ApiModel
+@NoArgsConstructor
 public class WorkGroupUserVO implements Serializable {
 
     @ApiModelProperty(value = "用户ID")

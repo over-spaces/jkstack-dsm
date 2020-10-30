@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.UserControllerFeign;
 import com.jkstack.dsm.common.*;
 import com.jkstack.dsm.common.redis.RedisCommand;
+import com.jkstack.dsm.common.utils.ExcelUtil;
 import com.jkstack.dsm.common.utils.JwtConstants;
 import com.jkstack.dsm.common.utils.JwtUtils;
 import com.jkstack.dsm.common.vo.PageVO;
@@ -18,6 +19,7 @@ import com.jkstack.dsm.user.controller.vo.UserExcelVO;
 import com.jkstack.dsm.user.controller.vo.UserVO;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
+import com.jkstack.dsm.user.entity.UserStatusEnum;
 import com.jkstack.dsm.user.entity.WorkGroupEntity;
 import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
@@ -85,7 +87,7 @@ public class UserController extends BaseController implements UserControllerFeig
         } else {
             //编辑
             userEntity = userService.getByBusinessId(userVO.getUserId());
-            DsmAssert.isNull(userEntity,"用户不存在");
+            Assert.isNull(userEntity,"用户不存在");
             userEntity = userVO.toUserEntity(userEntity);
             userService.updateById(userEntity);
         }
@@ -98,7 +100,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @GetMapping("/get")
     public ResponseResult<UserVO> get(@RequestParam String userId) throws MessageException {
         UserEntity userEntity = userService.getByBusinessId(userId);
-        DsmAssert.isNull(userEntity, "用户不存在");
+        Assert.isNull(userEntity, "用户不存在");
         UserVO userVO = new UserVO(userEntity);
         return new ResponseResult<>(userVO);
     }
@@ -144,7 +146,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @ApiOperation("移除用户")
     @PostMapping("/delete")
     public ResponseResult delete(@RequestBody List<String> userIds) throws MessageException {
-        DsmAssert.isNull(userIds, "请选择需要删除的用户列表");
+        Assert.isNull(userIds, "请选择需要删除的用户列表");
         userService.deleteByUserId(userIds);
         return new ResponseResult<>();
     }
@@ -153,6 +155,9 @@ public class UserController extends BaseController implements UserControllerFeig
     @GetMapping("/template/download")
     public ResponseResult downloadTemplate(HttpServletResponse response) {
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("导入用户信息", "导入用户信息"), UserExcelVO.class, Lists.newArrayList());
+
+        ExcelUtil.addSelectList(workbook.getSheetAt(0), 2, 6, UserStatusEnum.getStatusTextArray());
+
         downloadExcel("导入用户信息.xls", workbook, response);
         return new ResponseResult<>();
     }
@@ -209,7 +214,7 @@ public class UserController extends BaseController implements UserControllerFeig
 
     private UserEntity getByBusinessId(String userId) throws MessageException {
         UserEntity userEntity = userService.getByBusinessId(userId);
-        DsmAssert.isNull(userEntity, "用户不存在");
+        Assert.isNull(userEntity, "用户不存在");
         return userEntity;
     }
 }

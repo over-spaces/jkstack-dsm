@@ -35,8 +35,8 @@ public class UserExcelVO implements Serializable {
     @Excel(name = "微信", width = 30, isImportField = "true")
     private String wechat;
 
-    @Excel(name = "职能", width = 30, isImportField = "true")
-    private String job;
+    @Excel(name = "工作组", width = 30, isImportField = "true")
+    private String workGroupName;
 
     @Excel(name = "*状态（在职、离职、休假）", width = 30, isImportField = "true")
     private String statusText;

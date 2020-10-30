@@ -125,4 +125,16 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
             return userMapper.pageByNotDepartmentIdAndLike(departmentId, pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
         }
     }
+
+    /**
+     * 查收工作组下人员列表
+     *
+     * @param workGroupId 工作组ID
+     * @param pageVO      分页信息
+     * @return 用户列表
+     */
+    @Override
+    public IPage<UserEntity> listByWorkGroupId(String workGroupId, PageVO pageVO) {
+        return userMapper.listByWorkGroupId(workGroupId, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+    }
 }

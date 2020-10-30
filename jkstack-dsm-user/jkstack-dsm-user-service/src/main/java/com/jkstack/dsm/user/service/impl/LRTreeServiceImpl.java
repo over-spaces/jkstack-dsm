@@ -1,5 +1,6 @@
 package com.jkstack.dsm.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jkstack.dsm.common.lr.LRNode;
 import com.jkstack.dsm.common.lr.LRNodeTree;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
@@ -45,7 +46,7 @@ public class LRTreeServiceImpl implements LRTreeService {
 
         Collection<LRNode> allNodes = listAllNode();
 
-        if(CollectionUtils.isEmpty(allNodes)) {
+        if (CollectionUtils.isEmpty(allNodes)) {
             return;
         }
 
@@ -58,7 +59,7 @@ public class LRTreeServiceImpl implements LRTreeService {
 
         LRNodeTree root = buildNodeTree(rootNode, allNodes);
 
-        if(root == null){
+        if (root == null) {
             logger.error("LR算法刷新失败，可能是上下级关系出现死循环了, class:{}", cls);
             return;
         }
@@ -75,20 +76,27 @@ public class LRTreeServiceImpl implements LRTreeService {
     }
 
 
-    public void batchUpdateNodeLR(List<LRNode> allNodeList){
-        List<DepartmentEntity> departmentEntities = allNodeList.stream()
+    public void batchUpdateNodeLR(List<LRNode> allNodeList) {
+        allNodeList.stream()
                 .filter(node -> StringUtils.isNotBlank(node.getId()))
-                .map(node -> {
+                .forEach(node -> {
                     DepartmentEntity departmentEntity = new DepartmentEntity();
                     departmentEntity.setDepartmentId(node.getId());
                     departmentEntity.setDeep(node.getDeep());
                     departmentEntity.setRgt(node.getRgt());
                     departmentEntity.setLft(node.getLft());
                     departmentEntity.setFullPathName(node.getFullPathName());
-                    return departmentEntity;
-                })
-                .collect(Collectors.toList());
-        departmentService.updateBatchByBusinessId(departmentEntities, 500);
+
+                    UpdateWrapper<DepartmentEntity> wrapper = new UpdateWrapper<>();
+                    wrapper.lambda()
+                            .eq(DepartmentEntity::getDepartmentId, departmentEntity.getDepartmentId())
+                            .set(DepartmentEntity::getDeep, departmentEntity.getDeep())
+                            .set(DepartmentEntity::getRgt, departmentEntity.getRgt())
+                            .set(DepartmentEntity::getLft, departmentEntity.getLft())
+                            .set(DepartmentEntity::getFullPathName, departmentEntity.getFullPathName());
+
+                    departmentMapper.update(departmentEntity, wrapper);
+                });
     }
 
     public Collection<LRNode> listAllNode() {
@@ -104,7 +112,7 @@ public class LRTreeServiceImpl implements LRTreeService {
         return nodes;
     }
 
-    private LRNode getVirtualRootNode(){
+    private LRNode getVirtualRootNode() {
         Integer right = departmentMapper.getMaxRightValue();
         LRNode node = new LRNode();
         right = Math.max(Optional.ofNullable(right).orElse(0), 1);
@@ -115,10 +123,10 @@ public class LRTreeServiceImpl implements LRTreeService {
     }
 
 
-    private List<String> getNameFullPathList(LRNode node, List<String> nameFullPathList){
-        if(node != null && StringUtils.isNotBlank(node.getName())) {
+    private List<String> getNameFullPathList(LRNode node, List<String> nameFullPathList) {
+        if (node != null && StringUtils.isNotBlank(node.getName())) {
             nameFullPathList.add(node.getName());
-            if(node.getParentNode() != null) {
+            if (node.getParentNode() != null) {
                 getNameFullPathList(node.getParentNode(), nameFullPathList);
             }
         }
@@ -162,7 +170,7 @@ public class LRTreeServiceImpl implements LRTreeService {
             }
             logger.debug("get tree root node children size: {}", treeRootNode.getChildren().size());
             return treeRootNode;
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
         return null;

@@ -2,6 +2,7 @@ package com.jkstack.dsm.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.entity.UserEntity;
 
@@ -20,4 +21,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     IPage<UserEntity> pageByNotDepartmentIdAndLike(String departmentId, String condition, IPage<UserEntity> page);
 
     List<UserSimpleVO> listAllByDepartmentId(String departmentId);
+
+    IPage<UserEntity> listByWorkGroupId(String workGroupId, Page<Object> page);
 }
