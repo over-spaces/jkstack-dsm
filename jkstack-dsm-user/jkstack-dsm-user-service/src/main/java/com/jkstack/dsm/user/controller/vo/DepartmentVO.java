@@ -55,6 +55,6 @@ public class DepartmentVO implements Serializable {
         this.fullPathName = entity.getFullPathName();
         Integer lft = Optional.ofNullable(entity.getLft()).orElse(0);
         Integer rgt = Optional.ofNullable(entity.getRgt()).orElse(0);
-        this.leaf = (Math.max(0, rgt - lft - 1) / 2) <= 0;
+        this.leaf = Math.max(0, rgt - lft - 1) / 2 <= 0;
     }
 }
