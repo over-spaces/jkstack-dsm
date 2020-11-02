@@ -24,12 +24,12 @@ public class DepartmentDropSortVO implements Serializable {
         /**
          * 前
          */
-        PREV,
+        before,
 
         /**
          * 后
          */
-        NEXT
+        after
     }
 
     @ApiModelProperty(value = "拖拽的节点")

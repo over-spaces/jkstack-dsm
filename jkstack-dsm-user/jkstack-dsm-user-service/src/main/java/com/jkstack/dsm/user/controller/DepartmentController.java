@@ -96,7 +96,7 @@ public class DepartmentController extends BaseController {
         Assert.isNull(targetDepartmentEntity, "拖拽的目标节点不存在");
 
         //重新排序。
-        int sort = departmentDropSortVO.getDropType() == DepartmentDropSortVO.DropType.NEXT ? targetDepartmentEntity.getSort() + 1 : targetDepartmentEntity.getSort() - 1;
+        int sort = departmentDropSortVO.getDropType() == DepartmentDropSortVO.DropType.after ? targetDepartmentEntity.getSort() + 1 : targetDepartmentEntity.getSort() - 1;
         dropDepartmentEntity.setSort(sort);
         allDepartmentEntities = allDepartmentEntities.stream()
                 .sorted(Comparator.comparing(DepartmentEntity::getSort))

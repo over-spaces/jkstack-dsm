@@ -1,6 +1,7 @@
 package com.jkstack.dsm.user.controller.vo;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.jkstack.dsm.common.annotation.ExcelSelect;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.entity.UserStatusEnum;
 import lombok.Getter;
@@ -41,6 +42,7 @@ public class UserExcelVO implements Serializable {
     @Excel(name = "工作组", width = 30, isImportField = "true")
     private String workGroupName;
 
+    @ExcelSelect(select = {"在职", "离职", "休假"})
     @Excel(name = "*状态（在职、离职、休假）", width = 30, isImportField = "true")
     private String statusText;
 

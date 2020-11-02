@@ -154,10 +154,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @ApiOperation("下载Excel导入模板")
     @GetMapping("/template/download")
     public ResponseResult downloadTemplate(HttpServletResponse response) {
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("导入用户信息", "导入用户信息"), UserExcelVO.class, Lists.newArrayList());
-
-        ExcelUtil.addSelectList(workbook.getSheetAt(0), 2, 6, UserStatusEnum.getStatusTextArray());
-
+        Workbook workbook = ExcelUtil.exportExcel(new ExportParams("导入用户信息", "导入用户信息"), UserExcelVO.class, Lists.newArrayList());
         downloadExcel("导入用户信息.xls", workbook, response);
         return new ResponseResult<>();
     }
