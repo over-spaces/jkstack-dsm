@@ -26,6 +26,9 @@ public class UserExcelVO implements Serializable {
     @Excel(name = "*姓名", width = 30, isImportField = "true")
     private String name;
 
+    @Excel(name = "工号", width = 30, isImportField = "true")
+    private String userNo;
+
     @Excel(name = "*电话", width = 30, isImportField = "true")
     private String phone;
 
@@ -45,6 +48,7 @@ public class UserExcelVO implements Serializable {
         UserEntity userEntity = new UserEntity();
         userEntity.setLoginName(this.loginName);
         userEntity.setName(this.name);
+        userEntity.setUserNo(this.userNo);
         userEntity.setPhone(this.phone);
         userEntity.setEmail(this.email);
         userEntity.setWechat(this.wechat);

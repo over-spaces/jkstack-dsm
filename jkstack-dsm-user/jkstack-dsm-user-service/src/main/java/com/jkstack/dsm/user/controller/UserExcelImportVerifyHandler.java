@@ -36,8 +36,12 @@ public class UserExcelImportVerifyHandler implements IExcelVerifyHandler<UserExc
 
         if (StringUtils.isBlank(userExcelVO.getName())) {
             message += "姓名不允许为空;";
-        }else if(ValidatorUtil.isName(userExcelVO.getName())){
+        }else if(StringUtils.length(userExcelVO.getName()) > 20 || !ValidatorUtil.isChineseAndLetter(userExcelVO.getName())){
             message += "姓名字符过长,不可超过20个字符，只允许中文字母";
+        }
+
+        if (StringUtils.isNotBlank(userExcelVO.getUserNo()) && (StringUtils.length(userExcelVO.getUserNo()) > 50 || !ValidatorUtil.isLetterAndDigital(userExcelVO.getUserNo()))){
+            message += "工号字符过长,不可超过50个字符，只允许字母数字";
         }
 
         if (StringUtils.isBlank(userExcelVO.getPhone())) {

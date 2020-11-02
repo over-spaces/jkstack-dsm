@@ -16,9 +16,14 @@ public final class ValidatorUtil {
     private static final Pattern REG_PHONE = Pattern.compile("^[0-9-()（）-]{1,20}$");
 
     /**
-     * 名称校验，中文+字母
+     * 中文字母组合，中文+字母
      */
-    private static final Pattern REG_NAME = Pattern.compile("^[a-zA-Z\\u4E00-\\u9FA5]{1,20}$");
+    private static final Pattern REG_CHINESE_LETTER = Pattern.compile("^[a-zA-Z\\u4E00-\\u9FA5]+$");
+
+    /**
+     * 字母+数字
+     */
+    private static final Pattern REG_LETTER_DIGITAL = Pattern.compile("^[a-zA-Z\\d+]+$");
 
     /**
      * 是否是email格式
@@ -27,12 +32,24 @@ public final class ValidatorUtil {
         return Validator.isEmail(value);
     }
 
+    /**
+     * 是否电话
+     */
     public static boolean isPhone(CharSequence value){
         return Validator.isMatchRegex(REG_PHONE, value);
     }
 
-    public static boolean isName(CharSequence value){
-        return Validator.isMatchRegex(REG_NAME, value);
+    /**
+     * 是否是中文+字母组合
+     */
+    public static boolean isChineseAndLetter(CharSequence value){
+        return Validator.isMatchRegex(REG_CHINESE_LETTER, value);
     }
 
+    /**
+     * 是否字母+数字组合
+     */
+    public static boolean isLetterAndDigital(CharSequence value){
+        return Validator.isMatchRegex(REG_LETTER_DIGITAL, value);
+    }
 }
