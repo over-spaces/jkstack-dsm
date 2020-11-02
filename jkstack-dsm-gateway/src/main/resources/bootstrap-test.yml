@@ -28,6 +28,15 @@ spring:
           filters:
             - StripPrefix=1
           order: 20
+
+        - id: dsm-service-sheet
+          uri: lb://dsm-service-sheet
+          predicates:
+            - Path=/dsm-service-sheet/**
+          filters:
+            - StripPrefix=1
+          order: 30
+
     nacos:
       discovery:
         server-addr: ${nacos.server-addr}

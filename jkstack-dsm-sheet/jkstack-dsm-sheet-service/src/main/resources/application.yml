@@ -1,0 +1,22 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: dsm-service-sheet
+  main:
+    allow-bean-definition-overriding: true
+
+swagger:
+  enable: true
+  title: JKStack-DSM「流程模块」接口文档
+  description: JKStack-DSM「流程模块」接口文档
+
+# actable的配置信息
+actable:
+  table:
+    auto: add
+  model:
+    pack: com.jkstack.dsm.sheet.entity
+  database:
+    type: mysql
