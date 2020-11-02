@@ -193,7 +193,7 @@ public class UserController extends BaseController implements UserControllerFeig
     public ResponseResult checkLoginName(@RequestParam(required = false) String userId,
                                          @RequestParam String loginName) throws MessageException {
         if (!userService.checkUserLoginName(userId, loginName)) {
-            throw new MessageException("用户名不合法或已存在!");
+            throw new MessageException("用户已存在!");
         }
         return ResponseResult.success();
     }

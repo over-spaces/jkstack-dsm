@@ -45,7 +45,7 @@ public abstract class BaseEntity implements Serializable {
      */
     @Column(type = MySqlTypeConstant.DATETIME)
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime = new Date();
+    private Date createTime;
 
     /**
      * 创建人ID

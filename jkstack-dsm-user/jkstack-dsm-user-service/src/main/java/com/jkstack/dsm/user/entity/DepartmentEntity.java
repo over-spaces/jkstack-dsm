@@ -38,5 +38,5 @@ public class DepartmentEntity extends LRTreeNodeEntity{
     private String leaderUserId;
 
     @Column(comment = "排序")
-    private int sort;
+    private Integer sort;
 }

@@ -1,5 +1,6 @@
 package com.jkstack.dsm.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jkstack.dsm.common.lr.LRNode;
 import com.jkstack.dsm.common.lr.LRNodeTree;
@@ -30,13 +31,12 @@ public class LRTreeServiceImpl implements LRTreeService {
 
     @Autowired
     private DepartmentMapper departmentMapper;
-    @Autowired
-    private DepartmentServiceImpl departmentService;
 
     /**
      * 一次性批量更新指定类的所有节点的L/R值。
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateAllNodeLR(Class cls) {
         //1.采用全部加载到内存中的方式，应该会快一些。
         LRNode rootNode = getVirtualRootNode();
@@ -81,20 +81,13 @@ public class LRTreeServiceImpl implements LRTreeService {
                 .filter(node -> StringUtils.isNotBlank(node.getId()))
                 .forEach(node -> {
                     DepartmentEntity departmentEntity = new DepartmentEntity();
-                    departmentEntity.setDepartmentId(node.getId());
                     departmentEntity.setDeep(node.getDeep());
                     departmentEntity.setRgt(node.getRgt());
                     departmentEntity.setLft(node.getLft());
                     departmentEntity.setFullPathName(node.getFullPathName());
 
-                    UpdateWrapper<DepartmentEntity> wrapper = new UpdateWrapper<>();
-                    wrapper.lambda()
-                            .eq(DepartmentEntity::getDepartmentId, departmentEntity.getDepartmentId())
-                            .set(DepartmentEntity::getDeep, departmentEntity.getDeep())
-                            .set(DepartmentEntity::getRgt, departmentEntity.getRgt())
-                            .set(DepartmentEntity::getLft, departmentEntity.getLft())
-                            .set(DepartmentEntity::getFullPathName, departmentEntity.getFullPathName());
-
+                    LambdaUpdateWrapper<DepartmentEntity> wrapper = new LambdaUpdateWrapper<>();
+                    wrapper.eq(DepartmentEntity::getDepartmentId, node.getId());
                     departmentMapper.update(departmentEntity, wrapper);
                 });
     }

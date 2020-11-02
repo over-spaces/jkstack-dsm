@@ -30,6 +30,12 @@ public interface CommonService<T> extends IService<T> {
     void removeByBusinessId(String businessId);
 
     /**
+     * 根据业务ID删除记录
+     * @param businessIds 表的业务ID，非主键ID
+     */
+    void removeByBusinessIds(Collection<String> businessIds);
+
+    /**
      * 根据业务ID更新
      * @param entityList 实体类列表
      */

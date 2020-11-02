@@ -78,6 +78,23 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
     }
 
     /**
+     * 根据业务ID删除记录
+     *
+     * @param businessIds 表的业务ID，非主键ID
+     */
+    @Override
+    public void removeByBusinessIds(Collection<String> businessIds) {
+        Field field = getBusinessIdField();
+        if(Objects.isNull(field)){
+            logger.error("{}, 未知的业务ID字段.", entityClass.getName());
+            return;
+        }
+        QueryWrapper<T> wrapper = new QueryWrapper<>();
+        wrapper.in(StringUtil.convertCamelToUnder(field.getName()), businessIds);
+        baseMapper.delete(wrapper);
+    }
+
+    /**
      * 根据业务ID更新
      *
      * @param entityList 实体类列表

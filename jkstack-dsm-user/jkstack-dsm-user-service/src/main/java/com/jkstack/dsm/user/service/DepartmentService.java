@@ -89,4 +89,6 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
      * @param parentDepartmentId 父部门ID
      */
     int getSameDeepMaxSortValueByParentDepartmentId(String parentDepartmentId);
+
+    void deleteByDepartmentId(String departmentId) throws MessageException;
 }

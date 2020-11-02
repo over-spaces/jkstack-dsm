@@ -1,6 +1,7 @@
 package com.jkstack.dsm.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.collect.Maps;
 import com.jkstack.dsm.common.Assert;
 import com.jkstack.dsm.common.MessageException;
@@ -13,6 +14,7 @@ import com.jkstack.dsm.user.mapper.DepartmentMapper;
 import com.jkstack.dsm.user.mapper.UserDepartmentMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,5 +223,23 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
             sort = departmentMapper.getMaxSortValueByParentDepartmentId(parentDepartmentId);
         }
         return Optional.ofNullable(sort).orElse(0);
+    }
+
+    @Override
+    public void deleteByDepartmentId(String departmentId) throws MessageException {
+        DepartmentEntity departmentEntity = getByBusinessId(departmentId);
+        Assert.isNull(departmentEntity, "未知的部门");
+        List<String> children = departmentMapper.listChildrenDepartmentIds(departmentEntity.getLft(), departmentEntity.getRgt());
+        List<String> departmentIds = Lists.newArrayList();
+        departmentIds.add(departmentId);
+        departmentIds.addAll(children);
+
+        UpdateWrapper<UserDepartmentEntity> wrapper = new UpdateWrapper();
+        wrapper.lambda().set(UserDepartmentEntity::getDepartmentId, departmentIds);
+        //删除用户关联的部门
+        userDepartmentMapper.delete(wrapper);
+
+        //删除部门
+        removeByBusinessIds(departmentIds);
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,8 +43,8 @@ public class DepartmentController extends BaseController {
 
     @ApiOperation("更新部门LR算法")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
-    @PostMapping("/upldateAllDeptLR")
-    public ResponseResult upldateAllDeptLR(){
+    @PostMapping("/updateAllDeptLR")
+    public ResponseResult updateAllDeptLR(){
         lrTreeService.updateAllNodeLR(DepartmentEntity.class);
         return ResponseResult.success();
     }
@@ -61,7 +62,6 @@ public class DepartmentController extends BaseController {
             departmentTreeList = departmentEntities.stream()
                     .map(DepartmentTreeVO::new)
                     .collect(Collectors.toList());
-
         }
         return ResponseResult.success(departmentTreeList);
     }
@@ -132,6 +132,7 @@ public class DepartmentController extends BaseController {
         departmentEntity.setLeaderUserId(departmentVO.getLeaderUserId());
         departmentService.saveOrUpdate(departmentEntity);
 
+        //更新LR算法。
         lrTreeService.updateAllNodeLR(DepartmentEntity.class);
         return ResponseResult.success();
     }
@@ -175,11 +176,9 @@ public class DepartmentController extends BaseController {
 
     @ApiOperation("删除部门")
     @GetMapping("/delete")
-    public ResponseResult delete(@RequestParam String departmentId){
-        DepartmentEntity departmentEntity = departmentService.getByBusinessId(departmentId);
-
-
-
+    public ResponseResult delete(@RequestParam String departmentId) throws MessageException {
+        departmentService.deleteByDepartmentId(departmentId);
+        lrTreeService.updateAllNodeLR(DepartmentEntity.class);
         return ResponseResult.success();
     }
 
@@ -189,9 +188,8 @@ public class DepartmentController extends BaseController {
         String departmentId = departmentAddUserVO.getDepartmentId();
         Set<String> userIds = departmentAddUserVO.getUserIds();
 
-        if(CollectionUtils.isEmpty(userIds)){
-            throw new MessageException("请选择需要移除的用户！");
-        }
+        Assert.isEmpty(userIds, "请选择需要移除的用户！");
+
         departmentService.removeUser(departmentId, userIds);
         return ResponseResult.success();
     }
@@ -233,7 +231,7 @@ public class DepartmentController extends BaseController {
         if(StringUtils.isNotBlank(departmentVO.getParentDepartmentId())){
             DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentVO.getParentDepartmentId());
             Assert.isNull(parentDepartmentEntity, "未知的上级部门");
-            deep = parentDepartmentEntity.getDeep() + 1;
+            deep = Optional.ofNullable(parentDepartmentEntity.getDeep()).orElse(0) + 1;
         }
 
         //同一层级，部门名称不允许重名
