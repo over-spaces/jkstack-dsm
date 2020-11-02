@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -34,6 +35,9 @@ public class DepartmentVO implements Serializable {
     @ApiModelProperty(value = "父部门ID")
     private String parentDepartmentId;
 
+    @ApiModelProperty(value = "原始的父部门ID，前端使用")
+    private String originalParentDepartmentId;
+
     @ApiModelProperty(value = "父部门名称")
     private String parentDepartmentName;
 
@@ -51,6 +55,8 @@ public class DepartmentVO implements Serializable {
 
     public DepartmentVO(DepartmentEntity entity) {
         this.departmentId = entity.getDepartmentId();
+        this.parentDepartmentId = entity.getParentDepartmentId();
+        this.originalParentDepartmentId = entity.getParentDepartmentId();
         this.name = entity.getName();
         this.fullPathName = entity.getFullPathName();
         Integer lft = Optional.ofNullable(entity.getLft()).orElse(0);

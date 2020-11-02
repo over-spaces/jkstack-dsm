@@ -20,7 +20,7 @@ import java.io.Serializable;
 @ApiModel(description = "部门树拖拽VO")
 public class DepartmentDropSortVO implements Serializable {
 
-    enum DropType{
+    public enum DropType{
         /**
          * 前
          */

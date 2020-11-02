@@ -90,5 +90,14 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
      */
     int getSameDeepMaxSortValueByParentDepartmentId(String parentDepartmentId);
 
+    /**
+     * 获取指定部门的全部兄弟节点（相同父节点）
+     * @return departmentId 部门ID
+     * @return 兄弟部门列表
+     */
+    List<DepartmentEntity> listSiblingDepartmentByDepartmentId(String departmentId);
+
     void deleteByDepartmentId(String departmentId) throws MessageException;
+
+    void updateDepartmentSort(List<DepartmentEntity> departmentEntities);
 }

@@ -1,6 +1,8 @@
 package com.jkstack.dsm.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.collect.Maps;
 import com.jkstack.dsm.common.Assert;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * (Department)表服务实现类
@@ -59,9 +62,14 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     }
 
     @Override
-    public List<DepartmentEntity> listByParentDepartmentId(String departmentId) {
-        QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(DepartmentEntity::getParentDepartmentId, departmentId);
+    public List<DepartmentEntity> listByParentDepartmentId(String parentDepartmentId) {
+        LambdaQueryWrapper<DepartmentEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(DepartmentEntity::getSort);
+        if (StringUtils.isBlank(parentDepartmentId)) {
+            wrapper.isNull(DepartmentEntity::getParentDepartmentId);
+        } else {
+            wrapper.eq(DepartmentEntity::getParentDepartmentId, parentDepartmentId);
+        }
         return departmentMapper.selectList(wrapper);
     }
 
@@ -225,6 +233,21 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         return Optional.ofNullable(sort).orElse(0);
     }
 
+    /**
+     * 获取指定部门的全部兄弟节点（相同父节点）
+     *
+     * @param departmentId
+     * @return 兄弟部门列表
+     */
+    @Override
+    public List<DepartmentEntity> listSiblingDepartmentByDepartmentId(String departmentId) {
+        DepartmentEntity departmentEntity = getByBusinessId(departmentId);
+        if (departmentEntity == null) {
+            return Collections.emptyList();
+        }
+        return listByParentDepartmentId(departmentEntity.getParentDepartmentId());
+    }
+
     @Override
     public void deleteByDepartmentId(String departmentId) throws MessageException {
         DepartmentEntity departmentEntity = getByBusinessId(departmentId);
@@ -241,5 +264,16 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
 
         //删除部门
         removeByBusinessIds(departmentIds);
+    }
+
+    @Override
+    public void updateDepartmentSort(List<DepartmentEntity> departmentEntities) {
+        int sort = 1;
+        for (DepartmentEntity departmentEntity : departmentEntities) {
+            LambdaUpdateWrapper<DepartmentEntity> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(DepartmentEntity::getDepartmentId,  departmentEntity.getDepartmentId());
+            wrapper.set(DepartmentEntity::getSort, sort++);
+            departmentMapper.update(null, wrapper);
+        }
     }
 }

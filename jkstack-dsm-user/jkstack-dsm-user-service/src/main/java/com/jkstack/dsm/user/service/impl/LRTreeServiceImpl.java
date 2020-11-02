@@ -80,15 +80,13 @@ public class LRTreeServiceImpl implements LRTreeService {
         allNodeList.stream()
                 .filter(node -> StringUtils.isNotBlank(node.getId()))
                 .forEach(node -> {
-                    DepartmentEntity departmentEntity = new DepartmentEntity();
-                    departmentEntity.setDeep(node.getDeep());
-                    departmentEntity.setRgt(node.getRgt());
-                    departmentEntity.setLft(node.getLft());
-                    departmentEntity.setFullPathName(node.getFullPathName());
-
                     LambdaUpdateWrapper<DepartmentEntity> wrapper = new LambdaUpdateWrapper<>();
                     wrapper.eq(DepartmentEntity::getDepartmentId, node.getId());
-                    departmentMapper.update(departmentEntity, wrapper);
+                    wrapper.set(DepartmentEntity::getDeep, node.getDeep());
+                    wrapper.set(DepartmentEntity::getRgt, node.getRgt());
+                    wrapper.set(DepartmentEntity::getLft, node.getLft());
+                    wrapper.set(DepartmentEntity::getFullPathName, node.getFullPathName());
+                    departmentMapper.update(null, wrapper);
                 });
     }
 

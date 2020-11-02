@@ -3,6 +3,7 @@ package com.jkstack.dsm.user.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jkstack.dsm.common.*;
 import com.jkstack.dsm.common.vo.PageVO;
+import com.jkstack.dsm.common.vo.SimpleTreeDataVO;
 import com.jkstack.dsm.user.controller.vo.*;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
@@ -19,10 +20,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
 /**
@@ -66,11 +66,46 @@ public class DepartmentController extends BaseController {
         return ResponseResult.success(departmentTreeList);
     }
 
-    @ApiOperation(value = "部门排序")
+    @ApiOperation(value = "部门拖拽排序")
     @PostMapping("/tree/sort")
-    public ResponseResult sort(@RequestBody DepartmentDropSortVO departmentDropSortVO){
+    public ResponseResult sort(@RequestBody DepartmentDropSortVO departmentDropSortVO) throws MessageException {
+        //先校验参数是否正确
+        checkDepartmentDropSortVO(departmentDropSortVO);
+
+        List<DepartmentEntity> allDepartmentEntities = departmentService.listSiblingDepartmentByDepartmentId(departmentDropSortVO.getDropNode().getId());
+
+        //重新生成sort,并且扩大10倍
+        AtomicInteger atomicInteger = new AtomicInteger(1);
+        allDepartmentEntities = allDepartmentEntities.stream()
+                .peek(entity -> entity.setSort(atomicInteger.getAndIncrement() * 10))
+                .sorted(Comparator.comparing(DepartmentEntity::getSort))
+                .collect(Collectors.toList());
+
+        DepartmentEntity dropDepartmentEntity = allDepartmentEntities.stream()
+                .filter(entity -> StringUtils.equals(entity.getDepartmentId(), departmentDropSortVO.getDropNode().getId()))
+                .findFirst()
+                .orElse(null);
+
+        Assert.isNull(dropDepartmentEntity, "拖拽的节点不存在");
+
+        DepartmentEntity targetDepartmentEntity = allDepartmentEntities.stream()
+                .filter(entity -> StringUtils.equals(entity.getDepartmentId(), departmentDropSortVO.getTargetNode().getId()))
+                .findFirst()
+                .orElse(null);
+
+        Assert.isNull(targetDepartmentEntity, "拖拽的目标节点不存在");
+
+        //重新排序。
+        int sort = departmentDropSortVO.getDropType() == DepartmentDropSortVO.DropType.NEXT ? targetDepartmentEntity.getSort() + 1 : targetDepartmentEntity.getSort() - 1;
+        dropDepartmentEntity.setSort(sort);
+        allDepartmentEntities = allDepartmentEntities.stream()
+                .sorted(Comparator.comparing(DepartmentEntity::getSort))
+                .collect(Collectors.toList());
+
+        departmentService.updateDepartmentSort(allDepartmentEntities);
         return ResponseResult.success();
     }
+
 
     @ApiOperation(value = "部门明细信息")
     @GetMapping("/get")
@@ -85,6 +120,7 @@ public class DepartmentController extends BaseController {
         DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentEntity.getParentDepartmentId());
         if(parentDepartmentEntity != null){
             departmentVO.setParentDepartmentId(parentDepartmentEntity.getDepartmentId());
+            departmentVO.setOriginalParentDepartmentId(parentDepartmentEntity.getDepartmentId());
             departmentVO.setParentDepartmentName(parentDepartmentEntity.getName());
             departmentVO.setParentFullPathName(parentDepartmentEntity.getFullPathName());
         }
@@ -120,7 +156,7 @@ public class DepartmentController extends BaseController {
 
             //获取相同深度的节点最大排序值
             int sort = departmentService.getSameDeepMaxSortValueByParentDepartmentId(departmentVO.getParentDepartmentId());
-            departmentEntity.setSort(sort + 1);
+            departmentEntity.setSort(sort + 10);
         }else{
             //更新
             departmentEntity = departmentService.getByBusinessId(departmentVO.getDepartmentId());
@@ -246,5 +282,21 @@ public class DepartmentController extends BaseController {
                 throw new MessageException("部门主管设置错误，部门主管必须是当前部门的直属人员!");
             }
         }
+    }
+
+    private void checkDepartmentDropSortVO(DepartmentDropSortVO departmentDropSortVO) throws MessageException {
+        SimpleTreeDataVO dropNode = departmentDropSortVO.getDropNode();
+        SimpleTreeDataVO targetNode = departmentDropSortVO.getTargetNode();
+        DepartmentDropSortVO.DropType dropType = departmentDropSortVO.getDropType();
+
+        if(dropNode == null || StringUtils.isBlank(dropNode.getId())){
+            throw new MessageException("拖拽节点参数错误");
+        }
+
+        if(targetNode == null || StringUtils.isBlank(targetNode.getId())){
+            throw new MessageException("拖拽的目标节点参数错误");
+        }
+
+        Assert.isNull(dropType, "参数错误");
     }
 }
