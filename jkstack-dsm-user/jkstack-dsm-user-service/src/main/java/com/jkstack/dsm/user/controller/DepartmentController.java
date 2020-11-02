@@ -200,7 +200,7 @@ public class DepartmentController extends BaseController {
         List<DepartmentUserVO> departmentUserVOList = pageUser.getRecords().stream()
                 .map(DepartmentUserVO::new)
                 .collect(Collectors.toList());
-        PageResult<DepartmentUserVO> pageResult = new PageResult(pageUser.getPages(), queryVO.getPageSize(), departmentUserVOList);
+        PageResult<DepartmentUserVO> pageResult = new PageResult(pageUser.getPages(), pageUser.getTotal(), departmentUserVOList);
 
         //人数（全部子部门人数）
         pageResult.getExpand().put("allUserCount", allUserCount);
