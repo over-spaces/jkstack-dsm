@@ -43,4 +43,6 @@ public interface DepartmentMapper extends BaseMapper<DepartmentEntity> {
     Integer getMaxSortValueByDeep(int deep);
 
     Integer getMaxSortValueByParentDepartmentId(String parentDepartmentId);
+
+    Integer isExistRootDepartment();
 }

@@ -5,23 +5,21 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Index;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.jkstack.dsm.common.BaseEntity;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 /**
- * 用户所属部门
+ * 部门主管
  * @author lifang
- * @since 2020/10/12
+ * @since 2020/11/3
  */
 @Setter
 @Getter
 @NoArgsConstructor
-@TableName(value = "dsm_user_department")
-@Table(name = "dsm_user_department")
-public class UserDepartmentEntity extends BaseEntity{
+@TableName(value = "dsm_department_leader")
+@Table(name = "dsm_department_leader")
+public class DepartmentLeaderEntity extends BaseEntity {
 
     @Column(length = 64, comment = "用户ID")
     @Index(value = "idx_user_id")
@@ -31,7 +29,7 @@ public class UserDepartmentEntity extends BaseEntity{
     @Index(value = "idx_department_id")
     private String departmentId;
 
-    public UserDepartmentEntity(String userId, String departmentId){
+    public DepartmentLeaderEntity(String userId, String departmentId){
         this.userId = userId;
         this.departmentId = departmentId;
     }

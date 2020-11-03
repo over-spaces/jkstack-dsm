@@ -70,4 +70,18 @@ public interface UserService extends CommonService<UserEntity> {
      * @return 用户列表
      */
     IPage<UserEntity> listByWorkGroupId(String workGroupId, PageVO pageVO);
+
+    /**
+     * 分页查询用户，并且支持模糊匹配
+     * @param pageVO 分页查询VO
+     * @return 用户列表
+     */
+    IPage<UserEntity> pageByLike(PageVO pageVO);
+
+    /**
+     * 获取部门负责人列表
+     * @param departmentId 部门ID
+     * @return 部门负责人列表
+     */
+    List<UserEntity> listLeaderUserByDepartmentId(String departmentId);
 }

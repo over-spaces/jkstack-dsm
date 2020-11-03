@@ -10,6 +10,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,6 +30,8 @@ public class DepartmentVO implements Serializable {
     @ApiModelProperty(value = "部门名称")
     private String name;
 
+    private List<String> leaderUserIds;
+
     @ApiModelProperty(value = "部门名称路径")
     private String fullPathName;
 
@@ -43,12 +46,6 @@ public class DepartmentVO implements Serializable {
 
     @ApiModelProperty(value = "上级部门名称路径")
     private String parentFullPathName;
-
-    @ApiModelProperty(value = "部门主管ID")
-    private String leaderUserId;
-
-    @ApiModelProperty(value = "部门主管名称")
-    private String leaderUserName;
 
     @ApiModelProperty(value = "是否叶子节点，判断是否允许删除")
     private boolean leaf;

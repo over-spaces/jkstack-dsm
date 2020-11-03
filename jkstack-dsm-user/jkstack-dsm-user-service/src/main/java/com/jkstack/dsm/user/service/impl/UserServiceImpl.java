@@ -10,6 +10,7 @@ import com.jkstack.dsm.common.utils.MD5Util;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.config.UserConfigProperties;
 import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
+import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.mapper.UserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
@@ -103,7 +104,10 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      */
     @Override
     public List<UserSimpleVO> listAllByDepartmentId(String departmentId) {
-        return userMapper.listAllByDepartmentId(departmentId);
+        List<String> childrenDepartmentIds = departmentService.listChildrenDepartmentIds(departmentId);
+        //包含自己
+        childrenDepartmentIds.add(departmentId);
+        return userMapper.listByDepartmentIds(childrenDepartmentIds);
     }
 
     /**
@@ -136,5 +140,31 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     @Override
     public IPage<UserEntity> listByWorkGroupId(String workGroupId, PageVO pageVO) {
         return userMapper.listByWorkGroupId(workGroupId, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+    }
+
+    /**
+     * 分页查询用户，并且支持模糊匹配
+     *
+     * @param pageVO 分页查询VO
+     * @return 用户列表
+     */
+    @Override
+    public IPage<UserEntity> pageByLike(PageVO pageVO) {
+        if(StringUtils.isBlank(pageVO.getCondition())){
+            return userMapper.pageByLike(new Page<>(pageVO.getPageNo(), pageVO.getPageSize()), pageVO.getCondition());
+        }else {
+            return userMapper.selectPage(new Page<>(pageVO.getPageNo(), pageVO.getPageSize()), null);
+        }
+    }
+
+    /**
+     * 获取部门负责人列表
+     *
+     * @param departmentId 部门ID
+     * @return 部门负责人列表
+     */
+    @Override
+    public List<UserEntity> listLeaderUserByDepartmentId(String departmentId) {
+        return userMapper.listLeaderUserByDepartmentId(departmentId);
     }
 }

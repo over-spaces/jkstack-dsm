@@ -58,6 +58,15 @@ public class WorkGroupController extends BaseController {
         return ResponseResult.success();
     }
 
+    @ApiOperation(value = "获取工作组明细")
+    @PostMapping("/get")
+    public ResponseResult<WorkGroupVO> get(@RequestParam String workGroupId) throws MessageException {
+        WorkGroupEntity workGroupEntity = workGroupService.getByBusinessId(workGroupId);
+        Assert.isNull(workGroupEntity, "工作组不存在");
+        WorkGroupVO workGroupVO = new WorkGroupVO(workGroupEntity);
+        return ResponseResult.success(workGroupVO);
+    }
+
     @ApiOperation(value = "工作组列表")
     @GetMapping("/list")
     public ResponseResult<List<WorkGroupVO>> list() throws MessageException {

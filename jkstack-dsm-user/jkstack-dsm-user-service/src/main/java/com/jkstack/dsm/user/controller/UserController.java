@@ -6,6 +6,7 @@ import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.UserControllerFeign;
 import com.jkstack.dsm.common.*;
@@ -109,13 +110,7 @@ public class UserController extends BaseController implements UserControllerFeig
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @PostMapping("/list")
     public ResponseResult<PageResult<UserVO>> list(@RequestBody PageVO pageVO) {
-        Page<UserEntity> page;
-        LambdaUpdateWrapper<UserEntity> wrapper = getLikeQueryWrapper(pageVO.getCondition());
-        if(Objects.isNull(wrapper)){
-            page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()));
-        }else {
-            page = userService.page(new Page(pageVO.getPageNo(), pageVO.getPageSize()), wrapper);
-        }
+        IPage<UserEntity> page = userService.pageByLike(pageVO);
 
         List<String> userIds = page.getRecords().stream().map(UserEntity::getUserId).collect(Collectors.toList());
         Map<String, List<WorkGroupEntity>> userWorkGroupMap = workGroupService.listByUserIds(userIds);

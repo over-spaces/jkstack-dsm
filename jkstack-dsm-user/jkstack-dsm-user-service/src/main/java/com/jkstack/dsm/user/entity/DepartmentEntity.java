@@ -34,9 +34,6 @@ public class DepartmentEntity extends LRTreeNodeEntity{
     @Index(value = "idx_parent_department_id")
     private String parentDepartmentId;
 
-    @Column(length = 64, comment = "部门主管")
-    private String leaderUserId;
-
     @Column(comment = "排序")
     private Integer sort;
 }
