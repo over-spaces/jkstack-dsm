@@ -1,5 +1,6 @@
 package com.jkstack.dsm.common;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -29,6 +30,13 @@ public class PageResult<T> implements Serializable {
 
     public PageResult(){
     }
+
+    public PageResult(IPage page, Collection<T> records){
+        this.page = page.getPages();
+        this.total = page.getTotal();
+        this.records = records;
+    }
+
 
     public PageResult(long page, long total, Collection<T> records) {
         this.page = page;

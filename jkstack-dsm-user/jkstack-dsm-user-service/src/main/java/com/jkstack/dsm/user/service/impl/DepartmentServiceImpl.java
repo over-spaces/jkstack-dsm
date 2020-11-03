@@ -11,9 +11,11 @@ import com.jkstack.dsm.common.service.CommonServiceImpl;
 import com.jkstack.dsm.common.vo.TreeHelper;
 import com.jkstack.dsm.user.controller.vo.DepartmentTreeVO;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
-import com.jkstack.dsm.user.entity.UserDepartmentEntity;
+import com.jkstack.dsm.user.entity.DepartmentLeaderEntity;
+import com.jkstack.dsm.user.entity.DepartmentUserEntity;
+import com.jkstack.dsm.user.mapper.DepartmentLeaderMapper;
 import com.jkstack.dsm.user.mapper.DepartmentMapper;
-import com.jkstack.dsm.user.mapper.UserDepartmentMapper;
+import com.jkstack.dsm.user.mapper.DepartmentUserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -26,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * (Department)表服务实现类
@@ -43,7 +44,10 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     @Resource
     private DepartmentMapper departmentMapper;
     @Resource
-    private UserDepartmentMapper userDepartmentMapper;
+    private DepartmentUserMapper departmentUserMapper;
+    @Resource
+    private DepartmentLeaderMapper departmentLeaderMapper;
+
 
     @Override
     public List<DepartmentEntity> listByUserId(String userId) {
@@ -111,15 +115,18 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         if (departmentEntity == null) {
             return;
         }
-        boolean contains = userIds.contains(departmentEntity.getLeaderUserId());
-        if (contains) {
-            departmentEntity.setLeaderUserId(null);
-            updateById(departmentEntity);
-        }
-        QueryWrapper<UserDepartmentEntity> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(UserDepartmentEntity::getDepartmentId, departmentId)
-                .and(w -> w.in(UserDepartmentEntity::getUserId, userIds));
-        userDepartmentMapper.delete(wrapper);
+
+        //移除部门主管
+        LambdaUpdateWrapper<DepartmentLeaderEntity> departmentLeaderWrapper = new LambdaUpdateWrapper<>();
+        departmentLeaderWrapper.eq(DepartmentLeaderEntity::getDepartmentId, departmentId)
+                .and(w -> w.in(DepartmentLeaderEntity::getUserId, userIds));
+        departmentLeaderMapper.delete(departmentLeaderWrapper);
+
+        //移除部门下成员
+        LambdaUpdateWrapper<DepartmentUserEntity> departmentUserWrapper = new LambdaUpdateWrapper<>();
+        departmentUserWrapper.eq(DepartmentUserEntity::getDepartmentId, departmentId)
+                .and(w -> w.in(DepartmentUserEntity::getUserId, userIds));
+        departmentUserMapper.delete(departmentUserWrapper);
     }
 
     /**
@@ -150,18 +157,18 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         DepartmentEntity departmentEntity = getByBusinessId(departmentId);
         Assert.isNull(departmentEntity, "部门不存在!");
 
-        QueryWrapper<UserDepartmentEntity> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(UserDepartmentEntity::getDepartmentId, departmentId);
+        QueryWrapper<DepartmentUserEntity> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(DepartmentUserEntity::getDepartmentId, departmentId);
 
         //避免重复添加
-        List<UserDepartmentEntity> dbUserDepartmentEntities = userDepartmentMapper.selectList(wrapper);
-        Set<String> dbUserIds = dbUserDepartmentEntities.stream().map(UserDepartmentEntity::getUserId).collect(Collectors.toSet());
+        List<DepartmentUserEntity> dbUserDepartmentEntities = departmentUserMapper.selectList(wrapper);
+        Set<String> dbUserIds = dbUserDepartmentEntities.stream().map(DepartmentUserEntity::getUserId).collect(Collectors.toSet());
         Collection<String> newUserIds = CollectionUtils.subtract(userIds, dbUserIds);
 
         //保存
         newUserIds.stream()
-                .map(userId -> new UserDepartmentEntity(userId, departmentId))
-                .forEach(userDepartmentEntity -> userDepartmentMapper.insert(userDepartmentEntity));
+                .map(userId -> new DepartmentUserEntity(userId, departmentId))
+                .forEach(departmentUserEntity -> departmentUserMapper.insert(departmentUserEntity));
     }
 
     /**
@@ -257,10 +264,10 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         departmentIds.add(departmentId);
         departmentIds.addAll(children);
 
-        UpdateWrapper<UserDepartmentEntity> wrapper = new UpdateWrapper();
-        wrapper.lambda().set(UserDepartmentEntity::getDepartmentId, departmentIds);
+        UpdateWrapper<DepartmentUserEntity> wrapper = new UpdateWrapper();
+        wrapper.lambda().set(DepartmentUserEntity::getDepartmentId, departmentIds);
         //删除用户关联的部门
-        userDepartmentMapper.delete(wrapper);
+        departmentUserMapper.delete(wrapper);
 
         //删除部门
         removeByBusinessIds(departmentIds);
@@ -275,5 +282,51 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
             wrapper.set(DepartmentEntity::getSort, sort++);
             departmentMapper.update(null, wrapper);
         }
+    }
+
+    /**
+     * 判断是否存在部门根节点
+     *
+     * @return true 存在， false 不存在
+     */
+    @Override
+    public boolean isExistRootDepartment() {
+        Integer flag = departmentMapper.isExistRootDepartment();
+        return Optional.ofNullable(flag).orElse(0) == 1;
+    }
+
+    /**
+     * 保存/更新部门
+     *
+     * @param departmentEntity 部门
+     * @param leaderUserIds    部门主管ID集合
+     */
+    @Override
+    public void saveDepartment(DepartmentEntity departmentEntity, List<String> leaderUserIds) {
+        if(StringUtils.isNotBlank(departmentEntity.getDepartmentId())){
+
+            if(CollectionUtils.isEmpty(leaderUserIds)) {
+
+                departmentLeaderMapper.deleteByDepartmentId(departmentEntity.getDepartmentId());
+
+            }else{
+                List<DepartmentLeaderEntity> departmentLeaderEntities = departmentLeaderMapper.listByDepartmentId(departmentEntity.getDepartmentId());
+                List<String> dbLeaderUserIds = departmentLeaderEntities.stream().map(DepartmentLeaderEntity::getUserId).collect(Collectors.toList());
+
+                //删除
+                departmentLeaderEntities.stream()
+                        .filter(entity -> !leaderUserIds.contains(entity.getUserId()))
+                        .forEach(entity -> departmentLeaderMapper.deleteById(entity.getId()));
+
+                //新增
+                leaderUserIds.stream()
+                        .filter(userId -> !dbLeaderUserIds.contains(userId))
+                        .forEach(userId -> {
+                            departmentLeaderMapper.insert(new DepartmentLeaderEntity(departmentEntity.getDepartmentId(), userId));
+                        });
+            }
+
+        }
+        saveOrUpdate(departmentEntity);
     }
 }

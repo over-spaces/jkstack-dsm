@@ -22,12 +22,12 @@
 
     <select id="listByUserId" parameterType="string" resultType="com.jkstack.dsm.user.entity.DepartmentEntity">
         SELECT dept.* FROM dsm_department dept
-            LEFT JOIN dsm_user_department d ON dept.department_id=d.department_id
+            LEFT JOIN dsm_department_user d ON dept.department_id=d.department_id
             WHERE d.user_id='${userId}'
     </select>
 
     <select id="listDeptUserNumber" resultType="java.util.Map">
-        SELECT d.department_id, count(d.user_id) AS count FROM dsm_user_department d GROUP BY d.department_id
+        SELECT d.department_id, count(d.user_id) AS count FROM dsm_department_user d GROUP BY d.department_id
     </select>
 
     <select id="listChildrenDepartmentIds" parameterType="int" resultType="java.lang.String">
@@ -48,6 +48,10 @@
 
     <select id="getMaxSortValueByParentDepartmentId" parameterType="string" resultType="java.lang.Integer">
         SELECT MAX(sort) FROM dsm_department WHERE parent_department_id='${parentDepartmentId}'
+    </select>
+
+    <select id="isExistRootDepartment"  resultType="java.lang.Integer">
+        SELECT 1 FROM dsm_department where deep=1 OR parent_department_id IS NULL LIMIT 1
     </select>
 
 </mapper>

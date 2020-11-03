@@ -6,6 +6,7 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.Index;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.jkstack.dsm.common.BaseEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -15,9 +16,10 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@Table(value = "dsm_user_work_group")
-@TableName(value = "dsm_user_work_group")
-public class UserWorkGroupEntity extends BaseEntity {
+@NoArgsConstructor
+@Table(value = "dsm_work_group_user")
+@TableName(value = "dsm_work_group_user")
+public class WorkGroupUserEntity extends BaseEntity {
 
     @Column(length = 64, comment = "用户ID")
     @Index("idx_user_id")
@@ -27,4 +29,8 @@ public class UserWorkGroupEntity extends BaseEntity {
     @Index("idx_work_group_id")
     private String workGroupId;
 
+    public WorkGroupUserEntity(String userId, String workGroupId) {
+        this.userId = userId;
+        this.workGroupId = workGroupId;
+    }
 }

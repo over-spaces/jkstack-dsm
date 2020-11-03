@@ -22,30 +22,109 @@
         <result property="position" column="position" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="listDepartmentUsers" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
-        SELECT user.* FROM dsm_user user LEFT JOIN dsm_user_department d ON user.user_id=d.user_id WHERE d.department_id='${departmentId}'
+    <select id="selectPageUserByDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT user.* FROM dsm_user user LEFT JOIN dsm_department_user d ON user.user_id=d.user_id WHERE d.department_id='${departmentId}'
     </select>
 
-    <select id="pageByNotDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
-        SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_user_department WHERE department_id='${departmentId}')
+    <select id="selectPageUserByNotDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_department_user WHERE department_id='${departmentId}')
     </select>
 
-    <select id="listAllByDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+    <select id="listByDepartmentIds" parameterType="string" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
         SELECT user.user_id, user.name,user.login_name FROM dsm_user user
-            LEFT JOIN dsm_user_department dept ON user.user_id=dept.user_id
-            WHERE dept.department_id='${departmentId}'
+            LEFT JOIN dsm_department_user dept ON user.user_id=dept.user_id
+            WHERE dept.department_id IN
+            <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+                #{id}
+            </foreach>
     </select>
 
-    <select id="pageByNotDepartmentIdAndLike" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
-        SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_user_department
+    <select id="selectPageUserByNotDepartmentIdAndLike" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_department_user
             WHERE department_id='${departmentId}')
             AND (name LIKE '%${condition}%' OR login_name LIKE '%${condition}%' OR user_no LIKE '%${condition}%')
     </select>
 
     <select id="listByWorkGroupId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
         SELECT user.* FROM dsm_user user
-            LEFT JOIN dsm_user_work_group group ON user.user_id=group.user_id
-            WHERE group.work_group_id='${workGroupId}'
+            LEFT JOIN dsm_work_group_user g ON user.user_id=g.user_id
+            WHERE g.work_group_id='${workGroupId}'
     </select>
 
+    <select id="selectPageByLike" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT user.* FROM dsm_user user WHERE CONCAT(IFNULL(user.name, ''),
+            IFNULL(user.login_name, ''), IFNULL(user.user_no, ''),
+            IFNULL(user.phone, ''), IFNULL(user.wechat, ''))
+            LIKE '%${condition}%'
+    </select>
+
+    <select id="selectLeaderUserListByDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT user.* FROM dsm_user user
+            LEFT JOIN dsm_department_leader leader ON user.user_id=leader.user_id
+            WHERE leader.department_id='${departmentId}'
+    </select>
+
+    <select id="selectPageByDepartmentIdsAndNotWorkGroupId" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+        LEFT JOIN dsm_department_user dept ON user.user_id=dept.user_id
+        WHERE user.user_id NOT IN (SELECT user_id FROM dsm_work_group_user WHERE work_group_id=#{workGroupId})
+        AND dept.department_id IN
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectPageByDepartmentIdsAndNotWorkGroupIdAndLike" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+        LEFT JOIN dsm_department_user dept ON user.user_id=dept.user_id
+        WHERE user.user_id NOT IN (SELECT user_id FROM dsm_work_group_user WHERE work_group_id=#{workGroupId})
+        AND (user.user_id LIKE '%${condition}%' OR user.login_name LIKE '%${condition}%' OR user.name LIKE '%${condition}%')
+        AND dept.department_id IN
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectPageByNotWorkGroupId" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+            LEFT JOIN dsm_work_group_user wg ON  user.user_id=wg.user_id
+            WHERE (wg.work_group_id != #{workGroupId} OR wg.work_group_id IS NULL)
+    </select>
+
+    <select id="selectPageByNotWorkGroupIdAndLike" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+            LEFT JOIN dsm_work_group_user wg ON  user.user_id=wg.user_id
+            WHERE (wg.work_group_id != #{workGroupId} OR wg.work_group_id IS NULL)
+                AND (user.user_id LIKE '%${condition}%' OR user.login_name LIKE '%${condition}%' OR user.name LIKE '%${condition}%')
+    </select>
+
+    <select id="selectPageByDepartmentIds" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+        LEFT JOIN dsm_department_user dept ON user.user_id=dept.user_id
+        LEFT JOIN dsm_work_group_user wg ON  user.user_id=wg.user_id
+        WHERE dept.department_id IN
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectPageByDepartmentIdsAndLike" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+        LEFT JOIN dsm_department_user dept ON user.user_id=dept.user_id
+        LEFT JOIN dsm_work_group_user wg ON  user.user_id=wg.user_id
+        WHERE (user.user_id LIKE '%${condition}%' OR user.login_name LIKE '%${condition}%' OR user.name LIKE '%${condition}%')
+            AND dept.department_id IN
+            <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+    </select>
+
+    <select id="selectPageSimpleUserList" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+    </select>
+
+    <select id="selectPageSimpleUserListByLike" parameterType="string" resultType="com.jkstack.dsm.user.controller.vo.UserSimpleVO">
+        SELECT DISTINCT user.user_id, user.name,user.login_name FROM dsm_user user
+        WHERE user.user_id LIKE '%${condition}%' OR user.login_name LIKE '%${condition}%' OR user.name LIKE '%${condition}%'
+    </select>
 </mapper>

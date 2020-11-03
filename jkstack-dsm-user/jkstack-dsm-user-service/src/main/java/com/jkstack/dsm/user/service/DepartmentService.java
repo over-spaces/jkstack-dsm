@@ -100,4 +100,17 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
     void deleteByDepartmentId(String departmentId) throws MessageException;
 
     void updateDepartmentSort(List<DepartmentEntity> departmentEntities);
+
+    /**
+     * 判断是否存在部门根节点
+     * @return true 存在， false 不存在
+     */
+    boolean isExistRootDepartment();
+
+    /**
+     * 保存/更新部门
+     * @param departmentEntity 部门
+     * @param leaderUserIds 部门主管ID集合
+     */
+    void saveDepartment(DepartmentEntity departmentEntity, List<String> leaderUserIds);
 }

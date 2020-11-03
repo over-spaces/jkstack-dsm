@@ -33,6 +33,9 @@ public class WorkGroupVO implements Serializable {
     @Length(max = 100, message = "描述内容过长")
     private String description;
 
+    @ApiModelProperty(value = "工作组成员数")
+    private Long userCount;
+
     public WorkGroupVO(WorkGroupEntity workGroupEntity){
         this.workGroupId = workGroupEntity.getWorkGroupId();
         this.name = workGroupEntity.getName();
