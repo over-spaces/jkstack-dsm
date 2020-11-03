@@ -34,3 +34,7 @@ build/
 
 ### jkstack-dsm-log ###
 jkstack-dsm/
+
+### 开发模式配置 ###
+bootstrap-dev.yml
+application-test.yml
