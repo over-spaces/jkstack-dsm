@@ -1,16 +1,14 @@
 package com.jkstack.dsm.user.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
 import com.jkstack.dsm.common.service.CommonServiceImpl;
 import com.jkstack.dsm.common.utils.MD5Util;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.config.UserConfigProperties;
 import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
-import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.mapper.UserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
@@ -93,7 +91,7 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     @Override
     public IPage<UserEntity> listDepartmentUsers(String departmentId, PageVO pageVO) {
         IPage<UserEntity> page = new Page<>(pageVO.getPageNo(), pageVO.getPageSize());
-        return userMapper.listDepartmentUsers(departmentId, page);
+        return userMapper.selectPageUserByDepartmentId(departmentId, page);
     }
 
     /**
@@ -103,11 +101,22 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      * @return 部门下全部用户列表
      */
     @Override
-    public List<UserSimpleVO> listAllByDepartmentId(String departmentId) {
+    public List<UserSimpleVO> listAllUserByDepartmentId(String departmentId) {
         List<String> childrenDepartmentIds = departmentService.listChildrenDepartmentIds(departmentId);
         //包含自己
         childrenDepartmentIds.add(departmentId);
         return userMapper.listByDepartmentIds(childrenDepartmentIds);
+    }
+
+    /**
+     * 获取部门下直属用户列表
+     *
+     * @param departmentId 部门ID
+     * @return 部门下直属用户列表
+     */
+    @Override
+    public List<UserSimpleVO> listDirectUserByDepartmentId(String departmentId) {
+        return userMapper.listByDepartmentIds(Lists.newArrayList(departmentId));
     }
 
     /**
@@ -124,9 +133,9 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     @Override
     public IPage<UserEntity> pageByNotDepartmentId(String departmentId, PageVO pageVO) {
         if(StringUtils.isBlank(pageVO.getCondition())){
-            return userMapper.pageByNotDepartmentId(departmentId, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+            return userMapper.selectPageUserByNotDepartmentId(departmentId, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
         }else{
-            return userMapper.pageByNotDepartmentIdAndLike(departmentId, pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+            return userMapper.selectPageUserByNotDepartmentIdAndLike(departmentId, pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
         }
     }
 
@@ -151,7 +160,7 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     @Override
     public IPage<UserEntity> pageByLike(PageVO pageVO) {
         if(StringUtils.isBlank(pageVO.getCondition())){
-            return userMapper.pageByLike(new Page<>(pageVO.getPageNo(), pageVO.getPageSize()), pageVO.getCondition());
+            return userMapper.selectPageByLike(pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
         }else {
             return userMapper.selectPage(new Page<>(pageVO.getPageNo(), pageVO.getPageSize()), null);
         }
@@ -165,6 +174,61 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      */
     @Override
     public List<UserEntity> listLeaderUserByDepartmentId(String departmentId) {
-        return userMapper.listLeaderUserByDepartmentId(departmentId);
+        return userMapper.selectLeaderUserListByDepartmentId(departmentId);
+    }
+
+    /**
+     * 分页查询指定部门下全部的人员，但需要排除指定工作组下的人员。
+     *
+     * @param departmentId 部门ID
+     * @param workGroupId  工作组ID
+     * @param pageVO       分页查询信息
+     */
+    @Override
+    public IPage<UserSimpleVO> pageByDepartmentIdAndNotWorkGroupId(String departmentId, String workGroupId, PageVO pageVO) {
+        int pageNo = pageVO.getPageNo();
+        int pageSize = pageVO.getPageSize();
+        if(StringUtils.isNotBlank(departmentId)) {
+            List<String> childrenDepartmentIds = departmentService.listChildrenDepartmentIds(departmentId);
+            childrenDepartmentIds.add(departmentId);
+            if(StringUtils.isNotBlank(pageVO.getCondition())) {
+                return userMapper.selectPageByDepartmentIdsAndNotWorkGroupIdAndLike(childrenDepartmentIds, workGroupId, pageVO.getCondition(), new Page<>(pageNo, pageSize));
+            }else{
+                return userMapper.selectPageByDepartmentIdsAndNotWorkGroupId(childrenDepartmentIds, workGroupId, new Page<>(pageNo, pageSize));
+            }
+        }else{
+            //查询全部部门下的人员
+            if(StringUtils.isNotBlank(pageVO.getCondition())) {
+                return userMapper.selectPageByNotWorkGroupIdAndLike(workGroupId, pageVO.getCondition(), new Page<>(pageNo, pageSize));
+            }else {
+                return userMapper.selectPageByNotWorkGroupId(workGroupId, new Page<>(pageNo, pageSize));
+            }
+        }
+    }
+
+    /**
+     * 分页查询指定部门下全部的人员
+     *
+     * @param departmentId 部门ID
+     * @param pageVO       分页查询信息
+     */
+    @Override
+    public IPage<UserSimpleVO> pageByDepartmentId(String departmentId, PageVO pageVO) {
+        if(StringUtils.isBlank(departmentId)){
+            if(StringUtils.isBlank(pageVO.getCondition())) {
+                return userMapper.selectPageSimpleUserList(new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+            }else{
+                return userMapper.selectPageSimpleUserListByLike(pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+            }
+        }else {
+            List<String> departmentIds = departmentService.listChildrenDepartmentIds(departmentId);
+            departmentIds.add(departmentId);
+
+            if(StringUtils.isBlank(pageVO.getCondition())) {
+                return userMapper.selectPageByDepartmentIds(departmentIds, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+            }else{
+                return userMapper.selectPageByDepartmentIdsAndLike(departmentIds, pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
+            }
+        }
     }
 }

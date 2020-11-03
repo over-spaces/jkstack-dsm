@@ -14,7 +14,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
 /**
@@ -256,8 +254,9 @@ public class DepartmentController extends BaseController {
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @GetMapping("/members")
     public ResponseResult<List<UserSimpleVO>> listUser(@RequestParam String departmentId) {
-        return ResponseResult.success(userService.listAllByDepartmentId(departmentId));
+        return ResponseResult.success(userService.listDirectUserByDepartmentId(departmentId));
     }
+
 
     private void checkDepartment(DepartmentVO departmentVO) throws MessageException {
         int deep = 1;

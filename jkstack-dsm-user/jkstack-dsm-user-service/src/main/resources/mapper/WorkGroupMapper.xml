@@ -17,8 +17,16 @@
 
     <select id="listByUserId" parameterType="string" resultType="com.jkstack.dsm.user.entity.WorkGroupEntity">
         SELECT w.* FROM dsm_work_group w
-            LEFT JOIN dsm_user_work_group u ON w.work_group_id=u.work_group_id
+            LEFT JOIN dsm_work_group_user u ON w.work_group_id=u.work_group_id
             WHERE u.user_id='${userId}'
+    </select>
+
+    <select id="countUsers" parameterType="java.lang.String" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM dsm_work_group_user WHERE work_group_id=#{workGroupId}
+    </select>
+
+    <select id="getMaxSortValue" resultType="java.lang.Integer">
+        SELECT MAX(sort) FROM dsm_work_group
     </select>
 
 </mapper>

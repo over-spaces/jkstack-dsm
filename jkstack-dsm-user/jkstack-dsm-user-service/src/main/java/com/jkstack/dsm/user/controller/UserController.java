@@ -1,6 +1,5 @@
 package com.jkstack.dsm.user.controller;
 
-import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
@@ -17,10 +16,11 @@ import com.jkstack.dsm.common.utils.JwtUtils;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.common.vo.SimpleDataVO;
 import com.jkstack.dsm.user.controller.vo.UserExcelVO;
+import com.jkstack.dsm.user.controller.vo.UserSelectVO;
+import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.controller.vo.UserVO;
 import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
-import com.jkstack.dsm.user.entity.UserStatusEnum;
 import com.jkstack.dsm.user.entity.WorkGroupEntity;
 import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
@@ -136,7 +136,31 @@ public class UserController extends BaseController implements UserControllerFeig
         return new ResponseResult<>(pageResult);
     }
 
+    @ApiOperation("选择成员列表")
+    @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
+    @PostMapping("/select/members")
+    public ResponseResult<PageResult<UserSimpleVO>> selectMembers(@RequestBody UserSelectVO selectVO){
+        String departmentId = selectVO.getDepartmentId();
 
+        IPage<UserSimpleVO> pageUser = null;
+        if(selectVO.getType() == UserSelectVO.TypeEnum.WORK_GROUP){
+
+            String workGroupId = selectVO.getId();
+            pageUser = userService.pageByDepartmentIdAndNotWorkGroupId(departmentId, workGroupId, selectVO);
+
+
+        }else if(selectVO.getType() == UserSelectVO.TypeEnum.PERM_GROUP){
+
+            pageUser = new Page<>();
+
+        }else {
+
+            pageUser = userService.pageByDepartmentId(departmentId, selectVO);
+
+        }
+        PageResult<UserSimpleVO> pageResult = new PageResult(pageUser, pageUser.getRecords());
+        return ResponseResult.success(pageResult);
+    }
 
     @ApiOperation("移除用户")
     @PostMapping("/delete")

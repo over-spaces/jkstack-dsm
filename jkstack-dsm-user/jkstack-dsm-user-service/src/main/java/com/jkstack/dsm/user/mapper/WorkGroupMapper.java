@@ -16,4 +16,8 @@ public interface WorkGroupMapper extends BaseMapper<WorkGroupEntity> {
 
     List<WorkGroupEntity> listByUserId(String userId);
 
+    Long countUsers(String workGroupId);
+
+    Integer getMaxSortValue();
+
 }

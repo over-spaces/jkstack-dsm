@@ -48,11 +48,18 @@ public interface UserService extends CommonService<UserEntity> {
     IPage<UserEntity> listDepartmentUsers(String departmentId, PageVO pageVO);
 
     /**
-     * 获取指定部门下全部的用户列表（包含子部门）
+     * 获取指定部门下全部的用户列表（包含子部门用户）
      * @param departmentId 部门ID
      * @return 部门下全部用户列表
      */
-    List<UserSimpleVO> listAllByDepartmentId(String departmentId);
+    List<UserSimpleVO> listAllUserByDepartmentId(String departmentId);
+
+    /**
+     * 获取部门下直属用户列表
+     * @param departmentId 部门ID
+     * @return 部门下直属用户列表
+     */
+    List<UserSimpleVO> listDirectUserByDepartmentId(String departmentId);
 
     /**
      * 统计指定部门下用户数量
@@ -84,4 +91,19 @@ public interface UserService extends CommonService<UserEntity> {
      * @return 部门负责人列表
      */
     List<UserEntity> listLeaderUserByDepartmentId(String departmentId);
+
+    /**
+     * 分页查询指定部门下全部的人员，但需要排除指定工作组下的人员。
+     * @param departmentId 部门ID
+     * @param workGroupId 工作组ID
+     * @param pageVO 分页信息
+     */
+    IPage<UserSimpleVO> pageByDepartmentIdAndNotWorkGroupId(String departmentId, String workGroupId, PageVO pageVO);
+
+    /**
+     * 分页查询指定部门下全部的人员
+     * @param departmentId 部门ID
+     * @param pageVO 分页信息
+     */
+    IPage<UserSimpleVO> pageByDepartmentId(String departmentId, PageVO pageVO);
 }

@@ -32,9 +32,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/work-group")
 public class WorkGroupController extends BaseController {
 
-    /**
-     * 服务对象
-     */
     @Autowired
     private WorkGroupService workGroupService;
     @Autowired
@@ -48,6 +45,8 @@ public class WorkGroupController extends BaseController {
         WorkGroupEntity workGroupEntity;
         if (StringUtils.isBlank(workGroupVO.getWorkGroupId())) {
             workGroupEntity = new WorkGroupEntity();
+            int sort = workGroupService.getMaxSortValue();
+            workGroupEntity.setSort(sort + 1);
         } else {
             workGroupEntity = workGroupService.getByBusinessId(workGroupVO.getWorkGroupId());
             Assert.isNull(workGroupEntity, "工作组不存在");
@@ -59,12 +58,26 @@ public class WorkGroupController extends BaseController {
     }
 
     @ApiOperation(value = "获取工作组明细")
-    @PostMapping("/get")
+    @GetMapping("/get")
     public ResponseResult<WorkGroupVO> get(@RequestParam String workGroupId) throws MessageException {
         WorkGroupEntity workGroupEntity = workGroupService.getByBusinessId(workGroupId);
         Assert.isNull(workGroupEntity, "工作组不存在");
+
+        //用户数
+        Long userCount = workGroupService.countUsers(workGroupEntity.getWorkGroupId());
+
         WorkGroupVO workGroupVO = new WorkGroupVO(workGroupEntity);
+        workGroupVO.setUserCount(userCount);
         return ResponseResult.success(workGroupVO);
+    }
+
+    @ApiOperation(value = "删除工作组")
+    @GetMapping("/delete")
+    public ResponseResult<WorkGroupVO> delete(@RequestParam String workGroupId) throws MessageException {
+
+        workGroupService.deleteByWorkGroupId(workGroupId);
+
+        return ResponseResult.success();
     }
 
     @ApiOperation(value = "工作组列表")
@@ -81,28 +94,54 @@ public class WorkGroupController extends BaseController {
     @ApiOperation(value = "工作组成员列表")
     @PostMapping("/users")
     public ResponseResult<PageResult<WorkGroupUserVO>> users(@RequestBody PageVO pageVO) throws MessageException {
+        WorkGroupEntity workGroupEntity = workGroupService.getByBusinessId(pageVO.getId());
+
+        Assert.isNull(workGroupEntity, "工作组不存在");
+
+        Long userCount = workGroupService.countUsers(workGroupEntity.getWorkGroupId());
         IPage<UserEntity> page = userService.listByWorkGroupId(pageVO.getId(), pageVO);
 
         List<WorkGroupUserVO> list = page.getRecords().stream()
                 .map(WorkGroupUserVO::new)
                 .collect(Collectors.toList());
-        return ResponseResult.success(new PageResult(page.getPages(), page.getTotal(), list));
+        PageResult<WorkGroupUserVO> pageResult = new PageResult(page, list);
+        pageResult.getExpand().put("workGroupId", workGroupEntity.getWorkGroupId());
+        pageResult.getExpand().put("name", workGroupEntity.getName());
+        pageResult.getExpand().put("userCount", userCount);
+        return ResponseResult.success(pageResult);
     }
 
     @ApiOperation(value = "工作组添加成员")
     @PostMapping("/add/user")
     public ResponseResult addUser(@RequestBody WorkGroupAddUserVO workGroupAddUserVO) throws MessageException {
+
+        Assert.isEmpty(workGroupAddUserVO.getUserIds(), "请选择需要添加的成员");
+
+        workGroupService.addUser(workGroupAddUserVO.getWorkGroupId(), workGroupAddUserVO.getUserIds());
+
         return ResponseResult.success();
     }
 
     @ApiOperation(value = "工作组移除成员")
     @PostMapping("/remove/user")
     public ResponseResult removeUser(@RequestBody WorkGroupAddUserVO workGroupAddUserVO) throws MessageException {
+        Assert.isEmpty(workGroupAddUserVO.getUserIds(), "请选择需要移除的成员");
+
+        workGroupService.removeUser(workGroupAddUserVO.getWorkGroupId(), workGroupAddUserVO.getUserIds());
+
+        return ResponseResult.success();
+    }
+
+    @ApiOperation(value = "工作组排序")
+    @PostMapping("/sort")
+    public ResponseResult sort(@RequestBody List<WorkGroupVO> workGroupList) throws MessageException {
+
+        workGroupService.updateSort(workGroupList);
+
         return ResponseResult.success();
     }
 
     private void checkWorkGroupVO() {
 
     }
-
 }
