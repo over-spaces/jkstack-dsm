@@ -1,5 +1,6 @@
 package com.jkstack.dsm.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,7 +10,9 @@ import com.jkstack.dsm.common.utils.MD5Util;
 import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.config.UserConfigProperties;
 import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
+import com.jkstack.dsm.user.entity.DepartmentUserEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
+import com.jkstack.dsm.user.mapper.DepartmentUserMapper;
 import com.jkstack.dsm.user.mapper.UserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -28,6 +32,8 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     private UserMapper userMapper;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private DepartmentUserMapper departmentUserMapper;
     @Autowired
     private UserConfigProperties userConfigProperties;
 
@@ -91,7 +97,11 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     @Override
     public IPage<UserEntity> listDepartmentUsers(String departmentId, PageVO pageVO) {
         IPage<UserEntity> page = new Page<>(pageVO.getPageNo(), pageVO.getPageSize());
-        return userMapper.selectPageUserByDepartmentId(departmentId, page);
+        if(StringUtils.isNotBlank(pageVO.getCondition())){
+            return userMapper.selectPageUserByDepartmentIdAndLike(departmentId, pageVO.getCondition(), page);
+        }else {
+            return userMapper.selectPageUserByDepartmentId(departmentId, page);
+        }
     }
 
     /**
@@ -127,7 +137,10 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      */
     @Override
     public long countUserByDepartmentId(String departmentId) {
-        return departmentService.listChildrenDepartmentIds(departmentId).size();
+        //获取子部门
+        List<String> childrenDepartmentIds = departmentService.listChildrenDepartmentIds(departmentId);
+        childrenDepartmentIds.add(departmentId);
+        return departmentUserMapper.selectUserIdsByDepartmentIds(childrenDepartmentIds).size();
     }
 
     @Override
@@ -230,5 +243,27 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
                 return userMapper.selectPageByDepartmentIdsAndLike(departmentIds, pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
             }
         }
+    }
+
+    /**
+     * 更新用户，绑定部门及工作组
+     *
+     * @param userEntity    用户
+     * @param departmentIds 部门ID集合
+     * @param workGroupIds  工作组ID集合
+     */
+    @Override
+    public void update(UserEntity userEntity, Set<String> departmentIds, Set<String> workGroupIds) {
+        //绑定部门
+        LambdaQueryWrapper<DepartmentUserEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DepartmentUserEntity::getUserId, userEntity.getUserId());
+        departmentUserMapper.delete(wrapper);
+
+        for (String departmentId : departmentIds) {
+            departmentUserMapper.insert(new DepartmentUserEntity(userEntity.getUserId(), departmentId));
+        }
+
+        //更新用户
+        updateByBusinessId(userEntity);
     }
 }

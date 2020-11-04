@@ -1,6 +1,5 @@
 package com.jkstack.dsm.common.service;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,15 +24,16 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
 
     /**
      * 根据业务ID查询
+     *
      * @param businessId 表的业务ID，非主键ID
      */
     @Override
     public T getByBusinessId(String businessId) {
-        if(StringUtils.isBlank(businessId)){
+        if (StringUtils.isBlank(businessId)) {
             return null;
         }
         Field field = getBusinessIdField();
-        if(Objects.isNull(field)){
+        if (Objects.isNull(field)) {
             logger.error("{}, 未知的业务ID字段.", entityClass.getName());
             return null;
         }
@@ -44,15 +44,16 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
 
     /**
      * 根据业务ID批量查询
+     *
      * @param businessIds 表业务ID集合
      */
     @Override
     public List<T> listByBusinessIds(Collection<String> businessIds) {
-        if(CollectionUtils.isEmpty(businessIds)){
+        if (CollectionUtils.isEmpty(businessIds)) {
             return Collections.emptyList();
         }
         Field field = getBusinessIdField();
-        if(Objects.isNull(field)){
+        if (Objects.isNull(field)) {
             logger.error("{}, 未知的业务ID字段.", entityClass.getName());
             return Collections.emptyList();
         }
@@ -63,12 +64,13 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
 
     /**
      * 根据业务ID删除记录
+     *
      * @param businessId
      */
     @Override
     public void removeByBusinessId(String businessId) {
         Field field = getBusinessIdField();
-        if(Objects.isNull(field)){
+        if (Objects.isNull(field)) {
             logger.error("{}, 未知的业务ID字段.", entityClass.getName());
             return;
         }
@@ -85,7 +87,7 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
     @Override
     public void removeByBusinessIds(Collection<String> businessIds) {
         Field field = getBusinessIdField();
-        if(Objects.isNull(field)){
+        if (Objects.isNull(field)) {
             logger.error("{}, 未知的业务ID字段.", entityClass.getName());
             return;
         }
@@ -97,12 +99,37 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
     /**
      * 根据业务ID更新
      *
+     * @param entity
+     */
+    @Override
+    public void updateByBusinessId(T entity) {
+        Field field = getBusinessIdField();
+        if (field == null) {
+            logger.error("{}, 未知的业务ID字段.", entityClass.getName());
+            return;
+        }
+        try {
+            String businessId = BeanUtils.getProperty(entity, field.getName());
+            if (StringUtils.isBlank(businessId)) {
+                return;
+            }
+            QueryWrapper<T> wrapper = new QueryWrapper<>();
+            wrapper.eq(StringUtil.convertCamelToUnder(field.getName()), businessId);
+            baseMapper.update(entity, wrapper);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 根据业务ID更新
+     *
      * @param entityList 实体类列表
      */
     @Override
     public boolean updateBatchByBusinessId(Collection<T> entityList) {
         Field field = getBusinessIdField();
-        if(field == null){
+        if (field == null) {
             logger.error("{}, 未知的业务ID字段.", entityClass.getName());
             return false;
         }
@@ -116,17 +143,17 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
                 wrapper.eq(StringUtil.convertCamelToUnder(field.getName()), businessId);
                 baseMapper.update(t, wrapper);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return false;
         }
         return true;
     }
 
-    private Field getBusinessIdField(){
+    private Field getBusinessIdField() {
         Field[] fields = entityClass.getDeclaredFields();
 
-        if(fields.length == 0) {
+        if (fields.length == 0) {
             return null;
         }
 

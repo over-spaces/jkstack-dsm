@@ -14,4 +14,11 @@
         <result property="modifierId" column="modifier_id" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <select id="selectUserIdsByDepartmentIds" resultType="java.lang.String">
+        SELECT DISTINCT user_id FROM dsm_department_user WHERE department_id IN
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

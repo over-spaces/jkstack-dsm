@@ -35,6 +35,17 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     IPage<UserEntity> selectPageUserByNotDepartmentId(String departmentId, IPage<UserEntity> page);
 
     /**
+     * 分页获取非指定部门下人员列表
+     *
+     * @param departmentId 部门ID
+     * @param page         分页信息
+     * @param condition    模糊查询条件
+     * @return 用户列表
+     */
+    IPage<UserEntity> selectPageUserByDepartmentIdAndLike(String departmentId, String condition, IPage<UserEntity> page);
+
+
+    /**
      * 分页获取非指定部门下人员列表，并且模糊查询
      *
      * @param departmentId 部门ID
@@ -88,7 +99,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * 分页查询用户部分信息列表，并且排除指定工作组下的人员
      *
      * @param workGroupId 工作组ID
-     * @param condition 模糊查询条件
+     * @param condition   模糊查询条件
      * @param page        分页信息
      * @return 用户列表
      */
@@ -108,11 +119,11 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * 分页查询用户部分信息列表
      *
      * @param departmentIds 部门ID列表
-     * @param condition 模糊查询条件
+     * @param condition     模糊查询条件
      * @param page          分页信息
      * @return 用户列表
      */
-    IPage<UserSimpleVO> selectPageByDepartmentIdsAndLike(@Param("list") List<String> departmentIds, String condition, @Param("page")  Page<Object> page);
+    IPage<UserSimpleVO> selectPageByDepartmentIdsAndLike(@Param("list") List<String> departmentIds, String condition, @Param("page") Page<Object> page);
 
 
     /**
@@ -130,16 +141,18 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     /**
      * 分页查询用户部分信息列表,并且支持模糊查询
      *
-     * @param page          分页信息
+     * @param page 分页信息
      * @return 用户列表
      */
     IPage<UserSimpleVO> selectPageSimpleUserList(@Param("page") Page<Object> page);
 
     /**
      * 分页查询用户部分信息列表,并且支持模糊查询
-     * @param condition     模糊查询条件
-     * @param page          分页信息
+     *
+     * @param condition 模糊查询条件
+     * @param page      分页信息
      * @return 用户列表
      */
-    IPage<UserSimpleVO> selectPageSimpleUserListByLike(String condition, @Param("page")  Page<Object> page);
+    IPage<UserSimpleVO> selectPageSimpleUserListByLike(String condition, @Param("page") Page<Object> page);
+
 }

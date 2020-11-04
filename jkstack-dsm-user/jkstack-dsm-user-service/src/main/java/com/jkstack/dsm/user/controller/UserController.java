@@ -4,7 +4,6 @@ import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jkstack.dsm.UserControllerFeign;
@@ -30,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.compress.utils.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,16 @@ public class UserController extends BaseController implements UserControllerFeig
             userEntity = userService.getByBusinessId(userVO.getUserId());
             Assert.isNull(userEntity,"用户不存在");
             userEntity = userVO.toUserEntity(userEntity);
-            userService.updateById(userEntity);
+
+            //用户所属部门
+            List<SimpleDataVO> departmentList = userVO.getDepartmentList();
+            Set<String> departmentIds = departmentList.stream().map(SimpleDataVO::getId).collect(Collectors.toSet());
+
+            //用户所属工作组
+            // List<SimpleDataVO> workGroupList = userVO.getWorkGroupList();
+            // Set<String> workGroupIds = workGroupList.stream().map(SimpleDataVO::getId).collect(Collectors.toSet());
+
+            userService.update(userEntity, departmentIds, Sets.newHashSet());
         }
         return new ResponseResult();
     }
@@ -102,7 +111,14 @@ public class UserController extends BaseController implements UserControllerFeig
     public ResponseResult<UserVO> get(@RequestParam String userId) throws MessageException {
         UserEntity userEntity = userService.getByBusinessId(userId);
         Assert.isNull(userEntity, "用户不存在");
+
+        List<DepartmentEntity> departmentEntities = departmentService.listByUserId(userEntity.getUserId());
+        List<SimpleDataVO> departmentList = departmentEntities.stream()
+                .sorted(Comparator.comparing(DepartmentEntity::getSort))
+                .map(entity -> new SimpleDataVO(entity.getDepartmentId(), entity.getName())).collect(Collectors.toList());
+
         UserVO userVO = new UserVO(userEntity);
+        userVO.setDepartmentList(departmentList);
         return new ResponseResult<>(userVO);
     }
 
@@ -125,10 +141,10 @@ public class UserController extends BaseController implements UserControllerFeig
                     user.setDepartmentList(userDepartmentList);
 
                     //工作组
-                    List<SimpleDataVO> userWorkGroupList = userWorkGroupMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()
-                            .map(workGroupEntity -> new SimpleDataVO(workGroupEntity.getWorkGroupId(), workGroupEntity.getName()))
-                            .collect(Collectors.toList());
-                    user.setWorkGroupList(userWorkGroupList);
+                    // List<SimpleDataVO> userWorkGroupList = userWorkGroupMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()
+                    //         .map(workGroupEntity -> new SimpleDataVO(workGroupEntity.getWorkGroupId(), workGroupEntity.getName()))
+                    //         .collect(Collectors.toList());
+                    // user.setWorkGroupList(userWorkGroupList);
                 })
                 .collect(Collectors.toList());
 
@@ -212,20 +228,6 @@ public class UserController extends BaseController implements UserControllerFeig
             throw new MessageException("用户已存在!");
         }
         return ResponseResult.success();
-    }
-
-
-    private LambdaUpdateWrapper<UserEntity> getLikeQueryWrapper(String condition) {
-        if (StringUtils.isBlank(condition)) {
-            return null;
-        }
-        LambdaUpdateWrapper<UserEntity> wrapper = new LambdaUpdateWrapper<>(UserEntity.class);
-        wrapper.like(UserEntity::getLoginName, "%" + condition + "%")
-                .or()
-                .like(UserEntity::getName, "%" + condition + "%")
-                .or()
-                .like(UserEntity::getUserNo, "%" + condition + "%");
-        return wrapper;
     }
 
     private UserEntity getByBusinessId(String userId) throws MessageException {

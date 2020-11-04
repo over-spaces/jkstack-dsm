@@ -37,6 +37,12 @@ public interface CommonService<T> extends IService<T> {
 
     /**
      * 根据业务ID更新
+     * @param entity
+     */
+    void updateByBusinessId(T entity);
+
+    /**
+     * 根据业务ID更新
      * @param entityList 实体类列表
      */
     boolean updateBatchByBusinessId(Collection<T> entityList);

@@ -26,6 +26,12 @@
         SELECT user.* FROM dsm_user user LEFT JOIN dsm_department_user d ON user.user_id=d.user_id WHERE d.department_id='${departmentId}'
     </select>
 
+    <select id="selectPageUserByDepartmentIdAndLike" resultType="com.jkstack.dsm.user.entity.UserEntity">
+        SELECT user.* FROM dsm_user user
+            LEFT JOIN dsm_department_user d ON user.user_id=d.user_id
+            WHERE d.department_id='${departmentId}' AND (user.name LIKE '%${condition}%' OR user.login_name LIKE '%${condition}%' OR user.user_no LIKE '%${condition}%')
+    </select>
+
     <select id="selectPageUserByNotDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
         SELECT * FROM dsm_user WHERE user_id NOT IN (SELECT user_id FROM dsm_department_user WHERE department_id='${departmentId}')
     </select>
