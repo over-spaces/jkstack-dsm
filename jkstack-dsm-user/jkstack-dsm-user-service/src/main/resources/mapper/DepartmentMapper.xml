@@ -50,6 +50,11 @@
         SELECT MAX(sort) FROM dsm_department WHERE parent_department_id='${parentDepartmentId}'
     </select>
 
+    <select id="isExistRootDepartmentByNotDepartmentId"  resultType="java.lang.Integer">
+        SELECT 1 FROM dsm_department where (deep=1 OR parent_department_id IS NULL) AND department_id!=#{departmentId}  LIMIT 1
+    </select>
+
+
     <select id="isExistRootDepartment"  resultType="java.lang.Integer">
         SELECT 1 FROM dsm_department where deep=1 OR parent_department_id IS NULL LIMIT 1
     </select>

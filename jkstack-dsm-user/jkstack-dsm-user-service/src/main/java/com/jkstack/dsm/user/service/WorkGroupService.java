@@ -48,4 +48,6 @@ public interface WorkGroupService extends CommonService<WorkGroupEntity> {
     int getMaxSortValue();
 
     void updateSort(List<WorkGroupVO> workGroupList);
+
+    WorkGroupEntity getByName(String name);
 }

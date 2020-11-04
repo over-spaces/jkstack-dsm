@@ -1,6 +1,7 @@
 package com.jkstack.dsm.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.google.common.collect.Maps;
 import com.jkstack.dsm.common.Assert;
@@ -131,5 +132,12 @@ public class WorkGroupServiceImpl extends CommonServiceImpl<WorkGroupMapper, Wor
             wrapper.eq(WorkGroupEntity::getWorkGroupId, workGroupVO.getWorkGroupId());
             workGroupMapper.update(null, wrapper);
         }
+    }
+
+    @Override
+    public WorkGroupEntity getByName(String name) {
+        LambdaQueryWrapper<WorkGroupEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(WorkGroupEntity::getName, name);
+        return workGroupMapper.selectOne(wrapper);
     }
 }

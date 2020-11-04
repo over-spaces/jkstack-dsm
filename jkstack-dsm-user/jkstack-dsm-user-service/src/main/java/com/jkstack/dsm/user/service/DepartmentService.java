@@ -105,7 +105,7 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
      * 判断是否存在部门根节点
      * @return true 存在， false 不存在
      */
-    boolean isExistRootDepartment();
+    boolean isExistRootDepartment(String departmentId);
 
     /**
      * 保存/更新部门

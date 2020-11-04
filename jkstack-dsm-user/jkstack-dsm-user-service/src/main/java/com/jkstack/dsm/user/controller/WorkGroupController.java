@@ -6,8 +6,10 @@ import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.controller.vo.WorkGroupAddUserVO;
 import com.jkstack.dsm.user.controller.vo.WorkGroupUserVO;
 import com.jkstack.dsm.user.controller.vo.WorkGroupVO;
+import com.jkstack.dsm.user.entity.DepartmentEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
 import com.jkstack.dsm.user.entity.WorkGroupEntity;
+import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
 import com.jkstack.dsm.user.service.WorkGroupService;
 import io.swagger.annotations.Api;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +39,8 @@ public class WorkGroupController extends BaseController {
     private WorkGroupService workGroupService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DepartmentService departmentService;
 
 
     @ApiOperation(value = "新建/修改工作组")
@@ -98,11 +103,17 @@ public class WorkGroupController extends BaseController {
 
         Assert.isNull(workGroupEntity, "工作组不存在");
 
+        //用户数
         Long userCount = workGroupService.countUsers(workGroupEntity.getWorkGroupId());
+
         IPage<UserEntity> page = userService.listByWorkGroupId(pageVO.getId(), pageVO);
+        List<String> userIds = page.getRecords().stream().map(UserEntity::getUserId).collect(Collectors.toList());
+
+        //部门
+        Map<String, List<DepartmentEntity>> userDepartmentMap = departmentService.listByUsers(userIds);
 
         List<WorkGroupUserVO> list = page.getRecords().stream()
-                .map(WorkGroupUserVO::new)
+                .map(userEntity -> new WorkGroupUserVO(userEntity, userDepartmentMap.get(userEntity.getUserId())))
                 .collect(Collectors.toList());
         PageResult<WorkGroupUserVO> pageResult = new PageResult(page, list);
         pageResult.getExpand().put("workGroupId", workGroupEntity.getWorkGroupId());
@@ -134,7 +145,14 @@ public class WorkGroupController extends BaseController {
 
     @ApiOperation(value = "工作组名称校验")
     @GetMapping("/check/name")
-    public ResponseResult checkName(@RequestParam String workGroupId, @RequestParam String name) throws MessageException {
+    public ResponseResult checkName(@RequestParam(required = false) String workGroupId, @RequestParam String name) throws MessageException {
+        WorkGroupEntity workGroupEntity = workGroupService.getByName(name);
+        if(workGroupEntity == null){
+            return ResponseResult.success();
+        }
+        if(!StringUtils.equals(workGroupId, workGroupEntity.getWorkGroupId())){
+            throw new MessageException("工作组已存在");
+        }
         return ResponseResult.success();
     }
 

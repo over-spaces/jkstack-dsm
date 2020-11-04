@@ -203,16 +203,21 @@ public class DepartmentController extends BaseController {
     @ApiOperation("部门直属用户列表")
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @PostMapping("/users")
-    public ResponseResult<PageResult<DepartmentUserVO>> listDepartmentUsers(@RequestBody PageVO queryVO) {
+    public ResponseResult<PageResult<DepartmentUserVO>> listDepartmentUsers(@RequestBody PageVO queryVO) throws MessageException {
         String departmentId = queryVO.getId();
         DepartmentEntity departmentEntity = departmentService.getByBusinessId(departmentId);
+
+        Assert.isNull(departmentEntity, "未知的部门");
+
+        List<UserEntity> leaderUserList = userService.listLeaderUserByDepartmentId(departmentEntity.getDepartmentId());
+        List<String> leaderUserIds = leaderUserList.stream().map(UserEntity::getUserId).collect(Collectors.toList());
 
         IPage<UserEntity> pageUser = userService.listDepartmentUsers(departmentId, queryVO);
         long allUserCount = userService.countUserByDepartmentId(departmentId);
         long deptCount = departmentService.countDepartmentByByDepartmentId(departmentId);
 
         List<DepartmentUserVO> departmentUserVOList = pageUser.getRecords().stream()
-                .map(DepartmentUserVO::new)
+                .map(entity -> new DepartmentUserVO(entity, leaderUserIds.contains(entity.getUserId())))
                 .collect(Collectors.toList());
         PageResult<DepartmentUserVO> pageResult = new PageResult(pageUser, departmentUserVOList);
 
@@ -290,7 +295,7 @@ public class DepartmentController extends BaseController {
             Assert.isNull(parentDepartmentEntity, "未知的上级部门");
         }else{
             //判断root节点是否存在，只能存在一个root节点。
-            boolean existRootDepartment = departmentService.isExistRootDepartment();
+            boolean existRootDepartment = departmentService.isExistRootDepartment(departmentVO.getDepartmentId());
             if(existRootDepartment){
                 throw new MessageException("请设置部门的上级部门");
             }

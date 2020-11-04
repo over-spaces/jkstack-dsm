@@ -309,8 +309,13 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
      * @return true 存在， false 不存在
      */
     @Override
-    public boolean isExistRootDepartment() {
-        Integer flag = departmentMapper.isExistRootDepartment();
+    public boolean isExistRootDepartment(String departmentId) {
+        Integer flag;
+        if(StringUtils.isNotBlank(departmentId)){
+            flag = departmentMapper.isExistRootDepartmentByNotDepartmentId(departmentId);
+        }else {
+            flag = departmentMapper.isExistRootDepartment();
+        }
         return Optional.ofNullable(flag).orElse(0) == 1;
     }
 
