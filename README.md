@@ -132,8 +132,11 @@
 1）调用外部系统API都需要打印日志格式如下：
 
 ```
-    log.info("URL : " + 接口URL);
-    log.info("ARGS : " + 接口参数列表);
+    // 开始调用
+    log.info("业务ID:{} 执行HTTP请求，请求URL：{},请求参数：{} ",req.getrId(),url,param);
+
+    // 获取到结果
+    log.info("业务ID:{} 返回结果集：{}",req.getrId(),JSON.toJSONString(req));
 ```
 
 2）业务日志打印规范
