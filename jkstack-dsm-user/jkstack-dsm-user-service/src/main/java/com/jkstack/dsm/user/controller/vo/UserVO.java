@@ -59,8 +59,8 @@ public class UserVO extends UserSimpleVO {
     @ApiModelProperty(value = "部门")
     private List<SimpleDataVO> departmentList = Lists.newArrayList();
 
-    // @ApiModelProperty(value = "工作组")
-    // private List<SimpleDataVO> workGroupList = Lists.newArrayList();
+    @ApiModelProperty(value = "工作组")
+    private List<String> workGroupList = Lists.newArrayList();
 
     @ApiModelProperty(value = "全部的角色权限列表")
     private List<SimpleDataVO> roleList = Lists.newArrayList();

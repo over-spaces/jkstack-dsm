@@ -6,6 +6,7 @@ import com.jkstack.dsm.common.vo.PageVO;
 import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.entity.UserEntity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -114,5 +115,5 @@ public interface UserService extends CommonService<UserEntity> {
      * @param departmentIds 部门ID集合
      * @param workGroupIds 工作组ID集合
      */
-    void update(UserEntity userEntity, Set<String> departmentIds, Set<String> workGroupIds);
+    void update(UserEntity userEntity, Collection<String> departmentIds, Collection<String> workGroupIds);
 }

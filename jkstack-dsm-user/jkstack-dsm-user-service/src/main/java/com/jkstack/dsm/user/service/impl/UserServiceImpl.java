@@ -12,17 +12,19 @@ import com.jkstack.dsm.user.config.UserConfigProperties;
 import com.jkstack.dsm.user.controller.vo.UserSimpleVO;
 import com.jkstack.dsm.user.entity.DepartmentUserEntity;
 import com.jkstack.dsm.user.entity.UserEntity;
+import com.jkstack.dsm.user.entity.WorkGroupUserEntity;
 import com.jkstack.dsm.user.mapper.DepartmentUserMapper;
 import com.jkstack.dsm.user.mapper.UserMapper;
+import com.jkstack.dsm.user.mapper.WorkGroupUserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -34,6 +36,8 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     private DepartmentService departmentService;
     @Autowired
     private DepartmentUserMapper departmentUserMapper;
+    @Autowired
+    private WorkGroupUserMapper workGroupUserMapper;
     @Autowired
     private UserConfigProperties userConfigProperties;
 
@@ -253,15 +257,22 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      * @param workGroupIds  工作组ID集合
      */
     @Override
-    public void update(UserEntity userEntity, Set<String> departmentIds, Set<String> workGroupIds) {
+    public void update(UserEntity userEntity, Collection<String> departmentIds, Collection<String> workGroupIds) {
         //绑定部门
-        LambdaQueryWrapper<DepartmentUserEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(DepartmentUserEntity::getUserId, userEntity.getUserId());
-        departmentUserMapper.delete(wrapper);
-
-        for (String departmentId : departmentIds) {
+        LambdaQueryWrapper<DepartmentUserEntity> deptWrapper = new LambdaQueryWrapper<>();
+        deptWrapper.eq(DepartmentUserEntity::getUserId, userEntity.getUserId());
+        departmentUserMapper.delete(deptWrapper);
+        Optional.ofNullable(departmentIds).orElse(Collections.emptyList()).forEach(departmentId -> {
             departmentUserMapper.insert(new DepartmentUserEntity(userEntity.getUserId(), departmentId));
-        }
+        });
+
+        //绑定工作组
+        LambdaQueryWrapper<WorkGroupUserEntity> workGroupWrapper = new LambdaQueryWrapper<>();
+        workGroupWrapper.eq(WorkGroupUserEntity::getUserId, userEntity.getUserId());
+        workGroupUserMapper.delete(workGroupWrapper);
+        Optional.ofNullable(workGroupIds).orElse(Collections.emptyList()).forEach(workGroupId -> {
+            workGroupUserMapper.insert(new WorkGroupUserEntity(userEntity.getUserId(), workGroupId));
+        });
 
         //更新用户
         updateByBusinessId(userEntity);

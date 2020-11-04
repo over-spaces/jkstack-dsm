@@ -30,6 +30,7 @@ public class DepartmentVO implements Serializable {
     @ApiModelProperty(value = "部门名称")
     private String name;
 
+    @ApiModelProperty(value = "部门主管")
     private List<String> leaderUserIds;
 
     @ApiModelProperty(value = "部门名称路径")

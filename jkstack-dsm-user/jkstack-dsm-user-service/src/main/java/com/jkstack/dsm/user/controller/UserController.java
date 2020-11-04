@@ -96,10 +96,9 @@ public class UserController extends BaseController implements UserControllerFeig
             Set<String> departmentIds = departmentList.stream().map(SimpleDataVO::getId).collect(Collectors.toSet());
 
             //用户所属工作组
-            // List<SimpleDataVO> workGroupList = userVO.getWorkGroupList();
-            // Set<String> workGroupIds = workGroupList.stream().map(SimpleDataVO::getId).collect(Collectors.toSet());
+            List<String> workGroupIds = userVO.getWorkGroupList();
 
-            userService.update(userEntity, departmentIds, Sets.newHashSet());
+            userService.update(userEntity, departmentIds, workGroupIds);
         }
         return new ResponseResult();
     }
@@ -112,13 +111,19 @@ public class UserController extends BaseController implements UserControllerFeig
         UserEntity userEntity = userService.getByBusinessId(userId);
         Assert.isNull(userEntity, "用户不存在");
 
+        //部门
         List<DepartmentEntity> departmentEntities = departmentService.listByUserId(userEntity.getUserId());
         List<SimpleDataVO> departmentList = departmentEntities.stream()
                 .sorted(Comparator.comparing(DepartmentEntity::getSort))
                 .map(entity -> new SimpleDataVO(entity.getDepartmentId(), entity.getName())).collect(Collectors.toList());
 
+        //工作组
+        List<WorkGroupEntity> workGroupEntities = workGroupService.listByUserId(userEntity.getUserId());
+        List<String> workGroupIds = workGroupEntities.stream().map(WorkGroupEntity::getWorkGroupId).collect(Collectors.toList());
+
         UserVO userVO = new UserVO(userEntity);
         userVO.setDepartmentList(departmentList);
+        userVO.setWorkGroupList(workGroupIds);
         return new ResponseResult<>(userVO);
     }
 
