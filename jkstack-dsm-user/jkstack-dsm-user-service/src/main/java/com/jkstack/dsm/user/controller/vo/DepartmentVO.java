@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotBlank;
@@ -28,6 +29,7 @@ public class DepartmentVO implements Serializable {
 
     @NotBlank(message = "部门名称不允许为空")
     @ApiModelProperty(value = "部门名称")
+    @Length(max = 60, message = "部门名称字符过长，请控制在60字符以内.")
     private String name;
 
     @ApiModelProperty(value = "部门主管")

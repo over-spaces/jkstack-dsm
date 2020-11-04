@@ -132,6 +132,12 @@ public class WorkGroupController extends BaseController {
         return ResponseResult.success();
     }
 
+    @ApiOperation(value = "工作组名称校验")
+    @GetMapping("/check/name")
+    public ResponseResult checkName(@RequestParam String workGroupId, @RequestParam String name) throws MessageException {
+        return ResponseResult.success();
+    }
+
     @ApiOperation(value = "工作组排序")
     @PostMapping("/sort")
     public ResponseResult sort(@RequestBody List<WorkGroupVO> workGroupList) throws MessageException {

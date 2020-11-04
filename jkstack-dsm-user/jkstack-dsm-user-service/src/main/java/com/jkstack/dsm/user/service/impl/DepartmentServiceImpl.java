@@ -192,7 +192,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     /**
      * 按名称模糊查询部门列表
      *
-     * @param name 名称
+     * @param fullName 名称
      */
     @Override
     public List<DepartmentEntity> listByFullNameLike(String fullName) {
@@ -204,24 +204,37 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     /**
      * 校验部门名称是否合法（重名校验）
      *
-     * @param deep         深度，相同深度的节点校验
      * @param departmentId 部门ID，新建为空
+     * @param parentDepartmentId 父部门ID
      * @param name         待校验的名称
      */
     @Override
-    public void checkName(int deep, String departmentId, String name) throws MessageException {
-        LambdaQueryWrapper<DepartmentEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(DepartmentEntity::getDeep, deep).and(w -> w.in(DepartmentEntity::getName, name));
-        List<DepartmentEntity> departmentEntities = departmentMapper.selectList(wrapper);
+    public void checkName(String departmentId, String name, String parentDepartmentId) throws MessageException {
+
+        List<DepartmentEntity> departmentEntities;
+        if(StringUtils.isNotBlank(parentDepartmentId)){
+            departmentEntities = listByParentDepartmentId(parentDepartmentId);
+        }else{
+            LambdaQueryWrapper<DepartmentEntity> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(DepartmentEntity::getDeep, 1);
+            departmentEntities = departmentMapper.selectList(wrapper);
+        }
+
+        departmentEntities = departmentEntities.stream()
+                .filter(entity -> StringUtils.equals(name, entity.getName()))
+                .collect(Collectors.toList());
+
         if (CollectionUtils.isEmpty(departmentEntities)) {
             return;
         }
+
         if (StringUtils.isNotBlank(departmentId)) {
-            boolean flag = departmentEntities.stream().noneMatch(entity -> departmentId.equals(entity.getDepartmentId()));
+            boolean flag = departmentEntities.stream()
+                    .noneMatch(entity -> departmentId.equals(entity.getDepartmentId()));
             if (flag) {
                 throw new MessageException("部门名称已经存在");
             }
-        } else {
+        }else{
             throw new MessageException("部门名称已经存在");
         }
     }

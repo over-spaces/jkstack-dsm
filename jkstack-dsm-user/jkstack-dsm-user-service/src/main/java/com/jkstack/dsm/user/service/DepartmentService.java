@@ -78,11 +78,11 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
 
     /**
      * 校验部门名称是否合法（重名校验）
-     * @param deep 深度，相同深度的节点校验
      * @param departmentId 部门ID，新建为空
      * @param name 待校验的名称
+     * @param parentDepartmentId 父节点ID
      */
-    void checkName(int deep, String departmentId, String name) throws MessageException;
+    void checkName(String departmentId, String name, String parentDepartmentId) throws MessageException;
 
     /**
      * 获取相同深度的节点最大排序值

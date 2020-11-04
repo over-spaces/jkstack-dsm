@@ -285,11 +285,9 @@ public class DepartmentController extends BaseController {
 
 
     private void checkDepartment(DepartmentVO departmentVO) throws MessageException {
-        int deep = 1;
         if(StringUtils.isNotBlank(departmentVO.getParentDepartmentId())){
             DepartmentEntity parentDepartmentEntity = departmentService.getByBusinessId(departmentVO.getParentDepartmentId());
             Assert.isNull(parentDepartmentEntity, "未知的上级部门");
-            deep = Optional.ofNullable(parentDepartmentEntity.getDeep()).orElse(0) + 1;
         }else{
             //判断root节点是否存在，只能存在一个root节点。
             boolean existRootDepartment = departmentService.isExistRootDepartment();
@@ -299,7 +297,7 @@ public class DepartmentController extends BaseController {
         }
 
         //同一层级，部门名称不允许重名
-        departmentService.checkName(deep, departmentVO.getDepartmentId(), departmentVO.getName());
+        departmentService.checkName(departmentVO.getDepartmentId(), departmentVO.getName(), departmentVO.getParentDepartmentId());
     }
 
     private void checkDepartmentDropSortVO(DepartmentDropSortVO departmentDropSortVO) throws MessageException {
