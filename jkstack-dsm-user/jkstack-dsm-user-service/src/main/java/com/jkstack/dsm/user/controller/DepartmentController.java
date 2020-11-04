@@ -123,6 +123,11 @@ public class DepartmentController extends BaseController {
             departmentVO.setParentFullPathName(parentDepartmentEntity.getFullPathName());
         }
 
+        //部门下成员数量
+        long userCount = userService.countUserByDepartmentId(departmentId);
+        departmentVO.setUserCount(userCount);
+
+        //部门主管
         List<UserEntity> userEntities = userService.listLeaderUserByDepartmentId(departmentId);
         List<String> leaderUserIds = userEntities.stream().map(UserEntity::getUserId).collect(Collectors.toList());
         departmentVO.setLeaderUserIds(leaderUserIds);
@@ -131,11 +136,25 @@ public class DepartmentController extends BaseController {
 
     @ApiOperation(value = "按部门名称模糊查询")
     @GetMapping("/name/query")
-    public ResponseResult<List<DepartmentVO>> queryNameLike(@RequestParam String name) throws MessageException {
-        List<DepartmentEntity> departmentEntities = departmentService.listByNameLike(name);
-        List<DepartmentVO> result = departmentEntities.stream()
-                .map(DepartmentVO::new)
-                .collect(Collectors.toList());
+    public ResponseResult<List<DepartmentVO>> queryNameLike(@RequestParam(required = false) String departmentId,
+                                                            @RequestParam String name) throws MessageException {
+
+        List<DepartmentEntity> departmentEntities = departmentService.listByFullNameLike(name);
+
+        List<DepartmentVO> result;
+        if(StringUtils.isBlank(departmentId)){
+            result = departmentEntities.stream()
+                    .limit(500)
+                    .map(DepartmentVO::new)
+                    .collect(Collectors.toList());
+        }else {
+            List<String> childrenDepartmentIds = departmentService.listChildrenDepartmentIds(departmentId);
+            result = departmentEntities.stream()
+                    .filter(entity -> !childrenDepartmentIds.contains(entity.getDepartmentId()))
+                    .limit(500)
+                    .map(DepartmentVO::new)
+                    .collect(Collectors.toList());
+        }
         return ResponseResult.success(result);
     }
 

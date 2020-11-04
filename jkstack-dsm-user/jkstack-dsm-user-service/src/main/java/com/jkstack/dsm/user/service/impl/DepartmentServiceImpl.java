@@ -17,6 +17,7 @@ import com.jkstack.dsm.user.mapper.DepartmentLeaderMapper;
 import com.jkstack.dsm.user.mapper.DepartmentMapper;
 import com.jkstack.dsm.user.mapper.DepartmentUserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
+import com.jkstack.dsm.user.service.UserService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +48,8 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     private DepartmentUserMapper departmentUserMapper;
     @Resource
     private DepartmentLeaderMapper departmentLeaderMapper;
+    @Resource
+    private UserService userService;
 
 
     @Override
@@ -192,9 +195,9 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
      * @param name 名称
      */
     @Override
-    public List<DepartmentEntity> listByNameLike(String name) {
+    public List<DepartmentEntity> listByFullNameLike(String fullName) {
         QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
-        wrapper.lambda().like(DepartmentEntity::getName, name);
+        wrapper.lambda().like(DepartmentEntity::getFullPathName, fullName);
         return departmentMapper.selectList(wrapper);
     }
 
@@ -256,20 +259,24 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
 
     @Override
     public void deleteByDepartmentId(String departmentId) throws MessageException {
+        long userCount = userService.countUserByDepartmentId(departmentId);
+        if(userCount > 0){
+            throw new MessageException("当前部门或者子部门有成员, 不允许删除");
+        }
+
         DepartmentEntity departmentEntity = getByBusinessId(departmentId);
         Assert.isNull(departmentEntity, "未知的部门");
-        List<String> children = departmentMapper.listChildrenDepartmentIds(departmentEntity.getLft(), departmentEntity.getRgt());
-        List<String> departmentIds = Lists.newArrayList();
-        departmentIds.add(departmentId);
-        departmentIds.addAll(children);
 
-        //删除用户关联的部门
-        UpdateWrapper<DepartmentUserEntity> wrapper = new UpdateWrapper();
-        wrapper.lambda().set(DepartmentUserEntity::getDepartmentId, departmentIds);
-        departmentUserMapper.delete(wrapper);
+        List<String> childrenDepartmentIds = listChildrenDepartmentIds(departmentId);
+        childrenDepartmentIds.add(departmentId);
+
+        //清空部门负责人
+        UpdateWrapper<DepartmentLeaderEntity> leaderWrapper = new UpdateWrapper();
+        leaderWrapper.lambda().set(DepartmentLeaderEntity::getDepartmentId, childrenDepartmentIds);
+        departmentLeaderMapper.delete(leaderWrapper);
 
         //删除部门
-        removeByBusinessIds(departmentIds);
+        removeByBusinessIds(childrenDepartmentIds);
     }
 
     @Override

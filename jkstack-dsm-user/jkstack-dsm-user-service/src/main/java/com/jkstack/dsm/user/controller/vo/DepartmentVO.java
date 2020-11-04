@@ -48,8 +48,8 @@ public class DepartmentVO implements Serializable {
     @ApiModelProperty(value = "上级部门名称路径")
     private String parentFullPathName;
 
-    @ApiModelProperty(value = "是否叶子节点，判断是否允许删除")
-    private boolean leaf;
+    @ApiModelProperty(value = "部门下成员数量")
+    private Long userCount;
 
     public DepartmentVO(DepartmentEntity entity) {
         this.departmentId = entity.getDepartmentId();
@@ -57,8 +57,5 @@ public class DepartmentVO implements Serializable {
         this.originalParentDepartmentId = entity.getParentDepartmentId();
         this.name = entity.getName();
         this.fullPathName = entity.getFullPathName();
-        Integer lft = Optional.ofNullable(entity.getLft()).orElse(0);
-        Integer rgt = Optional.ofNullable(entity.getRgt()).orElse(0);
-        this.leaf = Math.max(0, rgt - lft - 1) / 2 <= 0;
     }
 }

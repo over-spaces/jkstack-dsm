@@ -74,7 +74,7 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
      * 按名称模糊查询部门列表
      * @param name 名称
      */
-    List<DepartmentEntity> listByNameLike(String name);
+    List<DepartmentEntity> listByFullNameLike(String name);
 
     /**
      * 校验部门名称是否合法（重名校验）
