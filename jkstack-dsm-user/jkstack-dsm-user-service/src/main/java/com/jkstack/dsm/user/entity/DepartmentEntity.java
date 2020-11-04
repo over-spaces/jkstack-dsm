@@ -23,7 +23,7 @@ import lombok.Setter;
 @TableName(value = "dsm_department")
 public class DepartmentEntity extends LRTreeNodeEntity{
 
-    @TableBusinessId
+    @TableBusinessId(prefix = "dept")
     @TableField(fill = FieldFill.INSERT)
     @Column(length = 64, comment = "部门ID")
     @Index(value = "idx_department_id")

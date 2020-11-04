@@ -11,4 +11,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface TableBusinessId {
+
+    /**
+     * 业务ID前缀，方便辨认。
+     */
+    String prefix() default "";
+
 }

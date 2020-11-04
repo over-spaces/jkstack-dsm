@@ -32,7 +32,7 @@ public class UserEntity extends BaseEntity {
     /**
      * 用户ID
      */
-    @TableBusinessId
+    @TableBusinessId(prefix = "user")
     @TableField(fill = FieldFill.INSERT)
     @Column(length = 64, comment = "用户ID")
     @Unique

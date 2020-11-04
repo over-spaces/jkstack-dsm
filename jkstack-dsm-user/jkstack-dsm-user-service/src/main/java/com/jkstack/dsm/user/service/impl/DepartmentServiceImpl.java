@@ -322,7 +322,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
                 leaderUserIds.stream()
                         .filter(userId -> !dbLeaderUserIds.contains(userId))
                         .forEach(userId -> {
-                            departmentLeaderMapper.insert(new DepartmentLeaderEntity(departmentEntity.getDepartmentId(), userId));
+                            departmentLeaderMapper.insert(new DepartmentLeaderEntity(userId, departmentEntity.getDepartmentId()));
                         });
             }
 

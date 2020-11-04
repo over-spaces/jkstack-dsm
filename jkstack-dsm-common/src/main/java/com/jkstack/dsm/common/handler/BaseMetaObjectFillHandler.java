@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.jkstack.dsm.common.annotation.TableBusinessId;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +33,11 @@ public class BaseMetaObjectFillHandler implements MetaObjectHandler {
         this.setFieldValByName("modifyTime", new Date(), metaObject);
 
         Class<?> clazz = metaObject.getOriginalObject().getClass();
-        Field businessField = getTableBusinessField(clazz);
-        if(businessField != null){
-            this.setFieldValByName(businessField.getName(), IdUtil.objectId(), metaObject);
+        Field field = getTableBusinessField(clazz);
+        if(field != null){
+            TableBusinessId tableBusinessId = field.getDeclaredAnnotation(TableBusinessId.class);
+            String objectId = StringUtils.isBlank(tableBusinessId.prefix()) ? IdUtil.objectId() : tableBusinessId.prefix().concat(IdUtil.objectId());
+            this.setFieldValByName(field.getName(), objectId, metaObject);
         }
     }
 
