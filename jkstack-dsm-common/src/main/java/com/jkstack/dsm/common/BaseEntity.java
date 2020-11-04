@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
+import com.gitee.sunchenbin.mybatis.actable.annotation.IsAutoIncrement;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public abstract class BaseEntity implements Serializable {
      * 注意：此ID不要参与任何业务逻辑，让它安静的自增就好了，处理业务逻辑用具体实体类的ID，如ServiceItemEntity#serviceItemId.
      */
     @TableId(type = IdType.AUTO)
+    @IsAutoIncrement
     @Column(name = "id",type = MySqlTypeConstant.BIGINT,isKey = true,isAutoIncrement = true)
     private Long id;
 

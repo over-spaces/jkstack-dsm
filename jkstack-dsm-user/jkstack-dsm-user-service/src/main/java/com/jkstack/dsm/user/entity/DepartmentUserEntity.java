@@ -31,8 +31,12 @@ public class DepartmentUserEntity extends BaseEntity{
     @Index(value = "idx_department_id")
     private String departmentId;
 
+    @Column(comment = "排序")
+    private Integer sort;
+
     public DepartmentUserEntity(String userId, String departmentId){
         this.userId = userId;
         this.departmentId = departmentId;
+        this.sort = 1;
     }
 }

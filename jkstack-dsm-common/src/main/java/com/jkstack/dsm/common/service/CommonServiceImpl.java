@@ -1,6 +1,7 @@
 package com.jkstack.dsm.common.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jkstack.dsm.common.annotation.TableBusinessId;
@@ -91,7 +92,10 @@ public abstract class CommonServiceImpl<M extends BaseMapper<T>, T> extends Serv
             logger.error("{}, 未知的业务ID字段.", entityClass.getName());
             return;
         }
-        QueryWrapper<T> wrapper = new QueryWrapper<>();
+        if(CollectionUtils.isEmpty(businessIds)){
+            return;
+        }
+        UpdateWrapper<T> wrapper = new UpdateWrapper<>();
         wrapper.in(StringUtil.convertCamelToUnder(field.getName()), businessIds);
         baseMapper.delete(wrapper);
     }

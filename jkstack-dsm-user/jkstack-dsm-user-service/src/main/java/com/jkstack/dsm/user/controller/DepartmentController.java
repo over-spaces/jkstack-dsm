@@ -239,6 +239,13 @@ public class DepartmentController extends BaseController {
         return ResponseResult.success(pageResult);
     }
 
+    @ApiOperation("校验部门名称是否合法")
+    @PostMapping("/check/name")
+    public ResponseResult checkName(@RequestBody DepartmentVO departmentVO) throws MessageException {
+        checkDepartment(departmentVO);
+        return ResponseResult.success();
+    }
+
 
     @ApiOperation("部门人添加用户")
     @PostMapping("/add/user")

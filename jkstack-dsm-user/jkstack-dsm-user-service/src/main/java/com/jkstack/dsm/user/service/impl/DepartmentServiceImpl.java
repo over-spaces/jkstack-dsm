@@ -207,9 +207,8 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
      */
     @Override
     public void checkName(int deep, String departmentId, String name) throws MessageException {
-        QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(DepartmentEntity::getDeep, deep)
-                .and(w -> w.in(DepartmentEntity::getName, name));
+        LambdaQueryWrapper<DepartmentEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DepartmentEntity::getDeep, deep).and(w -> w.in(DepartmentEntity::getName, name));
         List<DepartmentEntity> departmentEntities = departmentMapper.selectList(wrapper);
         if (CollectionUtils.isEmpty(departmentEntities)) {
             return;
@@ -264,9 +263,9 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
         departmentIds.add(departmentId);
         departmentIds.addAll(children);
 
+        //删除用户关联的部门
         UpdateWrapper<DepartmentUserEntity> wrapper = new UpdateWrapper();
         wrapper.lambda().set(DepartmentUserEntity::getDepartmentId, departmentIds);
-        //删除用户关联的部门
         departmentUserMapper.delete(wrapper);
 
         //删除部门
@@ -316,13 +315,17 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
                 //删除
                 departmentLeaderEntities.stream()
                         .filter(entity -> !leaderUserIds.contains(entity.getUserId()))
-                        .forEach(entity -> departmentLeaderMapper.deleteById(entity.getId()));
+                        .forEach(entity -> {
+                            departmentLeaderMapper.deleteById(entity.getId());
+                            departmentUserMapper.updateSort(entity.getDepartmentId(), entity.getUserId(), 1);
+                        });
 
                 //新增
                 leaderUserIds.stream()
                         .filter(userId -> !dbLeaderUserIds.contains(userId))
                         .forEach(userId -> {
                             departmentLeaderMapper.insert(new DepartmentLeaderEntity(userId, departmentEntity.getDepartmentId()));
+                            departmentUserMapper.updateSort(departmentEntity.getDepartmentId(), userId, 0);
                         });
             }
 

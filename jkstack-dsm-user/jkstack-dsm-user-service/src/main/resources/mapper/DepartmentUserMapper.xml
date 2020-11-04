@@ -21,4 +21,9 @@
         </foreach>
     </select>
 
+    <update id="updateSort">
+        update dsm_department_user set sort=#{sort} where user_id=#{userId} and department_id=#{departmentId}
+    </update>
+
+
 </mapper>

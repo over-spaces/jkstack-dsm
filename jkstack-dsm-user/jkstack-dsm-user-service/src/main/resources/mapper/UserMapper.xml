@@ -23,13 +23,16 @@
     </resultMap>
 
     <select id="selectPageUserByDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
-        SELECT user.* FROM dsm_user user LEFT JOIN dsm_department_user d ON user.user_id=d.user_id WHERE d.department_id='${departmentId}'
+        SELECT user.* FROM dsm_user user
+            LEFT JOIN dsm_department_user d ON user.user_id=d.user_id WHERE d.department_id='${departmentId}'
+            ORDER BY d.sort ASC, d.modify_time DESC
     </select>
 
     <select id="selectPageUserByDepartmentIdAndLike" resultType="com.jkstack.dsm.user.entity.UserEntity">
         SELECT user.* FROM dsm_user user
             LEFT JOIN dsm_department_user d ON user.user_id=d.user_id
             WHERE d.department_id='${departmentId}' AND (user.name LIKE '%${condition}%' OR user.login_name LIKE '%${condition}%' OR user.user_no LIKE '%${condition}%')
+            ORDER BY d.sort ASC, d.modify_time DESC
     </select>
 
     <select id="selectPageUserByNotDepartmentId" parameterType="string" resultType="com.jkstack.dsm.user.entity.UserEntity">
