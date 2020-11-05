@@ -89,8 +89,8 @@ public class WorkGroupController extends BaseController {
 
     @ApiOperation(value = "工作组列表")
     @GetMapping("/list")
-    public ResponseResult<List<WorkGroupVO>> list() throws MessageException {
-        List<WorkGroupEntity> workGroupEntities = workGroupService.list();
+    public ResponseResult<List<WorkGroupVO>> list(@RequestParam(required = false) String condition) throws MessageException {
+        List<WorkGroupEntity> workGroupEntities = workGroupService.selectListByNameLike(condition);
         List<WorkGroupVO> list = workGroupEntities.stream()
                 .sorted(Comparator.comparing(WorkGroupEntity::getSort))
                 .map(WorkGroupVO::new)

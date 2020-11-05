@@ -14,6 +14,7 @@ import com.jkstack.dsm.user.entity.WorkGroupUserEntity;
 import com.jkstack.dsm.user.mapper.WorkGroupMapper;
 import com.jkstack.dsm.user.mapper.WorkGroupUserMapper;
 import com.jkstack.dsm.user.service.WorkGroupService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -143,5 +144,21 @@ public class WorkGroupServiceImpl extends CommonServiceImpl<WorkGroupMapper, Wor
         LambdaQueryWrapper<WorkGroupEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(WorkGroupEntity::getName, name);
         return workGroupMapper.selectOne(wrapper);
+    }
+
+    /**
+     * 按名称模糊查询
+     *
+     * @param condition 模糊查询条件
+     * @return 工作组集合
+     */
+    @Override
+    public List<WorkGroupEntity> selectListByNameLike(String condition) {
+        LambdaQueryWrapper<WorkGroupEntity> wrapper = new LambdaQueryWrapper<>();
+        if(StringUtils.isNotBlank(condition)) {
+            wrapper.like(WorkGroupEntity::getName, condition);
+        }
+        wrapper.orderByAsc(WorkGroupEntity::getSort);
+        return workGroupMapper.selectList(wrapper);
     }
 }

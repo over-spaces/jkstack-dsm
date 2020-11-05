@@ -80,4 +80,11 @@ public interface WorkGroupService extends CommonService<WorkGroupEntity> {
      * @return 工作组
      */
     WorkGroupEntity getByName(String name);
+
+    /**
+     * 按名称模糊查询
+     * @param condition 模糊查询条件
+     * @return 工作组集合
+     */
+    List<WorkGroupEntity> selectListByNameLike(String condition);
 }
