@@ -14,6 +14,7 @@ import com.jkstack.dsm.user.service.UserService;
 import com.jkstack.dsm.user.service.WorkGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class WorkGroupController extends BaseController {
     @ApiOperation(value = "新建/修改工作组")
     @PostMapping("/save")
     public ResponseResult save(@RequestBody @Valid WorkGroupVO workGroupVO) throws MessageException {
-        checkWorkGroupVO();
+        checkWorkGroupVO(workGroupVO);
         WorkGroupEntity workGroupEntity;
         if (StringUtils.isBlank(workGroupVO.getWorkGroupId())) {
             workGroupEntity = new WorkGroupEntity();
@@ -62,6 +63,7 @@ public class WorkGroupController extends BaseController {
         return ResponseResult.success();
     }
 
+
     @ApiOperation(value = "获取工作组明细")
     @GetMapping("/get")
     public ResponseResult<WorkGroupVO> get(@RequestParam String workGroupId) throws MessageException {
@@ -69,7 +71,7 @@ public class WorkGroupController extends BaseController {
         Assert.isNull(workGroupEntity, "工作组不存在");
 
         //用户数
-        Long userCount = workGroupService.countUsers(workGroupEntity.getWorkGroupId());
+        Long userCount = workGroupService.selectCountUserByWorkGroupId(workGroupEntity.getWorkGroupId());
 
         WorkGroupVO workGroupVO = new WorkGroupVO(workGroupEntity);
         workGroupVO.setUserCount(userCount);
@@ -104,7 +106,7 @@ public class WorkGroupController extends BaseController {
         Assert.isNull(workGroupEntity, "工作组不存在");
 
         //用户数
-        Long userCount = workGroupService.countUsers(workGroupEntity.getWorkGroupId());
+        Long userCount = workGroupService.selectCountUserByWorkGroupId(workGroupEntity.getWorkGroupId());
 
         IPage<UserEntity> page = userService.listByWorkGroupId(pageVO.getId(), pageVO);
         List<String> userIds = page.getRecords().stream().map(UserEntity::getUserId).collect(Collectors.toList());
@@ -158,14 +160,24 @@ public class WorkGroupController extends BaseController {
 
     @ApiOperation(value = "工作组排序")
     @PostMapping("/sort")
-    public ResponseResult sort(@RequestBody List<WorkGroupVO> workGroupList) throws MessageException {
+    public ResponseResult sort(@RequestBody List<WorkGroupVO> workGroupList) {
 
-        workGroupService.updateSort(workGroupList);
+        if(CollectionUtils.isEmpty(workGroupList)) {
+            return ResponseResult.success();
+        }
+
+        List<String> workGroupIds = workGroupList.stream()
+                .filter(workGroupVO -> StringUtils.isNotBlank(workGroupVO.getWorkGroupId()))
+                .map(WorkGroupVO::getWorkGroupId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        workGroupService.updateSort(workGroupIds);
 
         return ResponseResult.success();
     }
 
-    private void checkWorkGroupVO() {
-
+    private void checkWorkGroupVO(@Valid WorkGroupVO workGroupVO) throws MessageException {
+        checkName(workGroupVO.getWorkGroupId(), workGroupVO.getName());
     }
 }

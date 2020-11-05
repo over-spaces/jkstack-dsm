@@ -37,12 +37,25 @@ public interface DepartmentMapper extends BaseMapper<DepartmentEntity> {
      */
     Integer getMaxRightValue();
 
-    List<LRNode> listAllNode();
+    /**
+     * 获取LRNode例表
+     */
+    List<LRNode> selectLRNodeList();
 
     Integer getMaxSortValueByDeep(int deep);
 
     Integer getMaxSortValueByParentDepartmentId(String parentDepartmentId);
 
+    /**
+     * 判断是否存在非departmentId的其他根节点
+     * @param departmentId 部门ID
+     * @return 1 存在根节点
+     */
     Integer isExistRootDepartmentByNotDepartmentId(String departmentId);
+
+    /**
+     * 判断是否存在根节点
+     * @return 1 存在根节点
+     */
     Integer isExistRootDepartment();
 }

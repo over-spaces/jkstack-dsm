@@ -14,10 +14,24 @@ import java.util.List;
  */
 public interface WorkGroupMapper extends BaseMapper<WorkGroupEntity> {
 
-    List<WorkGroupEntity> listByUserId(String userId);
+    /**
+     * 查询用户关联的工作组
+     * @param userId 用户ID
+     * @return 工作组例表
+     */
+    List<WorkGroupEntity> selectListByUserId(String userId);
 
-    Long countUsers(String workGroupId);
+    /**
+     * 统计工作组下成员数
+     * @param workGroupId 工作组ID
+     * @return 成员数
+     */
+    Long selectCountUserByWorkGroupId(String workGroupId);
 
+    /**
+     * 获取最大排序号
+     * @return 最大排序号
+     */
     Integer getMaxSortValue();
 
 }

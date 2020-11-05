@@ -23,7 +23,7 @@ public interface WorkGroupService extends CommonService<WorkGroupEntity> {
      * @param userId 用户ID
      * @return 工作组列表
      */
-    List<WorkGroupEntity> listByUserId(String userId);
+    List<WorkGroupEntity> selectListByUserId(String userId);
 
     /**
      * 批量查询用户所在工作组列表
@@ -37,17 +37,47 @@ public interface WorkGroupService extends CommonService<WorkGroupEntity> {
      * @param workGroupId 工作组ID
      * @return 用户数量
      */
-    long countUsers(String workGroupId);
+    long selectCountUserByWorkGroupId(String workGroupId);
 
+    /**
+     * 根据工作组ID删除工作组，如工作组下有成员，则不允许删除。
+     * @param workGroupId 工作组ID
+     * @throws MessageException 不允许删除异常
+     */
     void deleteByWorkGroupId(String workGroupId) throws MessageException;
 
+    /**
+     * 工作组添加成员
+     * @param workGroupId 工作组ID
+     * @param userIds 成员ID列表
+     * @throws MessageException 异常信息
+     */
     void addUser(String workGroupId, Set<String> userIds) throws MessageException;
 
+    /**
+     * 工作组移除成员
+     * @param workGroupId 工作组ID
+     * @param userIds 成员ID列表
+     * @throws MessageException 异常信息
+     */
     void removeUser(String workGroupId, Set<String> userIds) throws MessageException;
 
+    /**
+     * 获取工作组排序号最大值
+     * @return 最大排序号
+     */
     int getMaxSortValue();
 
-    void updateSort(List<WorkGroupVO> workGroupList);
+    /**
+     * 根据list顺序，更新工作组排序。
+     * @param workGroupIds 工作组ID列表
+     */
+    void updateSort(List<String> workGroupIds);
 
+    /**
+     * 通过name查询工作组
+     * @param name 名称
+     * @return 工作组
+     */
     WorkGroupEntity getByName(String name);
 }

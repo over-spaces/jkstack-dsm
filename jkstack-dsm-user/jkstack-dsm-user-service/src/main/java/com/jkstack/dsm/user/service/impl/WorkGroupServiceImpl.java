@@ -44,8 +44,8 @@ public class WorkGroupServiceImpl extends CommonServiceImpl<WorkGroupMapper, Wor
      * @return 工作组列表
      */
     @Override
-    public List<WorkGroupEntity> listByUserId(String userId) {
-        return workGroupMapper.listByUserId(userId);
+    public List<WorkGroupEntity> selectListByUserId(String userId) {
+        return workGroupMapper.selectListByUserId(userId);
     }
 
     /**
@@ -61,7 +61,7 @@ public class WorkGroupServiceImpl extends CommonServiceImpl<WorkGroupMapper, Wor
         }
         Map<String, List<WorkGroupEntity>> result = Maps.newHashMapWithExpectedSize(userIds.size());
         for (String userId : userIds) {
-            List<WorkGroupEntity> workGroupEntities = listByUserId(userId);
+            List<WorkGroupEntity> workGroupEntities = selectListByUserId(userId);
             result.put(userId, workGroupEntities);
         }
         return result;
@@ -74,14 +74,14 @@ public class WorkGroupServiceImpl extends CommonServiceImpl<WorkGroupMapper, Wor
      * @return 用户数量
      */
     @Override
-    public long countUsers(String workGroupId) {
-        Long count =  workGroupMapper.countUsers(workGroupId);
+    public long selectCountUserByWorkGroupId(String workGroupId) {
+        Long count =  workGroupMapper.selectCountUserByWorkGroupId(workGroupId);
         return Optional.ofNullable(count).orElse(0L);
     }
 
     @Override
     public void deleteByWorkGroupId(String workGroupId) throws MessageException {
-        long userCount = countUsers(workGroupId);
+        long userCount = selectCountUserByWorkGroupId(workGroupId);
         if(userCount <= 0){
             removeByBusinessId(workGroupId);
         }else{
@@ -124,12 +124,16 @@ public class WorkGroupServiceImpl extends CommonServiceImpl<WorkGroupMapper, Wor
     }
 
     @Override
-    public void updateSort(List<WorkGroupVO> workGroupList) {
+    public void updateSort(List<String> workGroupIds) {
+        if(CollectionUtils.isEmpty(workGroupIds)) {
+            return;
+        }
+
         int sort = 1;
-        for (WorkGroupVO workGroupVO : workGroupList) {
+        for (String workGroupId : workGroupIds) {
             LambdaUpdateWrapper<WorkGroupEntity> wrapper = new LambdaUpdateWrapper<>();
             wrapper.set(WorkGroupEntity::getSort, sort++);
-            wrapper.eq(WorkGroupEntity::getWorkGroupId, workGroupVO.getWorkGroupId());
+            wrapper.eq(WorkGroupEntity::getWorkGroupId, workGroupId);
             workGroupMapper.update(null, wrapper);
         }
     }

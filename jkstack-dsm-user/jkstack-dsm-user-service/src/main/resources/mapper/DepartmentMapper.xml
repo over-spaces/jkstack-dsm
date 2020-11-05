@@ -33,7 +33,7 @@
         select MAX(rgt) from dsm_department
     </select>
 
-    <select id="listAllNode" resultType="com.jkstack.dsm.common.lr.LRNode">
+    <select id="selectLRNodeList" resultType="com.jkstack.dsm.common.lr.LRNode">
         SELECT department_id AS id, parent_department_id AS parentId, name FROM dsm_department ORDER BY parent_department_id
     </select>
 

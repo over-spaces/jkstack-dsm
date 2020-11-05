@@ -36,7 +36,7 @@ public class WorkGroupEntity extends BaseEntity {
     private String name;
 
     @Column(comment = "排序")
-    private int sort;
+    private Integer sort;
 
     @Column(length = 120, comment = "备注")
     private String description;

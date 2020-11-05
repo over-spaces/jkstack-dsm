@@ -91,7 +91,7 @@ public class LRTreeServiceImpl implements LRTreeService {
     }
 
     public Collection<LRNode> listAllNode() {
-        List<LRNode> allNodes = departmentMapper.listAllNode();
+        List<LRNode> allNodes = departmentMapper.selectLRNodeList();
         Map<String, LRNode> nodeMap = allNodes.stream().collect(Collectors.toMap(LRNode::getId, Function.identity()));
 
         Collection<LRNode> nodes = nodeMap.values();
@@ -143,11 +143,11 @@ public class LRTreeServiceImpl implements LRTreeService {
                 treeNodeMap.get(level).add(treeNode);
             }
 
-            for (int l = maxLevel; l > 1; l--) {
-                List<LRNodeTree> treeNodes = treeNodeMap.get(l);
-                logger.debug("get level {} count {}", l, treeNodes.size());
+            for (int level = maxLevel; level > 1; level--) {
+                List<LRNodeTree> treeNodes = treeNodeMap.get(level);
+                logger.debug("get level {} count {}", level, treeNodes.size());
                 for (LRNodeTree lrNodeTree : treeNodes) {
-                    LRNodeTree parentNode = findParentNode(lrNodeTree.getParentId(), treeNodeMap.get(l - 1));
+                    LRNodeTree parentNode = findParentNode(lrNodeTree.getParentId(), treeNodeMap.get(level - 1));
                     if (parentNode != null) {
                         parentNode.getChildren().add(lrNodeTree);
                         lrNodeTree.setParentNode(parentNode);

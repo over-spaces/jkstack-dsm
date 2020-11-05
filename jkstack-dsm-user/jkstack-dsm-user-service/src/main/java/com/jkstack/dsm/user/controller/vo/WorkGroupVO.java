@@ -26,7 +26,7 @@ public class WorkGroupVO implements Serializable {
 
     @NotBlank(message = "工作组名称不允许为空")
     @ApiModelProperty(value = "工作组名称")
-    @Length(max = 60, message = "工作组名称不合法")
+    @Length(max = 60, message = "字符长度不可超过50个！")
     private String name;
 
     @ApiModelProperty(value = "描述")

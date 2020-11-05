@@ -118,7 +118,7 @@ public class UserController extends BaseController implements UserControllerFeig
                 .map(entity -> new SimpleDataVO(entity.getDepartmentId(), entity.getName())).collect(Collectors.toList());
 
         //工作组
-        List<WorkGroupEntity> workGroupEntities = workGroupService.listByUserId(userEntity.getUserId());
+        List<WorkGroupEntity> workGroupEntities = workGroupService.selectListByUserId(userEntity.getUserId());
         List<String> workGroupIds = workGroupEntities.stream().map(WorkGroupEntity::getWorkGroupId).collect(Collectors.toList());
 
         UserVO userVO = new UserVO(userEntity);
@@ -139,17 +139,17 @@ public class UserController extends BaseController implements UserControllerFeig
 
         List<UserVO> list = page.getRecords().stream().map(UserVO::new)
                 .peek(user -> {
-                    //部门
+                    // 部门
                     List<SimpleDataVO> userDepartmentList = userDepartmentMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()
                             .map(departmentEntity -> new SimpleDataVO(departmentEntity.getDepartmentId(), departmentEntity.getFullPathName()))
                             .collect(Collectors.toList());
                     user.setDepartmentList(userDepartmentList);
 
-                    //工作组
-                    // List<SimpleDataVO> userWorkGroupList = userWorkGroupMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()
-                    //         .map(workGroupEntity -> new SimpleDataVO(workGroupEntity.getWorkGroupId(), workGroupEntity.getName()))
-                    //         .collect(Collectors.toList());
-                    // user.setWorkGroupList(userWorkGroupList);
+                    // 工作组
+                    List<String> workGroupIds = userWorkGroupMap.getOrDefault(user.getUserId(), Collections.emptyList()).stream()
+                            .map(WorkGroupEntity::getWorkGroupId)
+                            .collect(Collectors.toList());
+                    user.setWorkGroupList(workGroupIds);
                 })
                 .collect(Collectors.toList());
 
