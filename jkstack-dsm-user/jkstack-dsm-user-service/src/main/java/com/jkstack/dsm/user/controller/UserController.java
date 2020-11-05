@@ -112,7 +112,7 @@ public class UserController extends BaseController implements UserControllerFeig
         Assert.isNull(userEntity, "用户不存在");
 
         //部门
-        List<DepartmentEntity> departmentEntities = departmentService.listByUserId(userEntity.getUserId());
+        List<DepartmentEntity> departmentEntities = departmentService.selectListByUserId(userEntity.getUserId());
         List<SimpleDataVO> departmentList = departmentEntities.stream()
                 .sorted(Comparator.comparing(DepartmentEntity::getSort))
                 .map(entity -> new SimpleDataVO(entity.getDepartmentId(), entity.getName())).collect(Collectors.toList());

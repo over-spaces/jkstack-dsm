@@ -51,10 +51,14 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     @Resource
     private UserService userService;
 
-
+    /**
+     * 查询用户关联的全部部门
+     * @param userId 用户ID
+     * @return 部门列表
+     */
     @Override
-    public List<DepartmentEntity> listByUserId(String userId) {
-        return departmentMapper.listByUserId(userId);
+    public List<DepartmentEntity> selectListByUserId(String userId) {
+        return departmentMapper.selectListByUserId(userId);
     }
 
     @Override
@@ -95,15 +99,16 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
 
     /**
      * 查询部门下用户数量
+     * @return key:部门ID，value:用户数
      */
     @Override
-    public Map<String, Long> queryDeptUserNumber() {
-        List<Map<String, Long>> list = departmentMapper.listDeptUserNumber();
-        Map<String, Long> result = Maps.newHashMapWithExpectedSize(list.size());
-        list.stream().forEach(map -> {
-            result.put(String.valueOf(map.get("department_id")), map.get("count"));
-        });
-        return result;
+    public Map<String, Long> countDepartmentUserNumber() {
+        List<Map<String, Long>> departmentUserNumberList = departmentUserMapper.countDepartmentUserNumber();
+        Map<String, Long> countDepartmentUserNumberMap = new HashMap<>(departmentUserNumberList.size());
+        for (Map<String, Long> map : departmentUserNumberList) {
+            countDepartmentUserNumberMap.put(String.valueOf(map.get("departmentId")), map.get("count"));
+        }
+        return countDepartmentUserNumberMap;
     }
 
     /**
@@ -183,7 +188,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     public Map<String, List<DepartmentEntity>> listByUsers(List<String> userIds) {
         Map<String, List<DepartmentEntity>> result = Maps.newHashMap();
         for (String userId : userIds) {
-            List<DepartmentEntity> departmentEntities = listByUserId(userId);
+            List<DepartmentEntity> departmentEntities = selectListByUserId(userId);
             result.put(userId, departmentEntities);
         }
         return result;

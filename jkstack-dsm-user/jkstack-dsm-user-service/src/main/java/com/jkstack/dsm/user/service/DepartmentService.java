@@ -18,7 +18,12 @@ import java.util.Set;
  */
 public interface DepartmentService extends CommonService<DepartmentEntity> {
 
-    List<DepartmentEntity> listByUserId(String userId);
+    /**
+     * 查询用户关联的全部部门
+     * @param userId 用户ID
+     * @return 部门列表
+     */
+    List<DepartmentEntity> selectListByUserId(String userId);
 
     List<DepartmentTreeVO> listDepartmentTreeByDeepLE(int deep);
 
@@ -38,9 +43,9 @@ public interface DepartmentService extends CommonService<DepartmentEntity> {
 
     /**
      * 查询部门下用户数量
-     * @return
+     * @return key:部门ID，value:用户数
      */
-    Map<String, Long> queryDeptUserNumber();
+    Map<String, Long> countDepartmentUserNumber();
 
     /**
      * 移除部门下用户列表

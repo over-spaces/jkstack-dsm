@@ -21,6 +21,10 @@
         </foreach>
     </select>
 
+    <select id="countDepartmentUserNumber" resultType="java.util.Map">
+        SELECT d.department_id as departmentId, count(d.user_id) AS count FROM dsm_department_user d GROUP BY d.department_id
+    </select>
+
     <update id="updateSort">
         update dsm_department_user set sort=#{sort} where user_id=#{userId} and department_id=#{departmentId}
     </update>

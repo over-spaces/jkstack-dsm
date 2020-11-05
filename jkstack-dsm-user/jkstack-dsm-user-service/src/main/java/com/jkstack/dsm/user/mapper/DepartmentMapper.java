@@ -17,13 +17,12 @@ import java.util.Map;
  */
 public interface DepartmentMapper extends BaseMapper<DepartmentEntity> {
 
-    List<DepartmentEntity> listByUserId(String userId);
-
-
     /**
-     * 查询部门下用户数量
+     * 查询用户所属部门列表
+     * @param userId 用户ID
+     * @return 部门列表
      */
-    List<Map<String, Long>> listDeptUserNumber();
+    List<DepartmentEntity> selectListByUserId(String userId);
 
     /**
      * 获取子部门列表ID

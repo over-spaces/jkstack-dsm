@@ -192,7 +192,7 @@ public class DepartmentController extends BaseController {
     @GetMapping("/children/list")
     public ResponseResult<List<DepartmentChildrenListVO>> listChildren(@RequestParam String departmentId){
         List<DepartmentEntity> departmentEntities = departmentService.listByParentDepartmentId(departmentId);
-        Map<String, Long> listUserNumberMap = departmentService.queryDeptUserNumber();
+        Map<String, Long> listUserNumberMap = departmentService.countDepartmentUserNumber();
 
         List<DepartmentChildrenListVO> departmentChildrenList = departmentEntities.stream()
                 .map(departmentEntity -> new DepartmentChildrenListVO(departmentEntity.getDepartmentId(), departmentEntity.getName(), listUserNumberMap.getOrDefault(departmentEntity.getDepartmentId(), 0L)))
