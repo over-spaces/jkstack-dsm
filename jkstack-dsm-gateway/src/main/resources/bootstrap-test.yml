@@ -21,21 +21,13 @@ spring:
             - StripPrefix=1
           order: 10
 
-        - id: dsm-service-dir
-          uri: lb://dsm-service-dir
-          predicates:
-            - Path=/dsm-service-dir/**
-          filters:
-            - StripPrefix=1
-          order: 20
-
         - id: dsm-service-sheet
           uri: lb://dsm-service-sheet
           predicates:
             - Path=/dsm-service-sheet/**
           filters:
             - StripPrefix=1
-          order: 30
+          order: 20
 
     nacos:
       discovery:
