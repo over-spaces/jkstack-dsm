@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisCommand implements IRedisCommand<String, Object> {
 
-    @Autowired
+    @Autowired(required = false)
     private RedisTemplate redisTemplate;
 
     @Override

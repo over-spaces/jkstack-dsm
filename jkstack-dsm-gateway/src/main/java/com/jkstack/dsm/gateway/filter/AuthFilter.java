@@ -8,6 +8,8 @@ import com.jkstack.dsm.common.redis.RedisCommand;
 import com.jkstack.dsm.common.utils.JwtConstants;
 import com.jkstack.dsm.common.utils.JwtUtils;
 import com.jkstack.dsm.common.utils.StringUtil;
+import com.jkstack.dsm.gateway.service.GatewayLoggerFeign;
+import com.jkstack.dsm.gateway.service.GatewayLoggerService;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -42,6 +44,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
     @Autowired
     private RedisCommand redisCommand;
+    @Autowired
+    private GatewayLoggerFeign gatewayLoggerFeign;
 
     private ObjectMapper objectMapper;
 
@@ -52,6 +56,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         final String url = exchange.getRequest().getURI().getPath();
+
+        gatewayLoggerFeign.saveLog();
 
         //跳过不需要验证的url
         if (isIgnoreAuthURL(url) || true) {

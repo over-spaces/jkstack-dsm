@@ -1,0 +1,22 @@
+nacos:
+  server-addr: 192.168.3.23:8848
+  namespace: jkstack-dsm
+
+spring:
+  security:
+    user:
+      name: root
+      password: 123qweASD
+  cloud:
+    nacos:
+      discovery:
+        namespace: ${nacos.namespace}
+        server-addr: ${nacos.server-addr}
+      config:
+        server-addr: ${nacos.server-addr}
+        namespace: ${nacos.namespace}
+        file-extension: yml
+        extension-configs[0]:
+          group: DEFAULT_GROUP
+          refresh: true
+          data-id: dsm-admin-jdbc.yml
