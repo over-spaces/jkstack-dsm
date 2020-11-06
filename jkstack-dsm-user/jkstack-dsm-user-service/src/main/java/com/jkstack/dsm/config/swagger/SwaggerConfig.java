@@ -1,4 +1,4 @@
-package com.jkstack.dsm.user.swagger;
+package com.jkstack.dsm.config.swagger;
 
 import com.jkstack.dsm.common.utils.JwtConstants;
 import org.reactivestreams.Publisher;

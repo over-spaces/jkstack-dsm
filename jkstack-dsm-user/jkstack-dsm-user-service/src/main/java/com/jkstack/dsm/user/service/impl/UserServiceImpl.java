@@ -18,7 +18,6 @@ import com.jkstack.dsm.user.mapper.UserMapper;
 import com.jkstack.dsm.user.mapper.WorkGroupUserMapper;
 import com.jkstack.dsm.user.service.DepartmentService;
 import com.jkstack.dsm.user.service.UserService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -148,7 +147,7 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
     }
 
     @Override
-    public IPage<UserEntity> pageByNotDepartmentId(String departmentId, PageVO pageVO) {
+    public IPage<UserEntity> selectPageByNotDepartmentId(String departmentId, PageVO pageVO) {
         if(StringUtils.isBlank(pageVO.getCondition())){
             return userMapper.selectPageUserByNotDepartmentId(departmentId, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
         }else{
@@ -164,7 +163,7 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      * @return 用户列表
      */
     @Override
-    public IPage<UserEntity> listByWorkGroupId(String workGroupId, PageVO pageVO) {
+    public IPage<UserEntity> selectPageByWorkGroupId(String workGroupId, PageVO pageVO) {
         return userMapper.listByWorkGroupId(workGroupId, new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
     }
 
@@ -175,7 +174,7 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      * @return 用户列表
      */
     @Override
-    public IPage<UserEntity> pageByLike(PageVO pageVO) {
+    public IPage<UserEntity> selectPageByLike(PageVO pageVO) {
         if(StringUtils.isBlank(pageVO.getCondition())){
             return userMapper.selectPageByLike(pageVO.getCondition(), new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));
         }else {
@@ -230,7 +229,7 @@ public class UserServiceImpl extends CommonServiceImpl<UserMapper, UserEntity> i
      * @param pageVO       分页查询信息
      */
     @Override
-    public IPage<UserSimpleVO> pageByDepartmentId(String departmentId, PageVO pageVO) {
+    public IPage<UserSimpleVO> selectPageByDepartmentId(String departmentId, PageVO pageVO) {
         if(StringUtils.isBlank(departmentId)){
             if(StringUtils.isBlank(pageVO.getCondition())) {
                 return userMapper.selectPageSimpleUserList(new Page<>(pageVO.getPageNo(), pageVO.getPageSize()));

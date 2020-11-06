@@ -1,4 +1,4 @@
-package com.jkstack.dsm.user.swagger;
+package com.jkstack.dsm.config.swagger;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

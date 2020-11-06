@@ -37,11 +37,6 @@ public class ResponseResult<T> implements Serializable {
         return new ResponseResult<T>(data);
     }
 
-    public static <T> ResponseResult<PageResult<T>> success(long pageSize, long total, Collection<T> records) {
-        long page = total / pageSize + 1;
-        return new ResponseResult<>(new PageResult<T>(page, total, records));
-    }
-
     public static ResponseResult error(String message) {
         return error(ResponseResultCodeEnum.INTERNAL_SERVER_ERROR.getCode(), message);
     }

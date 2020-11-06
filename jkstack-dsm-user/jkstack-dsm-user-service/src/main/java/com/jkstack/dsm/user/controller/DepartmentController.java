@@ -53,7 +53,7 @@ public class DepartmentController extends BaseController {
         List<DepartmentTreeVO> departmentTreeList = null;
         if(StringUtils.isBlank(departmentId)){
             //未指定部门ID，默认加载deep<=3的部门树
-            departmentTreeList = departmentService.listDepartmentTreeByDeepLE(1);
+            departmentTreeList = departmentService.selectListDepartmentTreeByDeepLE(1);
         }else{
             //指定部门ID，加载下级部门
             List<DepartmentEntity> departmentEntities = departmentService.listByParentDepartmentId(departmentId);
@@ -70,7 +70,7 @@ public class DepartmentController extends BaseController {
         //先校验参数是否正确
         checkDepartmentDropSortVO(departmentDropSortVO);
 
-        List<DepartmentEntity> allDepartmentEntities = departmentService.listSiblingDepartmentByDepartmentId(departmentDropSortVO.getDropNode().getId());
+        List<DepartmentEntity> allDepartmentEntities = departmentService.selectListSiblingDepartmentByDepartmentId(departmentDropSortVO.getDropNode().getId());
 
         //重新生成sort,并且扩大10倍
         AtomicInteger atomicInteger = new AtomicInteger(1);
@@ -139,7 +139,7 @@ public class DepartmentController extends BaseController {
     public ResponseResult<List<DepartmentVO>> queryNameLike(@RequestParam(required = false) String departmentId,
                                                             @RequestParam String name) throws MessageException {
 
-        List<DepartmentEntity> departmentEntities = departmentService.listByFullNameLike(name);
+        List<DepartmentEntity> departmentEntities = departmentService.selectListByFullPathNameLike(name);
 
         List<DepartmentVO> result;
         if(StringUtils.isBlank(departmentId)){
@@ -254,7 +254,7 @@ public class DepartmentController extends BaseController {
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @PostMapping("/pick/user")
     public ResponseResult<PageResult<UserSimpleVO>> listUser(@RequestBody PageVO pageVO) {
-        IPage<UserEntity> page = userService.pageByNotDepartmentId(pageVO.getId(), pageVO);
+        IPage<UserEntity> page = userService.selectPageByNotDepartmentId(pageVO.getId(), pageVO);
 
         List<UserSimpleVO> list = page.getRecords().stream()
                 .map(UserSimpleVO::new)

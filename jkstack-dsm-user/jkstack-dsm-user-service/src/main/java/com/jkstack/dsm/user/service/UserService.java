@@ -70,7 +70,13 @@ public interface UserService extends CommonService<UserEntity> {
      */
     long countUserByDepartmentId(String departmentId);
 
-    IPage<UserEntity> pageByNotDepartmentId(String departmentId, PageVO pageVO);
+    /**
+     * 分页查询非departmentId部门下的用户列表
+     * @param departmentId 部门ID
+     * @param pageVO 分页信息
+     * @return 用户列表
+     */
+    IPage<UserEntity> selectPageByNotDepartmentId(String departmentId, PageVO pageVO);
 
     /**
      * 查收工作组下人员列表
@@ -78,14 +84,14 @@ public interface UserService extends CommonService<UserEntity> {
      * @param pageVO 分页信息
      * @return 用户列表
      */
-    IPage<UserEntity> listByWorkGroupId(String workGroupId, PageVO pageVO);
+    IPage<UserEntity> selectPageByWorkGroupId(String workGroupId, PageVO pageVO);
 
     /**
      * 分页查询用户，并且支持模糊匹配
      * @param pageVO 分页查询VO
      * @return 用户列表
      */
-    IPage<UserEntity> pageByLike(PageVO pageVO);
+    IPage<UserEntity> selectPageByLike(PageVO pageVO);
 
     /**
      * 获取部门负责人列表
@@ -107,7 +113,7 @@ public interface UserService extends CommonService<UserEntity> {
      * @param departmentId 部门ID
      * @param pageVO 分页信息
      */
-    IPage<UserSimpleVO> pageByDepartmentId(String departmentId, PageVO pageVO);
+    IPage<UserSimpleVO> selectPageByDepartmentId(String departmentId, PageVO pageVO);
 
     /**
      * 更新用户，绑定部门及工作组

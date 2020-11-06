@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author lifang
  * @since 2020/10/10
  */
-@RestControllerAdvice(basePackages = "com.jkstack.dsm.user")
+@RestControllerAdvice(basePackages = "com.jkstack.dsm")
 public class HandlerException {
 
     private static Logger logger = LoggerFactory.getLogger(HandlerException.class);

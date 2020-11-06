@@ -108,11 +108,11 @@ public class WorkGroupController extends BaseController {
         //用户数
         Long userCount = workGroupService.selectCountUserByWorkGroupId(workGroupEntity.getWorkGroupId());
 
-        IPage<UserEntity> page = userService.listByWorkGroupId(pageVO.getId(), pageVO);
+        IPage<UserEntity> page = userService.selectPageByWorkGroupId(pageVO.getId(), pageVO);
         List<String> userIds = page.getRecords().stream().map(UserEntity::getUserId).collect(Collectors.toList());
 
         //部门
-        Map<String, List<DepartmentEntity>> userDepartmentMap = departmentService.listByUsers(userIds);
+        Map<String, List<DepartmentEntity>> userDepartmentMap = departmentService.selectUserDepartmentMapByUserIds(userIds);
 
         List<WorkGroupUserVO> list = page.getRecords().stream()
                 .map(userEntity -> new WorkGroupUserVO(userEntity, userDepartmentMap.get(userEntity.getUserId())))

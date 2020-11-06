@@ -29,7 +29,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.compress.utils.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,11 +130,11 @@ public class UserController extends BaseController implements UserControllerFeig
     @ApiResponses(@ApiResponse(code = 200, message = "处理成功"))
     @PostMapping("/list")
     public ResponseResult<PageResult<UserVO>> list(@RequestBody PageVO pageVO) {
-        IPage<UserEntity> page = userService.pageByLike(pageVO);
+        IPage<UserEntity> page = userService.selectPageByLike(pageVO);
 
         List<String> userIds = page.getRecords().stream().map(UserEntity::getUserId).collect(Collectors.toList());
         Map<String, List<WorkGroupEntity>> userWorkGroupMap = workGroupService.listByUserIds(userIds);
-        Map<String, List<DepartmentEntity>> userDepartmentMap = departmentService.listByUsers(userIds);
+        Map<String, List<DepartmentEntity>> userDepartmentMap = departmentService.selectUserDepartmentMapByUserIds(userIds);
 
         List<UserVO> list = page.getRecords().stream().map(UserVO::new)
                 .peek(user -> {
@@ -153,7 +152,7 @@ public class UserController extends BaseController implements UserControllerFeig
                 })
                 .collect(Collectors.toList());
 
-        PageResult<UserVO> pageResult = new PageResult(page.getCurrent(), page.getTotal(), list);
+        PageResult<UserVO> pageResult = new PageResult(page, list);
         return new ResponseResult<>(pageResult);
     }
 
@@ -176,7 +175,7 @@ public class UserController extends BaseController implements UserControllerFeig
 
         }else {
 
-            pageUser = userService.pageByDepartmentId(departmentId, selectVO);
+            pageUser = userService.selectPageByDepartmentId(departmentId, selectVO);
 
         }
         PageResult<UserSimpleVO> pageResult = new PageResult(pageUser, pageUser.getRecords());

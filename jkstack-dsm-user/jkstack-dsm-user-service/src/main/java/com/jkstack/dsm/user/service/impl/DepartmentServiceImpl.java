@@ -62,7 +62,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
     }
 
     @Override
-    public List<DepartmentTreeVO> listDepartmentTreeByDeepLE(int deep) {
+    public List<DepartmentTreeVO> selectListDepartmentTreeByDeepLE(int deep) {
         QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
         wrapper.lambda().le(DepartmentEntity::getDeep, deep);
         List<DepartmentEntity> departmentEntities = departmentMapper.selectList(wrapper);
@@ -185,7 +185,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
      * @param userIds 用户ID列表
      */
     @Override
-    public Map<String, List<DepartmentEntity>> listByUsers(List<String> userIds) {
+    public Map<String, List<DepartmentEntity>> selectUserDepartmentMapByUserIds(List<String> userIds) {
         Map<String, List<DepartmentEntity>> result = Maps.newHashMap();
         for (String userId : userIds) {
             List<DepartmentEntity> departmentEntities = selectListByUserId(userId);
@@ -200,7 +200,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
      * @param fullName 名称
      */
     @Override
-    public List<DepartmentEntity> listByFullNameLike(String fullName) {
+    public List<DepartmentEntity> selectListByFullPathNameLike(String fullName) {
         QueryWrapper<DepartmentEntity> wrapper = new QueryWrapper<>();
         wrapper.lambda().like(DepartmentEntity::getFullPathName, fullName);
         return departmentMapper.selectList(wrapper);
@@ -267,7 +267,7 @@ public class DepartmentServiceImpl extends CommonServiceImpl<DepartmentMapper, D
      * @return 兄弟部门列表
      */
     @Override
-    public List<DepartmentEntity> listSiblingDepartmentByDepartmentId(String departmentId) {
+    public List<DepartmentEntity> selectListSiblingDepartmentByDepartmentId(String departmentId) {
         DepartmentEntity departmentEntity = getByBusinessId(departmentId);
         if (departmentEntity == null) {
             return Collections.emptyList();
